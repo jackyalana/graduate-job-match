@@ -112,6 +112,22 @@ public class JobBrowseServiceImpl implements JobBrowseService {
             }
             qw.in(Job::getId, jobIds);
         }
+
+        if (resume == null) {
+            int off = offset == null ? 0 : offset;
+            if (off < 0) off = 0;
+            int size = pageSize == null ? 10 : pageSize;
+            if (size < 1) size = 1;
+            if (size > 50) size = 50;
+            qw.last("order by rand(" + userId + ") limit " + off + ", " + size);
+            List<Job> jobs = jobMapper.selectList(qw);
+            List<JobCardVO> res = new ArrayList<>();
+            for (Job j : jobs) {
+                res.add(toCard(j, null));
+            }
+            return res;
+        }
+
         int candidateLimit = 200;
         List<Job> jobs = jobMapper.selectList(qw.orderByDesc(Job::getId).last("limit " + candidateLimit));
 
@@ -158,9 +174,6 @@ public class JobBrowseServiceImpl implements JobBrowseService {
                 .eq(Resume::getUserId, userId)
                 .orderByDesc(Resume::getUpdateTime)
                 .last("limit 1"));
-        if (resume == null) {
-            throw new BizException(400, "请先创建简历并配置标签");
-        }
         return resume;
     }
 

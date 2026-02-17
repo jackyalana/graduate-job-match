@@ -9,7 +9,7 @@ START TRANSACTION;
 SET @pwd_123456 := '$2y$10$RCmaUNsyLi.ANO9f5QY5fuGYuE0zq1pCd4TcnaI2zKwczW.hMVcMa';
 
 INSERT INTO sys_user (username, password, email, role, company_name, avatar, status, audit_status, real_name, phone, school, graduate_date)
-VALUES ('hr.bytedance', @pwd_123456, 'hr.bytedance@bytedance.com', 'HR', '字节跳动', 'https://i.pravatar.cc/150?img=12', 1, 1, '张晨', '13800000001', '北京邮电大学', '2020-06-30')
+VALUES ('admin', @pwd_123456, 'admin@lanrecruitment.local', 'ADMIN', NULL, NULL, 1, 1, NULL, NULL, NULL, NULL)
 ON DUPLICATE KEY UPDATE
   password = VALUES(password),
   role = VALUES(role),
@@ -23,7 +23,7 @@ ON DUPLICATE KEY UPDATE
   graduate_date = VALUES(graduate_date);
 
 INSERT INTO sys_user (username, password, email, role, company_name, avatar, status, audit_status, real_name, phone, school, graduate_date)
-VALUES ('user.demo', @pwd_123456, 'user.demo@bytedance.com', 'USER', NULL, 'https://i.pravatar.cc/150?img=5', 1, 1, '李沐', '13800000002', '同济大学', '2026-06-30')
+VALUES ('hr', @pwd_123456, 'hr@lanrecruitment.local', 'HR', '字节跳动', 'https://i.pravatar.cc/150?img=12', 1, 1, '张晨', '13800000001', '北京邮电大学', '2020-06-30')
 ON DUPLICATE KEY UPDATE
   password = VALUES(password),
   role = VALUES(role),
@@ -36,8 +36,22 @@ ON DUPLICATE KEY UPDATE
   school = VALUES(school),
   graduate_date = VALUES(graduate_date);
 
-SET @hr_id := (SELECT id FROM sys_user WHERE username = 'hr.bytedance' LIMIT 1);
-SET @user_id := (SELECT id FROM sys_user WHERE username = 'user.demo' LIMIT 1);
+INSERT INTO sys_user (username, password, email, role, company_name, avatar, status, audit_status, real_name, phone, school, graduate_date)
+VALUES ('user', @pwd_123456, 'user@lanrecruitment.local', 'USER', NULL, 'https://i.pravatar.cc/150?img=5', 1, 1, '李沐', '13800000002', '同济大学', '2026-06-30')
+ON DUPLICATE KEY UPDATE
+  password = VALUES(password),
+  role = VALUES(role),
+  company_name = VALUES(company_name),
+  avatar = VALUES(avatar),
+  status = VALUES(status),
+  audit_status = VALUES(audit_status),
+  real_name = VALUES(real_name),
+  phone = VALUES(phone),
+  school = VALUES(school),
+  graduate_date = VALUES(graduate_date);
+
+SET @hr_id := (SELECT id FROM sys_user WHERE username = 'hr' LIMIT 1);
+SET @user_id := (SELECT id FROM sys_user WHERE username = 'user' LIMIT 1);
 
 INSERT INTO tag (tag_name, tag_type, base_weight, status) VALUES
 ('Java', 'SKILL', 5, 1),
@@ -58,6 +72,7 @@ INSERT INTO tag (tag_name, tag_type, base_weight, status) VALUES
 ('JavaScript', 'SKILL', 5, 1),
 ('TypeScript', 'SKILL', 5, 1),
 ('Vue', 'SKILL', 5, 1),
+('Vue 3', 'SKILL', 3, 1),
 ('React', 'SKILL', 4, 1),
 ('HTML', 'SKILL', 4, 1),
 ('CSS', 'SKILL', 4, 1),
@@ -94,14 +109,18 @@ INSERT INTO tag (tag_name, tag_type, base_weight, status) VALUES
 ('直播', 'INDUSTRY', 2, 1),
 ('搜索', 'INDUSTRY', 2, 1),
 ('广告', 'INDUSTRY', 2, 1),
+('前端开发', 'INDUSTRY', 1, 1),
+('后端开发', 'INDUSTRY', 1, 1),
 
 ('校招', 'EXPERIENCE', 2, 1),
 ('社招', 'EXPERIENCE', 2, 1),
 ('实习', 'EXPERIENCE', 2, 1),
 ('0-1年', 'EXPERIENCE', 2, 1),
 ('1-3年', 'EXPERIENCE', 2, 1),
+('3年经验', 'EXPERIENCE', 1, 1),
 ('3-5年', 'EXPERIENCE', 2, 1),
-('5年以上', 'EXPERIENCE', 2, 1)
+('5年以上', 'EXPERIENCE', 2, 1),
+('应届生', 'EXPERIENCE', 1, 1)
 ON DUPLICATE KEY UPDATE
   base_weight = VALUES(base_weight),
   status = VALUES(status);
