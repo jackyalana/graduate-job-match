@@ -13,21 +13,49 @@
           <el-form-item label="岗位类型">
             <el-input v-model="filters.jobType" placeholder="如：后端开发" clearable />
           </el-form-item>
-          <el-form-item label="标签">
+          <el-form-item label="技能">
             <el-select
-              v-model="filters.tagIds"
+              v-model="filters.skillTagIds"
               multiple
               filterable
               remote
               clearable
-              :remote-method="onSearchTags"
-              :loading="tagLoading"
-              placeholder="搜索并选择标签"
+              :remote-method="(q) => onSearchTagsByType('SKILL', q)"
+              :loading="tagLoadingMap.SKILL"
+              placeholder="搜索技能"
               style="width: 100%"
             >
-              <el-option-group v-for="group in groupedTagOptions" :key="group.label" :label="group.label">
-                <el-option v-for="t in group.options" :key="t.id" :label="t.tagName" :value="t.id" />
-              </el-option-group>
+              <el-option v-for="t in tagOptionsMap.SKILL" :key="t.id" :label="t.tagName" :value="t.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="行业">
+            <el-select
+              v-model="filters.industryTagIds"
+              multiple
+              filterable
+              remote
+              clearable
+              :remote-method="(q) => onSearchTagsByType('INDUSTRY', q)"
+              :loading="tagLoadingMap.INDUSTRY"
+              placeholder="搜索行业"
+              style="width: 100%"
+            >
+              <el-option v-for="t in tagOptionsMap.INDUSTRY" :key="t.id" :label="t.tagName" :value="t.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="经验">
+            <el-select
+              v-model="filters.experienceTagIds"
+              multiple
+              filterable
+              remote
+              clearable
+              :remote-method="(q) => onSearchTagsByType('EXPERIENCE', q)"
+              :loading="tagLoadingMap.EXPERIENCE"
+              placeholder="搜索经验"
+              style="width: 100%"
+            >
+              <el-option v-for="t in tagOptionsMap.EXPERIENCE" :key="t.id" :label="t.tagName" :value="t.id" />
             </el-select>
           </el-form-item>
           <el-button type="primary" style="width: 100%" :loading="loading" @click="onSearch">查询</el-button>
@@ -36,76 +64,96 @@
     </div>
 
     <div class="right">
-      <el-tabs v-model="activeTab" class="job-tabs" @tab-change="onTabChange">
-        <el-tab-pane v-if="role === 'USER'" label="推荐岗位" name="recommend" />
-        <el-tab-pane label="最新岗位" name="latest" />
-      </el-tabs>
+      <template v-if="!selectedJob">
+        <el-tabs v-model="activeTab" class="job-tabs" @tab-change="onTabChange">
+          <el-tab-pane v-if="role === 'USER'" label="推荐岗位" name="recommend" />
+          <el-tab-pane label="最新岗位" name="latest" />
+        </el-tabs>
 
-      <el-card v-for="job in displayJobs" :key="job.id" class="mb">
-        <div class="job-title">{{ job.jobName }}</div>
-        <div class="job-meta">
-          <span v-if="job.companyName">公司：{{ job.companyName }}</span>
-          <span>城市：{{ job.city }}</span>
-          <span>类型：{{ job.jobType }}</span>
-          <span>薪资：{{ job.salaryRange }}</span>
-          <span v-if="job.createdAt">发布时间：{{ formatDateTime(job.createdAt) }}</span>
-          <span v-if="job.matchScore != null">匹配度：{{ job.matchScore }}</span>
+        <el-card v-for="job in displayJobs" :key="job.id" class="mb job-card" @click="openDetail(job)">
+          <div class="job-title">{{ job.jobName }}</div>
+          <div class="job-meta">
+            <span v-if="job.companyName">公司：{{ job.companyName }}</span>
+            <span>城市：{{ job.city }}</span>
+            <span>类型：{{ job.jobType }}</span>
+            <span>薪资：{{ job.salaryRange }}</span>
+            <span v-if="job.createdAt">发布时间：{{ formatDateTime(job.createdAt) }}</span>
+          </div>
+          <div class="job-desc">{{ job.description }}</div>
+          <div class="job-actions" @click.stop>
+            <el-button size="small" @click="openDetail(job)">查看详情</el-button>
+            <el-button v-if="role === 'USER'" size="small" type="primary" @click="onApply(job)">投递简历</el-button>
+          </div>
+        </el-card>
+        <div ref="loadMoreRef" class="load-more-trigger">
+          <span v-if="loadingMore">加载中...</span>
+          <span v-else-if="!hasMore">没有更多了</span>
         </div>
-        <div class="job-desc">{{ job.description }}</div>
-        <div class="job-actions">
-          <el-button size="small" @click="openDetail(job)">查看详情</el-button>
-          <el-button v-if="role === 'USER'" size="small" type="primary" @click="onApply(job)">投递简历</el-button>
-        </div>
-      </el-card>
-      <div ref="loadMoreRef" class="load-more-trigger">
-        <span v-if="loadingMore">加载中...</span>
-        <span v-else-if="!hasMore">没有更多了</span>
-      </div>
+      </template>
+
+      <template v-else>
+        <el-card class="detail-card">
+          <template #header>
+            <div class="detail-header">
+              <el-button link @click="closeDetail">
+                <el-icon><ArrowLeft /></el-icon>
+                返回列表
+              </el-button>
+              <span class="detail-title">岗位详情</span>
+            </div>
+          </template>
+          <el-descriptions :column="2" border>
+            <el-descriptions-item label="岗位名称">{{ selectedJob.jobName }}</el-descriptions-item>
+            <el-descriptions-item v-if="selectedJob.companyName" label="公司名称">{{ selectedJob.companyName }}</el-descriptions-item>
+            <el-descriptions-item label="城市">{{ selectedJob.city }}</el-descriptions-item>
+            <el-descriptions-item label="类型">{{ selectedJob.jobType }}</el-descriptions-item>
+            <el-descriptions-item label="薪资">{{ selectedJob.salaryRange }}</el-descriptions-item>
+            <el-descriptions-item v-if="selectedJob.createdAt" label="发布时间">{{ formatDateTime(selectedJob.createdAt) }}</el-descriptions-item>
+          </el-descriptions>
+          <div class="job-desc-block">
+            <div class="job-desc-title">岗位描述</div>
+            <el-input :model-value="selectedJob.description" type="textarea" :rows="10" readonly />
+          </div>
+          <div class="detail-actions">
+            <el-button v-if="role === 'USER'" type="primary" @click="onApply(selectedJob)">投递简历</el-button>
+          </div>
+        </el-card>
+      </template>
     </div>
   </div>
-
-  <el-dialog v-model="detailVisible" title="岗位详情" width="780px">
-    <el-descriptions v-if="currentJob" :column="1" border>
-      <el-descriptions-item label="岗位名称">{{ currentJob.jobName }}</el-descriptions-item>
-      <el-descriptions-item v-if="currentJob.companyName" label="公司名称">{{ currentJob.companyName }}</el-descriptions-item>
-      <el-descriptions-item label="城市">{{ currentJob.city }}</el-descriptions-item>
-      <el-descriptions-item label="类型">{{ currentJob.jobType }}</el-descriptions-item>
-      <el-descriptions-item label="薪资">{{ currentJob.salaryRange }}</el-descriptions-item>
-      <el-descriptions-item v-if="currentJob.createdAt" label="发布时间">{{ formatDateTime(currentJob.createdAt) }}</el-descriptions-item>
-      <el-descriptions-item v-if="currentJob.matchScore != null" label="匹配度">{{ currentJob.matchScore }}</el-descriptions-item>
-      <el-descriptions-item label="描述">{{ currentJob.description }}</el-descriptions-item>
-    </el-descriptions>
-    <template #footer>
-      <el-button @click="detailVisible = false">关闭</el-button>
-      <el-button v-if="role === 'USER'" type="primary" @click="onApply(currentJob)">投递</el-button>
-    </template>
-  </el-dialog>
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { ArrowLeft } from '@element-plus/icons-vue'
 import { listJobs, recommendJobs as fetchRecommendJobsApi } from '../api/job'
 import { applyJob, listMyResumes } from '../api/resume'
 import { searchTags } from '../api/tag'
 
-const filters = reactive({ keyword: '', city: '', jobType: '', tagIds: [] })
+const filters = reactive({ 
+  keyword: '', 
+  city: '', 
+  jobType: '', 
+  skillTagIds: [], 
+  industryTagIds: [], 
+  experienceTagIds: [] 
+})
 const route = useRoute()
 const router = useRouter()
 
 const role = ref(localStorage.getItem('role') || 'USER')
 const loading = ref(false)
-const tagLoading = ref(false)
-const tagOptions = ref([])
+const tagLoadingMap = reactive({ SKILL: false, INDUSTRY: false, EXPERIENCE: false })
+const tagOptionsMap = reactive({ SKILL: [], INDUSTRY: [], EXPERIENCE: [] })
 
 const jobs = ref([])
 const recommendJobs = ref([])
 const resumes = ref([])
 const activeTab = ref(role.value === 'USER' ? 'recommend' : 'latest')
 
-const detailVisible = ref(false)
-const currentJob = ref(null)
+const selectedJob = ref(null)
 
 const initialPageSize = 10
 const pageSize = 10
@@ -124,22 +172,17 @@ const displayJobs = computed(() => {
   return jobs.value
 })
 
-const groupedTagOptions = computed(() => {
-  const groups = { SKILL: [], INDUSTRY: [], EXPERIENCE: [] }
-  const typeLabels = { SKILL: '技能', INDUSTRY: '行业', EXPERIENCE: '经验' }
-  ;(tagOptions.value || []).forEach((t) => {
-    if (groups[t.tagType]) {
-      groups[t.tagType].push(t)
-    }
-  })
-  return Object.entries(groups)
-    .filter(([, opts]) => opts.length > 0)
-    .map(([type, opts]) => ({ label: typeLabels[type] || type, options: opts }))
-})
-
 const hasMore = computed(() => {
   if (role.value === 'USER' && activeTab.value === 'recommend') return recommendHasMore.value
   return publicHasMore.value
+})
+
+const allTagIds = computed(() => {
+  return [
+    ...filters.skillTagIds,
+    ...filters.industryTagIds,
+    ...filters.experienceTagIds
+  ]
 })
 
 function buildPublicParams() {
@@ -147,7 +190,7 @@ function buildPublicParams() {
     keyword: filters.keyword,
     city: filters.city,
     jobType: filters.jobType,
-    tagIds: Array.isArray(filters.tagIds) && filters.tagIds.length > 0 ? filters.tagIds.join(',') : undefined,
+    tagIds: allTagIds.value.length > 0 ? allTagIds.value.join(',') : undefined,
     cursorId: publicCursorId.value,
     pageSize: publicCursorId.value == null ? initialPageSize : pageSize
   }
@@ -204,6 +247,7 @@ async function resetAndFetchRecommendJobs() {
 
 async function onSearch() {
   router.push({ path: '/home', query: { keyword: filters.keyword || '' } })
+  selectedJob.value = null
   if (role.value === 'USER' && activeTab.value === 'recommend') {
     await resetAndFetchRecommendJobs()
     return
@@ -211,19 +255,21 @@ async function onSearch() {
   await resetAndFetchPublicJobs()
 }
 
-async function onSearchTags(query) {
+async function onSearchTagsByType(tagType, query) {
   const q = (query || '').trim()
-  tagLoading.value = true
+  tagLoadingMap[tagType] = true
   try {
-    tagOptions.value = await searchTags({ keyword: q, limit: 20 })
+    const list = await searchTags({ tagType, keyword: q, limit: 20 })
+    tagOptionsMap[tagType] = Array.isArray(list) ? list : []
   } catch (e) {
-    tagOptions.value = []
+    tagOptionsMap[tagType] = []
   } finally {
-    tagLoading.value = false
+    tagLoadingMap[tagType] = false
   }
 }
 
 async function onTabChange(name) {
+  selectedJob.value = null
   if (name === 'recommend' && role.value === 'USER') {
     await resetAndFetchRecommendJobs()
   }
@@ -258,8 +304,11 @@ function formatDateTime(value) {
 }
 
 function openDetail(job) {
-  currentJob.value = job
-  detailVisible.value = true
+  selectedJob.value = job
+}
+
+function closeDetail() {
+  selectedJob.value = null
 }
 
 async function ensureResumes() {
@@ -289,7 +338,7 @@ async function loadMoreRecommendJobs() {
       keyword: filters.keyword || undefined,
       city: filters.city || undefined,
       jobType: filters.jobType || undefined,
-      tagIds: Array.isArray(filters.tagIds) && filters.tagIds.length > 0 ? filters.tagIds.join(',') : undefined,
+      tagIds: allTagIds.value.length > 0 ? allTagIds.value.join(',') : undefined,
       offset: recommendOffset.value,
       pageSize: size
     }
@@ -319,7 +368,11 @@ async function loadMore() {
 
 onMounted(async () => {
   filters.keyword = route.query.keyword || ''
-  await onSearchTags('')
+  await Promise.all([
+    onSearchTagsByType('SKILL', ''),
+    onSearchTagsByType('INDUSTRY', ''),
+    onSearchTagsByType('EXPERIENCE', '')
+  ])
   if (role.value === 'USER' && activeTab.value === 'recommend') {
     await resetAndFetchRecommendJobs()
   } else {
@@ -352,6 +405,7 @@ watch(
   () => route.query.keyword,
   async (val) => {
     filters.keyword = val || ''
+    selectedJob.value = null
     if (role.value === 'USER' && activeTab.value === 'recommend') {
       await resetAndFetchRecommendJobs()
       return
@@ -399,6 +453,14 @@ onBeforeUnmount(() => {
   margin: 0;
 }
 
+.job-card {
+  cursor: pointer;
+}
+
+.job-card:hover {
+  border-color: #409eff;
+}
+
 .job-title {
   font-weight: 600;
   margin-bottom: 8px;
@@ -444,5 +506,36 @@ onBeforeUnmount(() => {
   height: 44px;
   color: #909399;
   font-size: 12px;
+}
+
+.detail-card {
+  min-height: calc(100vh - 140px);
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.detail-title {
+  font-weight: 600;
+  color: #303133;
+}
+
+.job-desc-block {
+  margin-top: 20px;
+}
+
+.job-desc-title {
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 10px;
+}
+
+.detail-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

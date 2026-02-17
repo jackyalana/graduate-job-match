@@ -87,16 +87,19 @@
     </div>
   </el-card>
 
-  <el-dialog v-model="jobVisible" title="岗位详情" width="780px">
-    <el-descriptions v-if="currentJob" :column="1" border>
+  <el-dialog v-model="jobVisible" title="岗位详情" width="840px">
+    <el-descriptions v-if="currentJob" :column="2" border>
       <el-descriptions-item label="岗位名称">{{ currentJob.jobName }}</el-descriptions-item>
       <el-descriptions-item v-if="currentJob.companyName" label="公司名称">{{ currentJob.companyName }}</el-descriptions-item>
       <el-descriptions-item label="城市">{{ currentJob.city }}</el-descriptions-item>
       <el-descriptions-item label="类型">{{ currentJob.jobType }}</el-descriptions-item>
       <el-descriptions-item label="薪资">{{ currentJob.salaryRange }}</el-descriptions-item>
       <el-descriptions-item v-if="currentJob.createdAt" label="发布时间">{{ formatDateTime(currentJob.createdAt) }}</el-descriptions-item>
-      <el-descriptions-item label="描述">{{ currentJob.description }}</el-descriptions-item>
     </el-descriptions>
+    <div v-if="currentJob?.description" class="job-desc-block">
+      <div class="job-desc-title">岗位描述</div>
+      <el-input :model-value="currentJob.description" type="textarea" :rows="10" readonly />
+    </div>
     <template #footer>
       <el-button @click="jobVisible = false">关闭</el-button>
     </template>
@@ -422,6 +425,16 @@ onMounted(load)
 }
 
 .work-desc-title {
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 8px;
+}
+
+.job-desc-block {
+  margin-top: 16px;
+}
+
+.job-desc-title {
   font-weight: 600;
   color: #303133;
   margin-bottom: 8px;
