@@ -49,35 +49,7 @@
           </div>
         </div>
 
-        <div class="resume-row">
-          <div class="resume-info">
-            投递简历：{{ a.resume?.resumeName || '-' }}
-            <span v-if="a.resume?.realName">（{{ a.resume.realName }}）</span>
-          </div>
-          <div class="resume-actions">
-            <el-select
-              v-model="resumePickMap[a.applyId]"
-              size="small"
-              filterable
-              placeholder="选择要更换的简历"
-              style="width: 200px"
-              :disabled="!canChangeResume(a)"
-            >
-              <el-option v-for="r in resumes" :key="r.id" :label="r.resumeName" :value="r.id" />
-            </el-select>
-            <el-button
-              size="small"
-              type="primary"
-              :disabled="!canSubmitChange(a)"
-              :loading="changingMap[a.applyId] === true"
-              @click="onChangeResume(a)"
-            >
-              更换简历
-            </el-button>
-          </div>
-        </div>
-
-        <div v-if="a.resume?.workDesc" class="resume-preview">{{ a.resume.workDesc }}</div>
+        <div v-if="a.job?.description" class="job-desc-preview">{{ a.job.description }}</div>
 
         <div class="card-actions">
           <el-button size="small" @click="openJob(a.job)">查看岗位</el-button>
@@ -418,6 +390,17 @@ onMounted(load)
   color: #909399;
   text-align: center;
   padding: 18px 0;
+}
+
+.job-desc-preview {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #606266;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .work-desc-block {

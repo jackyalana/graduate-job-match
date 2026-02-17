@@ -52,7 +52,7 @@
     </el-header>
 
     <el-container class="body">
-      <el-aside :width="asideWidth" class="aside">
+      <el-aside :width="asideWidth" class="aside" :class="{ 'aside-collapsed': collapsed }">
         <div class="aside-top">
           <el-button class="aside-toggle" text @click="toggleCollapse">
             <el-icon v-if="collapsed"><Expand /></el-icon>
@@ -434,19 +434,20 @@ onBeforeUnmount(() => {
   border-right: 1px solid #ebeef5;
   position: relative;
   transition: width 120ms ease;
-  overflow: auto;
+  overflow: hidden;
   overscroll-behavior: contain;
   min-height: 0;
-  scrollbar-gutter: stable;
+  display: flex;
+  flex-direction: column;
 }
 
 .aside-top {
   height: 44px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding: 0 8px;
+  padding: 0 16px;
   border-bottom: 1px solid #ebeef5;
+  flex-shrink: 0;
 }
 
 .aside-toggle {
@@ -463,6 +464,40 @@ onBeforeUnmount(() => {
   width: 6px;
   height: 100%;
   cursor: col-resize;
+  z-index: 10;
+}
+
+.aside :deep(.el-menu) {
+  border-right: none;
+  width: 100%;
+  flex: 1;
+}
+
+.aside :deep(.el-menu-item) {
+  height: 48px;
+  line-height: 48px;
+}
+
+.aside :deep(.el-menu-item:hover) {
+  background-color: #f5f7fa;
+}
+
+.aside :deep(.el-menu-item.is-active) {
+  background-color: #ecf5ff;
+}
+
+.aside-top .aside-toggle {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.aside:not(.aside-collapsed) .aside-top {
+  justify-content: flex-end;
+}
+
+.aside:not(.aside-collapsed) .aside-top .aside-toggle {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .main {
