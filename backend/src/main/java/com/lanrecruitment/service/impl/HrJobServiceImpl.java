@@ -78,6 +78,20 @@ public class HrJobServiceImpl implements HrJobService {
         List<Job> list = jobMapper.selectList(new LambdaQueryWrapper<Job>()
                 .eq(Job::getHrId, hrId)
                 .orderByDesc(Job::getId));
+        
+        Set<Long> jobIds = new HashSet<>();
+        for (Job j : list) {
+            jobIds.add(j.getId());
+        }
+        
+        Map<Long, Integer> applyCountMap = new HashMap<>();
+        if (!jobIds.isEmpty()) {
+            List<JobApply> allApplies = jobApplyMapper.selectList(new LambdaQueryWrapper<JobApply>().in(JobApply::getJobId, jobIds));
+            for (JobApply a : allApplies) {
+                applyCountMap.merge(a.getJobId(), 1, Integer::sum);
+            }
+        }
+        
         List<HrJobVO> res = new ArrayList<>();
         for (Job j : list) {
             HrJobVO vo = new HrJobVO();
@@ -90,6 +104,7 @@ public class HrJobServiceImpl implements HrJobService {
             vo.setStatus(j.getStatus());
             vo.setAuditStatus(j.getAuditStatus());
             vo.setCreatedAt(j.getCreatedAt());
+            vo.setApplyCount(applyCountMap.getOrDefault(j.getId(), 0));
             res.add(vo);
         }
         return res;

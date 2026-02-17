@@ -1,9 +1,11 @@
 package com.lanrecruitment.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lanrecruitment.domain.dto.IdDTO;
 import com.lanrecruitment.domain.dto.TagSaveDTO;
 import com.lanrecruitment.domain.entity.Tag;
+import com.lanrecruitment.domain.vo.PageVO;
 import com.lanrecruitment.exception.BizException;
 import com.lanrecruitment.mapper.TagMapper;
 import com.lanrecruitment.service.TagService;
@@ -59,6 +61,29 @@ public class TagServiceImpl implements TagService {
             qw.eq(Tag::getStatus, status);
         }
         return tagMapper.selectList(qw.orderByDesc(Tag::getId));
+    }
+
+    @Override
+    public PageVO<Tag> listAdminPage(String tagType, Integer status, String keyword, int page, int pageSize) {
+        if (page < 1) page = 1;
+        if (pageSize < 1 || pageSize > 100) pageSize = 20;
+        
+        LambdaQueryWrapper<Tag> qw = new LambdaQueryWrapper<>();
+        if (tagType != null && !tagType.trim().isEmpty()) {
+            qw.eq(Tag::getTagType, tagType);
+        }
+        if (status != null) {
+            qw.eq(Tag::getStatus, status);
+        }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            qw.like(Tag::getTagName, keyword.trim());
+        }
+        qw.orderByDesc(Tag::getId);
+        
+        Page<Tag> p = new Page<>(page, pageSize);
+        Page<Tag> result = tagMapper.selectPage(p, qw);
+        
+        return new PageVO<>(result.getRecords(), result.getTotal(), page, pageSize);
     }
 
     @Override

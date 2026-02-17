@@ -2,70 +2,174 @@
   <el-card>
     <template #header>
       <div class="header">
-        <div>岗位管理</div>
-        <el-button type="primary" size="small" @click="openCreate">发布岗位</el-button>
+        <div v-if="!showApplyList">
+          <div>岗位管理</div>
+          <el-button type="primary" size="small" @click="openCreate">发布岗位</el-button>
+        </div>
+        <div v-else class="header-back">
+          <el-button link @click="closeApplyList">
+            <el-icon><ArrowLeft /></el-icon>
+            返回岗位管理
+          </el-button>
+          <span class="apply-title">投递简历列表 - {{ currentJob?.jobName }}</span>
+        </div>
       </div>
     </template>
 
-    <el-table :data="jobs" size="small" style="width: 100%">
-      <el-table-column prop="jobName" label="岗位名称" min-width="160" />
-      <el-table-column prop="city" label="城市" width="100" />
-      <el-table-column prop="jobType" label="类型" width="100" />
-      <el-table-column prop="salaryRange" label="薪资" width="130" />
-      <el-table-column prop="status" label="状态" width="80">
-        <template #default="{ row }">
-          <el-tag v-if="row.status === 1" type="success">招聘中</el-tag>
-          <el-tag v-else type="info">下架</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="auditStatus" label="审核" width="90">
-        <template #default="{ row }">
-          <el-tag v-if="row.auditStatus === 0" type="warning">待审核</el-tag>
-          <el-tag v-else-if="row.auditStatus === 1" type="success">通过</el-tag>
-          <el-tag v-else type="danger">拒绝</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="360">
-        <template #default="{ row }">
-          <el-button size="small" @click="openEdit(row)">编辑</el-button>
-          <el-button size="small" @click="openTags(row)">标签</el-button>
-          <el-button size="small" @click="openApplies(row)">投递</el-button>
-          <el-popconfirm title="确认下架该岗位？" @confirm="remove(row)">
-            <template #reference>
-              <el-button size="small" type="danger">下架</el-button>
-            </template>
-          </el-popconfirm>
-        </template>
-      </el-table-column>
-    </el-table>
+    <template v-if="!showApplyList">
+      <el-table :data="jobs" size="small" style="width: 100%">
+        <el-table-column prop="jobName" label="岗位名称" min-width="160" />
+        <el-table-column prop="city" label="城市" width="100" />
+        <el-table-column prop="jobType" label="类型" width="100" />
+        <el-table-column prop="salaryRange" label="薪资" width="130" />
+        <el-table-column prop="status" label="状态" width="80">
+          <template #default="{ row }">
+            <el-tag v-if="row.status === 1" type="success">招聘中</el-tag>
+            <el-tag v-else type="info">下架</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="auditStatus" label="审核" width="90">
+          <template #default="{ row }">
+            <el-tag v-if="row.auditStatus === 0" type="warning">待审核</el-tag>
+            <el-tag v-else-if="row.auditStatus === 1" type="success">通过</el-tag>
+            <el-tag v-else type="danger">拒绝</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="投递数" width="80">
+          <template #default="{ row }">
+            <span>{{ row.applyCount || 0 }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="查看简历" width="100">
+          <template #default="{ row }">
+            <el-button size="small" type="primary" @click="openApplies(row)">查看简历</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="240">
+          <template #default="{ row }">
+            <el-button size="small" @click="openEdit(row)">编辑</el-button>
+            <el-button size="small" @click="openTags(row)">标签</el-button>
+            <el-popconfirm title="确认下架该岗位？" @confirm="remove(row)">
+              <template #reference>
+                <el-button size="small" type="danger">下架</el-button>
+              </template>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
+    </template>
+
+    <template v-else>
+      <div class="apply-filters">
+        <el-select v-model="applyFilter.education" size="small" clearable placeholder="学历" style="width: 140px">
+          <el-option v-for="e in educationOptions" :key="e" :label="e" :value="e" />
+        </el-select>
+        <el-select
+          v-model="applyFilter.tagIds"
+          size="small"
+          multiple
+          filterable
+          clearable
+          placeholder="标签筛选"
+          style="width: 320px"
+        >
+          <el-option v-for="t in tags" :key="t.id" :label="t.tagName" :value="t.id" />
+        </el-select>
+        <el-input-number v-model="applyFilter.minScore" size="small" :min="0" :max="1" :step="0.05" controls-position="right" />
+        <div class="apply-filter-tip">最低匹配度</div>
+        <el-button size="small" @click="resetApplyFilter">重置</el-button>
+      </div>
+
+      <el-table :data="filteredApplications" size="small" style="width: 100%">
+        <el-table-column prop="resume.realName" label="姓名" width="100" />
+        <el-table-column prop="resume.education" label="学历" width="110" />
+        <el-table-column prop="resume.city" label="城市" width="100" />
+        <el-table-column prop="matchScore" label="匹配度" width="100" />
+        <el-table-column label="标签" min-width="180">
+          <template #default="{ row }">
+            <div class="apply-tags-row">
+              <el-tag v-for="t in getVisibleTags(row.resumeTags)" :key="t.tagId" size="small" effect="plain">
+                {{ t.tagName }}
+              </el-tag>
+              <span v-if="(row.resumeTags || []).length > maxVisibleTags" class="more-tags">
+                +{{ (row.resumeTags || []).length - maxVisibleTags }}
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="applyStatus" label="状态" width="100">
+          <template #default="{ row }">
+            <el-tag v-if="row.applyStatus === 0 || row.applyStatus === 1" type="info">已投递</el-tag>
+            <el-tag v-else-if="row.applyStatus === 2" type="success">通过</el-tag>
+            <el-tag v-else type="danger">拒绝</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="查看简历" width="100">
+          <template #default="{ row }">
+            <el-button size="small" type="primary" @click="openResumeDetail(row)">查看简历</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="160">
+          <template #default="{ row }">
+            <el-button size="small" type="success" @click="updateApply(row, 2)">通过</el-button>
+            <el-button size="small" type="danger" @click="updateApply(row, 3)">拒绝</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </template>
   </el-card>
 
-  <el-dialog v-model="editVisible" :title="editForm.id ? '编辑岗位' : '发布岗位'" width="560px">
+  <el-dialog v-model="editVisible" :title="editForm.id ? '编辑岗位' : '发布岗位'" width="840px">
     <el-form :model="editForm" label-position="top">
-      <el-form-item label="岗位名称">
-        <el-input v-model="editForm.jobName" />
-      </el-form-item>
-      <el-form-item label="公司名称">
-        <el-input :model-value="(profile && profile.companyName) || ''" disabled />
-      </el-form-item>
-      <el-form-item label="城市">
-        <el-input v-model="editForm.city" />
-      </el-form-item>
-      <el-form-item label="岗位类型">
-        <el-input v-model="editForm.jobType" />
-      </el-form-item>
-      <el-form-item label="薪资范围">
-        <el-input v-model="editForm.salaryRange" />
-      </el-form-item>
-      <el-form-item label="岗位描述">
-        <el-input v-model="editForm.description" type="textarea" :rows="3" />
-      </el-form-item>
-      <el-form-item label="状态">
-        <el-select v-model="editForm.status" style="width: 120px">
-          <el-option label="招聘中" :value="1" />
-          <el-option label="下架" :value="0" />
-        </el-select>
-      </el-form-item>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="岗位名称">
+            <el-input v-model="editForm.jobName" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="公司名称">
+            <el-input :model-value="(profile && profile.companyName) || ''" disabled />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="城市">
+            <el-input v-model="editForm.city" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="岗位类型">
+            <el-input v-model="editForm.jobType" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="薪资范围">
+            <el-input v-model="editForm.salaryRange" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="状态">
+            <el-switch
+              v-model="editForm.status"
+              :active-value="1"
+              :inactive-value="0"
+              active-text="招聘中"
+              inactive-text="下架"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item label="岗位描述">
+            <el-input v-model="editForm.description" type="textarea" :rows="10" />
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <template #footer>
       <el-button @click="editVisible = false">取消</el-button>
@@ -73,90 +177,94 @@
     </template>
   </el-dialog>
 
-  <el-dialog v-model="tagVisible" title="配置岗位标签" width="720px">
+  <el-dialog v-model="tagVisible" title="配置岗位标签" width="800px">
     <div v-if="currentJob" class="tag-tip">当前岗位：{{ currentJob.jobName }}</div>
-    <el-table :data="tags" size="small" style="width: 100%; margin-top: 8px">
-      <el-table-column label="选择" width="60">
-        <template #default="{ row }">
-          <el-checkbox v-model="checkedMap[row.id]" />
-        </template>
-      </el-table-column>
-      <el-table-column prop="tagName" label="标签" min-width="160" />
-      <el-table-column prop="tagType" label="类型" width="120" />
-      <el-table-column label="熟练度(技能)" width="160">
-        <template #default="{ row }">
-          <el-select v-if="row.tagType === 'SKILL'" v-model="proficiencyMap[row.id]" style="width: 120px">
-            <el-option label="了解(1)" :value="1" />
-            <el-option label="熟悉(2)" :value="2" />
-            <el-option label="精通(3)" :value="3" />
+    
+    <div class="tag-search-row">
+      <el-input
+        v-model="tagSearchKeyword"
+        size="small"
+        clearable
+        placeholder="搜索标签添加"
+        style="width: 300px"
+        @input="onTagSearch"
+      />
+    </div>
+
+    <div v-if="tagSearchKeyword" class="search-results">
+      <div class="section-title">搜索结果</div>
+      <div v-if="searchedTags.length === 0" class="empty-tip">未找到匹配的标签</div>
+      <div v-else class="tag-list">
+        <div v-for="t in searchedTags" :key="t.id" class="tag-item">
+          <el-checkbox v-model="checkedMap[t.id]">{{ t.tagName }}</el-checkbox>
+          <el-tag size="small" effect="plain">{{ tagTypeLabel(t.tagType) }}</el-tag>
+          <el-select v-if="t.tagType === 'SKILL' && checkedMap[t.id]" v-model="proficiencyMap[t.id]" size="small" style="width: 100px; margin-left: 8px">
+            <el-option label="了解" :value="1" />
+            <el-option label="熟悉" :value="2" />
+            <el-option label="精通" :value="3" />
           </el-select>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-    </el-table>
+        </div>
+      </div>
+    </div>
+
+    <div v-else>
+      <div class="tag-section">
+        <div class="section-title">已配置标签</div>
+        <div v-if="selectedTags.length === 0" class="empty-tip">暂未配置标签</div>
+        <div v-else class="tag-list">
+          <div v-for="t in selectedTags" :key="t.id" class="tag-item">
+            <el-checkbox v-model="checkedMap[t.id]">{{ t.tagName }}</el-checkbox>
+            <el-tag size="small" effect="plain">{{ tagTypeLabel(t.tagType) }}</el-tag>
+            <el-select v-if="t.tagType === 'SKILL' && checkedMap[t.id]" v-model="proficiencyMap[t.id]" size="small" style="width: 100px; margin-left: 8px">
+              <el-option label="了解" :value="1" />
+              <el-option label="熟悉" :value="2" />
+              <el-option label="精通" :value="3" />
+            </el-select>
+          </div>
+        </div>
+      </div>
+
+      <el-collapse v-model="tagCollapseActive">
+        <el-collapse-item title="技能标签" name="SKILL">
+          <div v-if="skillTags.length === 0" class="empty-tip">暂无技能标签</div>
+          <div v-else class="tag-list">
+            <div v-for="t in skillTags" :key="t.id" class="tag-item">
+              <el-checkbox v-model="checkedMap[t.id]">{{ t.tagName }}</el-checkbox>
+              <el-select v-if="checkedMap[t.id]" v-model="proficiencyMap[t.id]" size="small" style="width: 100px; margin-left: 8px">
+                <el-option label="了解" :value="1" />
+                <el-option label="熟悉" :value="2" />
+                <el-option label="精通" :value="3" />
+              </el-select>
+            </div>
+          </div>
+        </el-collapse-item>
+        <el-collapse-item title="行业标签" name="INDUSTRY">
+          <div v-if="industryTags.length === 0" class="empty-tip">暂无行业标签</div>
+          <div v-else class="tag-list">
+            <div v-for="t in industryTags" :key="t.id" class="tag-item">
+              <el-checkbox v-model="checkedMap[t.id]">{{ t.tagName }}</el-checkbox>
+            </div>
+          </div>
+        </el-collapse-item>
+        <el-collapse-item title="经验标签" name="EXPERIENCE">
+          <div v-if="experienceTags.length === 0" class="empty-tip">暂无经验标签</div>
+          <div v-else class="tag-list">
+            <div v-for="t in experienceTags" :key="t.id" class="tag-item">
+              <el-checkbox v-model="checkedMap[t.id]">{{ t.tagName }}</el-checkbox>
+            </div>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
+    </div>
+
     <template #footer>
       <el-button @click="tagVisible = false">取消</el-button>
       <el-button type="primary" @click="saveTags">保存标签</el-button>
     </template>
   </el-dialog>
 
-  <el-dialog v-model="applyVisible" title="投递简历列表" width="860px">
-    <div class="apply-filters">
-      <el-select v-model="applyFilter.education" size="small" clearable placeholder="学历" style="width: 140px">
-        <el-option v-for="e in educationOptions" :key="e" :label="e" :value="e" />
-      </el-select>
-      <el-select
-        v-model="applyFilter.tagIds"
-        size="small"
-        multiple
-        filterable
-        clearable
-        placeholder="标签筛选"
-        style="width: 320px"
-      >
-        <el-option v-for="t in tags" :key="t.id" :label="t.tagName" :value="t.id" />
-      </el-select>
-      <el-input-number v-model="applyFilter.minScore" size="small" :min="0" :max="1" :step="0.05" controls-position="right" />
-      <div class="apply-filter-tip">最低匹配度</div>
-      <el-button size="small" @click="resetApplyFilter">重置</el-button>
-    </div>
-
-    <el-table :data="filteredApplications" size="small" style="width: 100%">
-      <el-table-column prop="resume.realName" label="姓名" width="100" />
-      <el-table-column prop="resume.education" label="学历" width="110" />
-      <el-table-column prop="resume.city" label="城市" width="100" />
-      <el-table-column prop="matchScore" label="匹配度" width="100" />
-      <el-table-column label="标签" min-width="180">
-        <template #default="{ row }">
-          <div class="apply-tags">
-            <el-tag v-for="t in row.resumeTags || []" :key="t.tagId" size="small" effect="plain">
-              {{ t.tagName }}
-            </el-tag>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="applyStatus" label="状态" width="100">
-        <template #default="{ row }">
-          <el-tag v-if="row.applyStatus === 0 || row.applyStatus === 1" type="info">已投递</el-tag>
-          <el-tag v-else-if="row.applyStatus === 2" type="success">通过</el-tag>
-          <el-tag v-else type="danger">拒绝</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="300">
-        <template #default="{ row }">
-          <el-button size="small" @click="openResumeDetail(row)">查看简历</el-button>
-          <el-button size="small" type="success" @click="updateApply(row, 2)">通过</el-button>
-          <el-button size="small" type="danger" @click="updateApply(row, 3)">拒绝</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <template #footer>
-      <el-button @click="applyVisible = false">关闭</el-button>
-    </template>
-  </el-dialog>
-
   <el-drawer v-model="resumeVisible" title="简历详情" size="780px">
-    <el-descriptions v-if="currentResume" :column="1" border>
+    <el-descriptions v-if="currentResume" :column="2" border>
       <el-descriptions-item label="简历名称">{{ currentResume.resumeName }}</el-descriptions-item>
       <el-descriptions-item label="姓名">{{ currentResume.realName }}</el-descriptions-item>
       <el-descriptions-item label="城市">{{ currentResume.city }}</el-descriptions-item>
@@ -164,13 +272,17 @@
       <el-descriptions-item label="工作年限">{{ currentResume.workYears }}</el-descriptions-item>
       <el-descriptions-item label="期望岗位">{{ currentResume.expectJobType }}</el-descriptions-item>
       <el-descriptions-item label="期望薪资">{{ currentResume.expectSalary }}</el-descriptions-item>
-      <el-descriptions-item label="工作描述">{{ currentResume.workDesc }}</el-descriptions-item>
       <el-descriptions-item v-if="currentResume.fileUrl" label="附件简历">
         <a :href="toAbsoluteUrl(currentResume.fileUrl)" target="_blank" rel="noopener noreferrer">
           {{ currentResume.fileName || currentResume.fileUrl }}
         </a>
       </el-descriptions-item>
     </el-descriptions>
+
+    <div v-if="currentResume?.workDesc" class="work-desc-block">
+      <div class="work-desc-title">工作描述</div>
+      <el-input :model-value="currentResume.workDesc" type="textarea" :rows="10" readonly />
+    </div>
 
     <div v-if="currentResumeTags.length > 0" class="resume-tag-block">
       <div class="resume-tag-title">简历标签</div>
@@ -186,7 +298,8 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { listTags } from '../api/tag'
+import { ArrowLeft } from '@element-plus/icons-vue'
+import { listTags, searchTags } from '../api/tag'
 import { getProfile } from '../api/user'
 import {
   hrDeleteJob,
@@ -204,13 +317,18 @@ const profile = ref(null)
 
 const editVisible = ref(false)
 const tagVisible = ref(false)
-const applyVisible = ref(false)
 const resumeVisible = ref(false)
+const showApplyList = ref(false)
 
 const currentJob = ref(null)
 const applications = ref([])
 const currentResume = ref(null)
 const currentResumeTags = ref([])
+const tagSearchKeyword = ref('')
+const searchedTags = ref([])
+const tagCollapseActive = ref([])
+
+const maxVisibleTags = 4
 
 const editForm = reactive({
   id: null,
@@ -225,6 +343,37 @@ const editForm = reactive({
 const checkedMap = reactive({})
 const proficiencyMap = reactive({})
 const applyFilter = reactive({ education: '', tagIds: [], minScore: null })
+
+const selectedTags = computed(() => {
+  return tags.value.filter((t) => checkedMap[t.id])
+})
+
+const skillTags = computed(() => {
+  return tags.value.filter((t) => t.tagType === 'SKILL' && !checkedMap[t.id])
+})
+
+const industryTags = computed(() => {
+  return tags.value.filter((t) => t.tagType === 'INDUSTRY' && !checkedMap[t.id])
+})
+
+const experienceTags = computed(() => {
+  return tags.value.filter((t) => t.tagType === 'EXPERIENCE' && !checkedMap[t.id])
+})
+
+function tagTypeLabel(type) {
+  const labels = { SKILL: '技能', INDUSTRY: '行业', EXPERIENCE: '经验' }
+  return labels[type] || type
+}
+
+async function onTagSearch() {
+  const kw = (tagSearchKeyword.value || '').trim()
+  if (!kw) {
+    searchedTags.value = []
+    return
+  }
+  const list = await searchTags({ keyword: kw, limit: 20 })
+  searchedTags.value = (list || []).filter((t) => !checkedMap[t.id])
+}
 
 const educationOptions = computed(() => {
   const set = new Set()
@@ -254,6 +403,11 @@ const filteredApplications = computed(() => {
     return true
   })
 })
+
+function getVisibleTags(tags) {
+  if (!tags || tags.length <= maxVisibleTags) return tags || []
+  return tags.slice(0, maxVisibleTags)
+}
 
 async function loadJobs() {
   jobs.value = await hrListJobs()
@@ -308,6 +462,9 @@ async function remove(row) {
 
 async function openTags(row) {
   currentJob.value = row
+  tagSearchKeyword.value = ''
+  searchedTags.value = []
+  tagCollapseActive.value = []
   Object.keys(checkedMap).forEach((k) => (checkedMap[k] = false))
   const list = await hrListJobTags(row.id)
   ;(list || []).forEach((t) => {
@@ -332,8 +489,14 @@ async function saveTags() {
 async function openApplies(row) {
   currentJob.value = row
   applications.value = await hrListApplications(row.id)
-  applyVisible.value = true
+  showApplyList.value = true
   resetApplyFilter()
+}
+
+function closeApplyList() {
+  showApplyList.value = false
+  currentJob.value = null
+  applications.value = []
 }
 
 async function updateApply(row, status) {
@@ -375,6 +538,24 @@ onMounted(async () => {
   justify-content: space-between;
 }
 
+.header > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.header-back {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.apply-title {
+  font-weight: 600;
+  color: #303133;
+}
+
 .tag-tip {
   font-size: 12px;
   color: #606266;
@@ -398,6 +579,21 @@ onMounted(async () => {
   gap: 6px;
 }
 
+.apply-tags-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.more-tags {
+  font-size: 12px;
+  color: #909399;
+  line-height: 22px;
+}
+
 .resume-tag-block {
   margin-top: 12px;
 }
@@ -406,5 +602,54 @@ onMounted(async () => {
   font-weight: 600;
   color: #303133;
   margin-bottom: 8px;
+}
+
+.work-desc-block {
+  margin-top: 16px;
+}
+
+.work-desc-title {
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 8px;
+}
+
+.tag-search-row {
+  margin-bottom: 12px;
+}
+
+.search-results {
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tag-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #f5f7fa;
+  border-radius: 4px;
+}
+
+.empty-tip {
+  color: #909399;
+  font-size: 13px;
+}
+
+.tag-section {
+  margin-bottom: 16px;
 }
 </style>

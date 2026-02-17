@@ -8,6 +8,14 @@
     </template>
 
     <div class="filters">
+      <el-input
+        v-model="query.keyword"
+        size="small"
+        clearable
+        placeholder="搜索标签名称"
+        style="width: 200px"
+        @keyup.enter="load"
+      />
       <el-select v-model="query.tagType" clearable placeholder="类型" style="width: 160px" @change="load">
         <el-option label="技能(SKILL)" value="SKILL" />
         <el-option label="行业(INDUSTRY)" value="INDUSTRY" />
@@ -17,13 +25,17 @@
         <el-option label="启用(1)" :value="1" />
         <el-option label="禁用(0)" :value="0" />
       </el-select>
-      <el-button @click="load">刷新</el-button>
+      <el-button size="small" @click="load">搜索</el-button>
     </div>
 
     <el-table :data="tags" size="small" style="width: 100%">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="tagName" label="标签名称" min-width="160" />
-      <el-table-column prop="tagType" label="类型" width="140" />
+      <el-table-column prop="tagType" label="类型" width="140">
+        <template #default="{ row }">
+          {{ tagTypeLabel(row.tagType) }}
+        </template>
+      </el-table-column>
       <el-table-column prop="baseWeight" label="基础权重" width="110" />
       <el-table-column prop="status" label="状态" width="90">
         <template #default="{ row }">
@@ -42,6 +54,18 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <div class="pagination">
+      <el-pagination
+        v-model:current-page="page"
+        v-model:page-size="pageSize"
+        :page-sizes="[10, 20, 50]"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="load"
+        @current-change="load"
+      />
+    </div>
   </el-card>
 
   <el-dialog v-model="editVisible" :title="form.id ? '编辑标签' : '新增标签'" width="520px">
@@ -76,19 +100,32 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { adminDeleteTag, adminListTags, adminSaveTag } from '../api/tag'
+import { adminDeleteTag, adminListTagsPage, adminSaveTag } from '../api/tag'
 
 const tags = ref([])
 const editVisible = ref(false)
+const page = ref(1)
+const pageSize = ref(20)
+const total = ref(0)
 
-const query = reactive({ tagType: '', status: '' })
+const query = reactive({ tagType: '', status: '', keyword: '' })
 const form = reactive({ id: null, tagName: '', tagType: 'SKILL', baseWeight: 1, status: 1 })
 
+function tagTypeLabel(type) {
+  const labels = { SKILL: '技能', INDUSTRY: '行业', EXPERIENCE: '经验' }
+  return labels[type] || type
+}
+
 async function load() {
-  tags.value = await adminListTags({
+  const res = await adminListTagsPage({
     tagType: query.tagType || null,
-    status: query.status == null || query.status === '' ? null : query.status
+    status: query.status == null || query.status === '' ? null : query.status,
+    keyword: query.keyword || null,
+    page: page.value,
+    pageSize: pageSize.value
   })
+  tags.value = res.list || []
+  total.value = res.total || 0
 }
 
 function openCreate() {
@@ -129,5 +166,11 @@ onMounted(load)
   gap: 10px;
   align-items: center;
   margin-bottom: 12px;
+}
+
+.pagination {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

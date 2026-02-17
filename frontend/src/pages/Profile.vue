@@ -27,16 +27,16 @@
     <el-divider />
 
     <el-form :model="profileForm" label-position="top" style="max-width: 520px">
-      <el-form-item label="姓名">
+      <el-form-item v-if="showRealName" label="姓名">
         <el-input v-model="profileForm.realName" />
       </el-form-item>
-      <el-form-item label="手机号">
+      <el-form-item v-if="showPhone" label="手机号">
         <el-input v-model="profileForm.phone" />
       </el-form-item>
-      <el-form-item label="学校">
+      <el-form-item v-if="showSchool" label="学校">
         <el-input v-model="profileForm.school" />
       </el-form-item>
-      <el-form-item label="毕业时间">
+      <el-form-item v-if="showGraduateDate" label="毕业时间">
         <el-date-picker v-model="profileForm.graduateDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
       </el-form-item>
       <el-form-item v-if="me && me.role === 'HR'" label="公司名称">
@@ -85,6 +85,26 @@ const roleLabel = computed(() => {
   return r || ''
 })
 
+const showRealName = computed(() => {
+  const r = me.value && me.value.role
+  return r === 'USER'
+})
+
+const showPhone = computed(() => {
+  const r = me.value && me.value.role
+  return r === 'USER'
+})
+
+const showSchool = computed(() => {
+  const r = me.value && me.value.role
+  return r === 'USER'
+})
+
+const showGraduateDate = computed(() => {
+  const r = me.value && me.value.role
+  return r === 'USER'
+})
+
 const avatarFallback = computed(() => {
   const name = (me.value && me.value.username) || 'U'
   return name.slice(0, 1)
@@ -110,13 +130,18 @@ async function load() {
 }
 
 async function saveProfile() {
-  await updateProfile({
-    realName: profileForm.realName,
-    phone: profileForm.phone,
-    school: profileForm.school,
-    graduateDate: profileForm.graduateDate || null,
-    companyName: profileForm.companyName
-  })
+  const r = me.value && me.value.role
+  const payload = {}
+  if (r === 'USER') {
+    payload.realName = profileForm.realName
+    payload.phone = profileForm.phone
+    payload.school = profileForm.school
+    payload.graduateDate = profileForm.graduateDate || null
+  }
+  if (r === 'HR') {
+    payload.companyName = profileForm.companyName
+  }
+  await updateProfile(payload)
   window.dispatchEvent(new Event('profile-changed'))
   ElMessage.success('资料已保存')
 }

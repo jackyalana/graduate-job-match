@@ -4,6 +4,7 @@ import com.lanrecruitment.common.Response;
 import com.lanrecruitment.domain.dto.IdDTO;
 import com.lanrecruitment.domain.dto.TagSaveDTO;
 import com.lanrecruitment.domain.entity.Tag;
+import com.lanrecruitment.domain.vo.PageVO;
 import com.lanrecruitment.service.TagService;
 import java.util.List;
 import javax.validation.Valid;
@@ -44,6 +45,17 @@ public class TagController {
             @RequestParam(value = "status", required = false) Integer status
     ) {
         return Response.ok(tagService.listAdmin(tagType, status));
+    }
+
+    @GetMapping("/api/admin/tag/page")
+    public Response<PageVO<Tag>> listAdminPage(
+            @RequestParam(value = "tagType", required = false) String tagType,
+            @RequestParam(value = "status", required = false) Integer status,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", defaultValue = "20") int pageSize
+    ) {
+        return Response.ok(tagService.listAdminPage(tagType, status, keyword, page, pageSize));
     }
 
     @PostMapping("/api/admin/tag/save")
