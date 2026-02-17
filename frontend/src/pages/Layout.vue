@@ -436,6 +436,7 @@ onBeforeUnmount(() => {
   overflow: auto;
   overscroll-behavior: contain;
   min-height: 0;
+  scrollbar-gutter: stable;
 }
 
 .aside-top {
@@ -468,5 +469,6 @@ onBeforeUnmount(() => {
   overflow: auto;
   overscroll-behavior: contain;
   min-height: 0;
+  scrollbar-gutter: stable;
 }
 </style>
