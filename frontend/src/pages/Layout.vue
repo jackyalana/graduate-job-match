@@ -327,6 +327,7 @@ onBeforeUnmount(() => {
 .header-center {
   flex: 1;
   max-width: 520px;
+  margin-left: 40px;
 }
 
 .header-right {

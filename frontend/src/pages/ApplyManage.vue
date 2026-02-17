@@ -103,7 +103,7 @@
   </el-dialog>
 
   <el-dialog v-model="resumeVisible" title="简历详情" width="840px">
-    <el-descriptions v-if="currentResume" :column="1" border>
+    <el-descriptions v-if="currentResume" :column="2" border>
       <el-descriptions-item label="简历名称">{{ currentResume.resumeName }}</el-descriptions-item>
       <el-descriptions-item label="姓名">{{ currentResume.realName }}</el-descriptions-item>
       <el-descriptions-item label="城市">{{ currentResume.city }}</el-descriptions-item>
@@ -111,13 +111,16 @@
       <el-descriptions-item label="工作年限">{{ currentResume.workYears }}</el-descriptions-item>
       <el-descriptions-item label="期望岗位">{{ currentResume.expectJobType }}</el-descriptions-item>
       <el-descriptions-item label="期望薪资">{{ currentResume.expectSalary }}</el-descriptions-item>
-      <el-descriptions-item label="工作描述">{{ currentResume.workDesc }}</el-descriptions-item>
       <el-descriptions-item v-if="currentResume.fileUrl" label="附件简历">
         <a :href="toAbsoluteUrl(currentResume.fileUrl)" target="_blank" rel="noopener noreferrer">
           {{ currentResume.fileName || currentResume.fileUrl }}
         </a>
       </el-descriptions-item>
     </el-descriptions>
+    <div v-if="currentResume?.workDesc" class="work-desc-block">
+      <div class="work-desc-title">工作描述</div>
+      <el-input :model-value="currentResume.workDesc" type="textarea" :rows="10" readonly />
+    </div>
     <template #footer>
       <el-button @click="resumeVisible = false">关闭</el-button>
     </template>
@@ -412,5 +415,15 @@ onMounted(load)
   color: #909399;
   text-align: center;
   padding: 18px 0;
+}
+
+.work-desc-block {
+  margin-top: 16px;
+}
+
+.work-desc-title {
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 8px;
 }
 </style>

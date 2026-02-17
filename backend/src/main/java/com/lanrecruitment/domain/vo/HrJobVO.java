@@ -12,6 +12,7 @@ public class HrJobVO {
     private Integer status;
     private Integer auditStatus;
     private LocalDateTime createdAt;
+    private Integer applyCount;
 
     public Long getId() {
         return id;
@@ -83,5 +84,13 @@ public class HrJobVO {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Integer getApplyCount() {
+        return applyCount;
+    }
+
+    public void setApplyCount(Integer applyCount) {
+        this.applyCount = applyCount;
     }
 }

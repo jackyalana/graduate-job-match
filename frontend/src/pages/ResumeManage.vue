@@ -24,9 +24,13 @@
           <el-tag v-else type="info">无效</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="320">
+      <el-table-column label="查看简历" width="100">
         <template #default="{ row }">
-          <el-button size="small" @click="openEdit(row)">编辑</el-button>
+          <el-button size="small" type="primary" link @click="openEdit(row)">查看简历</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="240">
+        <template #default="{ row }">
           <el-button size="small" @click="openTags(row)">标签</el-button>
           <el-button size="small" @click="setDefault(row)">设为默认</el-button>
           <el-popconfirm title="确定删除该简历？" @confirm="remove(row)">
@@ -39,38 +43,69 @@
     </el-table>
   </el-card>
 
-  <el-dialog v-model="editVisible" :title="editForm.id ? '编辑简历' : '新增简历'" width="560px">
+  <el-dialog v-model="editVisible" :title="editForm.id ? '查看简历' : '新增简历'" width="840px">
     <el-form :model="editForm" label-position="top">
-      <el-form-item label="简历名称">
-        <el-input v-model="editForm.resumeName" />
-      </el-form-item>
-      <el-form-item label="姓名">
-        <el-input v-model="editForm.realName" />
-      </el-form-item>
-      <el-form-item label="城市">
-        <el-input v-model="editForm.city" />
-      </el-form-item>
-      <el-form-item label="学历">
-        <el-input v-model="editForm.education" />
-      </el-form-item>
-      <el-form-item label="工作年限">
-        <el-input v-model="editForm.workYears" />
-      </el-form-item>
-      <el-form-item label="期望岗位类型">
-        <el-input v-model="editForm.expectJobType" />
-      </el-form-item>
-      <el-form-item label="期望薪资">
-        <el-input v-model="editForm.expectSalary" />
-      </el-form-item>
-      <el-form-item label="工作描述">
-        <el-input v-model="editForm.workDesc" type="textarea" :rows="3" />
-      </el-form-item>
-      <el-form-item label="状态">
-        <el-select v-model="editForm.status" style="width: 120px">
-          <el-option label="有效" :value="1" />
-          <el-option label="无效" :value="0" />
-        </el-select>
-      </el-form-item>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="简历名称">
+            <el-input v-model="editForm.resumeName" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="姓名">
+            <el-input v-model="editForm.realName" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="城市">
+            <el-input v-model="editForm.city" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="学历">
+            <el-input v-model="editForm.education" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="工作年限">
+            <el-input v-model="editForm.workYears" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="期望岗位类型">
+            <el-input v-model="editForm.expectJobType" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="期望薪资">
+            <el-input v-model="editForm.expectSalary" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="状态">
+            <el-switch
+              v-model="editForm.status"
+              :active-value="1"
+              :inactive-value="0"
+              active-text="有效"
+              inactive-text="无效"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item label="工作描述">
+            <el-input v-model="editForm.workDesc" type="textarea" :rows="10" />
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <template #footer>
       <el-button @click="editVisible = false">取消</el-button>
@@ -80,14 +115,28 @@
 
   <el-dialog v-model="tagVisible" title="配置简历标签" width="720px">
     <div v-if="currentResume" class="tag-tip">当前简历：{{ currentResume.resumeName }}</div>
-    <el-table :data="tags" size="small" style="width: 100%; margin-top: 8px">
+    <div class="tag-search-row">
+      <el-input
+        v-model="tagKeyword"
+        size="small"
+        clearable
+        placeholder="搜索标签"
+        style="width: 240px"
+        @input="filterTags"
+      />
+    </div>
+    <el-table :data="filteredTags" size="small" style="width: 100%; margin-top: 8px" max-height="400">
       <el-table-column label="选择" width="60">
         <template #default="{ row }">
           <el-checkbox v-model="checkedMap[row.id]" />
         </template>
       </el-table-column>
       <el-table-column prop="tagName" label="标签" min-width="160" />
-      <el-table-column prop="tagType" label="类型" width="120" />
+      <el-table-column prop="tagType" label="类型" width="120">
+        <template #default="{ row }">
+          {{ tagTypeLabel(row.tagType) }}
+        </template>
+      </el-table-column>
       <el-table-column label="熟练度(技能)" width="160">
         <template #default="{ row }">
           <el-select v-if="row.tagType === 'SKILL'" v-model="proficiencyMap[row.id]" style="width: 120px">
@@ -107,7 +156,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { listTags } from '../api/tag'
 import { deleteResume, listMyResumes, saveResume, saveResumeTags, setDefaultResume, getResumeDetail } from '../api/resume'
@@ -118,6 +167,7 @@ const tags = ref([])
 const editVisible = ref(false)
 const tagVisible = ref(false)
 const currentResume = ref(null)
+const tagKeyword = ref('')
 
 const editForm = reactive({
   id: null,
@@ -134,6 +184,19 @@ const editForm = reactive({
 
 const checkedMap = reactive({})
 const proficiencyMap = reactive({})
+
+const filteredTags = computed(() => {
+  const kw = (tagKeyword.value || '').trim().toLowerCase()
+  if (!kw) return tags.value
+  return tags.value.filter((t) => t.tagName.toLowerCase().includes(kw))
+})
+
+function tagTypeLabel(type) {
+  const labels = { SKILL: '技能', INDUSTRY: '行业', EXPERIENCE: '经验' }
+  return labels[type] || type
+}
+
+function filterTags() {}
 
 async function loadResumes() {
   resumes.value = await listMyResumes()
@@ -189,6 +252,7 @@ async function setDefault(row) {
 
 async function openTags(row) {
   currentResume.value = row
+  tagKeyword.value = ''
   Object.keys(checkedMap).forEach((k) => (checkedMap[k] = false))
   const detail = await getResumeDetail(row.id)
   ;(detail.tags || []).forEach((t) => {
@@ -226,5 +290,9 @@ onMounted(async () => {
 .tag-tip {
   font-size: 12px;
   color: #606266;
+}
+
+.tag-search-row {
+  margin-top: 8px;
 }
 </style>

@@ -25,11 +25,20 @@
           <el-tag v-else type="danger">拒绝</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="360">
+      <el-table-column label="投递数" width="80">
+        <template #default="{ row }">
+          <span>{{ row.applyCount || 0 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="查看简历" width="100">
+        <template #default="{ row }">
+          <el-button size="small" type="primary" link @click="openApplies(row)">查看简历</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="240">
         <template #default="{ row }">
           <el-button size="small" @click="openEdit(row)">编辑</el-button>
           <el-button size="small" @click="openTags(row)">标签</el-button>
-          <el-button size="small" @click="openApplies(row)">投递</el-button>
           <el-popconfirm title="确认下架该岗位？" @confirm="remove(row)">
             <template #reference>
               <el-button size="small" type="danger">下架</el-button>
@@ -40,32 +49,57 @@
     </el-table>
   </el-card>
 
-  <el-dialog v-model="editVisible" :title="editForm.id ? '编辑岗位' : '发布岗位'" width="560px">
+  <el-dialog v-model="editVisible" :title="editForm.id ? '编辑岗位' : '发布岗位'" width="840px">
     <el-form :model="editForm" label-position="top">
-      <el-form-item label="岗位名称">
-        <el-input v-model="editForm.jobName" />
-      </el-form-item>
-      <el-form-item label="公司名称">
-        <el-input :model-value="(profile && profile.companyName) || ''" disabled />
-      </el-form-item>
-      <el-form-item label="城市">
-        <el-input v-model="editForm.city" />
-      </el-form-item>
-      <el-form-item label="岗位类型">
-        <el-input v-model="editForm.jobType" />
-      </el-form-item>
-      <el-form-item label="薪资范围">
-        <el-input v-model="editForm.salaryRange" />
-      </el-form-item>
-      <el-form-item label="岗位描述">
-        <el-input v-model="editForm.description" type="textarea" :rows="3" />
-      </el-form-item>
-      <el-form-item label="状态">
-        <el-select v-model="editForm.status" style="width: 120px">
-          <el-option label="招聘中" :value="1" />
-          <el-option label="下架" :value="0" />
-        </el-select>
-      </el-form-item>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="岗位名称">
+            <el-input v-model="editForm.jobName" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="公司名称">
+            <el-input :model-value="(profile && profile.companyName) || ''" disabled />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="城市">
+            <el-input v-model="editForm.city" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="岗位类型">
+            <el-input v-model="editForm.jobType" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="薪资范围">
+            <el-input v-model="editForm.salaryRange" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="状态">
+            <el-switch
+              v-model="editForm.status"
+              :active-value="1"
+              :inactive-value="0"
+              active-text="招聘中"
+              inactive-text="下架"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item label="岗位描述">
+            <el-input v-model="editForm.description" type="textarea" :rows="10" />
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <template #footer>
       <el-button @click="editVisible = false">取消</el-button>
@@ -128,10 +162,13 @@
       <el-table-column prop="matchScore" label="匹配度" width="100" />
       <el-table-column label="标签" min-width="180">
         <template #default="{ row }">
-          <div class="apply-tags">
-            <el-tag v-for="t in row.resumeTags || []" :key="t.tagId" size="small" effect="plain">
+          <div class="apply-tags-row">
+            <el-tag v-for="t in getVisibleTags(row.resumeTags)" :key="t.tagId" size="small" effect="plain">
               {{ t.tagName }}
             </el-tag>
+            <span v-if="(row.resumeTags || []).length > maxVisibleTags" class="more-tags">
+              +{{ (row.resumeTags || []).length - maxVisibleTags }}
+            </span>
           </div>
         </template>
       </el-table-column>
@@ -142,9 +179,8 @@
           <el-tag v-else type="danger">拒绝</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="300">
+      <el-table-column label="操作" width="200">
         <template #default="{ row }">
-          <el-button size="small" @click="openResumeDetail(row)">查看简历</el-button>
           <el-button size="small" type="success" @click="updateApply(row, 2)">通过</el-button>
           <el-button size="small" type="danger" @click="updateApply(row, 3)">拒绝</el-button>
         </template>
@@ -156,7 +192,7 @@
   </el-dialog>
 
   <el-drawer v-model="resumeVisible" title="简历详情" size="780px">
-    <el-descriptions v-if="currentResume" :column="1" border>
+    <el-descriptions v-if="currentResume" :column="2" border>
       <el-descriptions-item label="简历名称">{{ currentResume.resumeName }}</el-descriptions-item>
       <el-descriptions-item label="姓名">{{ currentResume.realName }}</el-descriptions-item>
       <el-descriptions-item label="城市">{{ currentResume.city }}</el-descriptions-item>
@@ -164,13 +200,17 @@
       <el-descriptions-item label="工作年限">{{ currentResume.workYears }}</el-descriptions-item>
       <el-descriptions-item label="期望岗位">{{ currentResume.expectJobType }}</el-descriptions-item>
       <el-descriptions-item label="期望薪资">{{ currentResume.expectSalary }}</el-descriptions-item>
-      <el-descriptions-item label="工作描述">{{ currentResume.workDesc }}</el-descriptions-item>
       <el-descriptions-item v-if="currentResume.fileUrl" label="附件简历">
         <a :href="toAbsoluteUrl(currentResume.fileUrl)" target="_blank" rel="noopener noreferrer">
           {{ currentResume.fileName || currentResume.fileUrl }}
         </a>
       </el-descriptions-item>
     </el-descriptions>
+
+    <div v-if="currentResume?.workDesc" class="work-desc-block">
+      <div class="work-desc-title">工作描述</div>
+      <el-input :model-value="currentResume.workDesc" type="textarea" :rows="10" readonly />
+    </div>
 
     <div v-if="currentResumeTags.length > 0" class="resume-tag-block">
       <div class="resume-tag-title">简历标签</div>
@@ -211,6 +251,8 @@ const currentJob = ref(null)
 const applications = ref([])
 const currentResume = ref(null)
 const currentResumeTags = ref([])
+
+const maxVisibleTags = 4
 
 const editForm = reactive({
   id: null,
@@ -254,6 +296,11 @@ const filteredApplications = computed(() => {
     return true
   })
 })
+
+function getVisibleTags(tags) {
+  if (!tags || tags.length <= maxVisibleTags) return tags || []
+  return tags.slice(0, maxVisibleTags)
+}
 
 async function loadJobs() {
   jobs.value = await hrListJobs()
@@ -398,11 +445,35 @@ onMounted(async () => {
   gap: 6px;
 }
 
+.apply-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-height: 28px;
+  overflow: hidden;
+}
+
+.more-tags {
+  font-size: 12px;
+  color: #909399;
+  line-height: 22px;
+}
+
 .resume-tag-block {
   margin-top: 12px;
 }
 
 .resume-tag-title {
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 8px;
+}
+
+.work-desc-block {
+  margin-top: 16px;
+}
+
+.work-desc-title {
   font-weight: 600;
   color: #303133;
   margin-bottom: 8px;

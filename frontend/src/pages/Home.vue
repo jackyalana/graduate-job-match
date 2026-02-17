@@ -25,7 +25,9 @@
               placeholder="搜索并选择标签"
               style="width: 100%"
             >
-              <el-option v-for="t in tagOptions" :key="t.id" :label="t.tagName" :value="t.id" />
+              <el-option-group v-for="group in groupedTagOptions" :key="group.label" :label="group.label">
+                <el-option v-for="t in group.options" :key="t.id" :label="t.tagName" :value="t.id" />
+              </el-option-group>
             </el-select>
           </el-form-item>
           <el-button type="primary" style="width: 100%" :loading="loading" @click="onSearch">查询</el-button>
@@ -120,6 +122,19 @@ const prefetchCount = ref(0)
 const displayJobs = computed(() => {
   if (role.value === 'USER' && activeTab.value === 'recommend') return recommendJobs.value
   return jobs.value
+})
+
+const groupedTagOptions = computed(() => {
+  const groups = { SKILL: [], INDUSTRY: [], EXPERIENCE: [] }
+  const typeLabels = { SKILL: '技能', INDUSTRY: '行业', EXPERIENCE: '经验' }
+  ;(tagOptions.value || []).forEach((t) => {
+    if (groups[t.tagType]) {
+      groups[t.tagType].push(t)
+    }
+  })
+  return Object.entries(groups)
+    .filter(([, opts]) => opts.length > 0)
+    .map(([type, opts]) => ({ label: typeLabels[type] || type, options: opts }))
 })
 
 const hasMore = computed(() => {

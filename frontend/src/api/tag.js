@@ -12,6 +12,10 @@ export function adminListTags(params) {
   return request.get('/api/admin/tag/list', { params })
 }
 
+export function adminListTagsPage(params) {
+  return request.get('/api/admin/tag/page', { params })
+}
+
 export function adminSaveTag(payload) {
   return request.post('/api/admin/tag/save', payload)
 }
