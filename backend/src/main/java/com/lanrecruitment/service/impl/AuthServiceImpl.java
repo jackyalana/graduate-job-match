@@ -2,7 +2,10 @@ package com.lanrecruitment.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lanrecruitment.common.enums.AuditStatus;
+import com.lanrecruitment.common.enums.CommonStatus;
 import com.lanrecruitment.common.enums.EmailPurpose;
+import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.common.enums.UserRole;
 import com.lanrecruitment.domain.dto.LoginByEmailDTO;
 import com.lanrecruitment.domain.dto.LoginByPasswordDTO;
@@ -31,16 +34,16 @@ public class AuthServiceImpl implements AuthService {
     public String loginByPassword(LoginByPasswordDTO dto) {
         SysUser user = sysUserMapper.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, dto.getUsername()));
         if (user == null) {
-            throw new BizException(400, "用户名或密码错误");
+            throw new BizException(ErrorCode.AUTH_INVALID_CREDENTIALS);
         }
-        if (user.getStatus() == null || user.getStatus() != 1) {
-            throw new BizException(403, "账号已被禁用");
+        if (user.getStatus() == null || user.getStatus() != CommonStatus.ENABLED.getCode()) {
+            throw new BizException(ErrorCode.AUTH_ACCOUNT_DISABLED);
         }
-        if (UserRole.isHr(user.getRole()) && (user.getAuditStatus() == null || user.getAuditStatus() != 1)) {
-            throw new BizException(403, "HR账号待审核");
+        if (UserRole.isHr(user.getRole()) && (user.getAuditStatus() == null || user.getAuditStatus() != AuditStatus.PASS.getCode())) {
+            throw new BizException(ErrorCode.AUTH_HR_PENDING_AUDIT);
         }
         if (!PasswordUtil.matches(dto.getPassword(), user.getPassword())) {
-            throw new BizException(400, "用户名或密码错误");
+            throw new BizException(ErrorCode.AUTH_INVALID_CREDENTIALS);
         }
         StpUtil.login(user.getId());
         return StpUtil.getTokenValue();
@@ -51,13 +54,13 @@ public class AuthServiceImpl implements AuthService {
         emailCodeService.verifyCode(dto.getEmail(), EmailPurpose.LOGIN.name(), dto.getCode());
         SysUser user = sysUserMapper.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getEmail, dto.getEmail()));
         if (user == null) {
-            throw new BizException(400, "账号不存在");
+            throw new BizException(ErrorCode.AUTH_ACCOUNT_NOT_FOUND);
         }
-        if (user.getStatus() == null || user.getStatus() != 1) {
-            throw new BizException(403, "账号已被禁用");
+        if (user.getStatus() == null || user.getStatus() != CommonStatus.ENABLED.getCode()) {
+            throw new BizException(ErrorCode.AUTH_ACCOUNT_DISABLED);
         }
-        if (UserRole.isHr(user.getRole()) && (user.getAuditStatus() == null || user.getAuditStatus() != 1)) {
-            throw new BizException(403, "HR账号待审核");
+        if (UserRole.isHr(user.getRole()) && (user.getAuditStatus() == null || user.getAuditStatus() != AuditStatus.PASS.getCode())) {
+            throw new BizException(ErrorCode.AUTH_HR_PENDING_AUDIT);
         }
         StpUtil.login(user.getId());
         return StpUtil.getTokenValue();
@@ -68,15 +71,15 @@ public class AuthServiceImpl implements AuthService {
         emailCodeService.verifyCode(dto.getEmail(), EmailPurpose.REGISTER.name(), dto.getCode());
         UserRole role = dto.getRole() == null ? UserRole.USER : UserRole.from(dto.getRole());
         if (role == null || role == UserRole.ADMIN) {
-            throw new BizException(400, "角色只能为USER或HR");
+            throw new BizException(ErrorCode.AUTH_ROLE_INVALID);
         }
         Long usernameCnt = sysUserMapper.selectCount(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, dto.getUsername()));
         if (usernameCnt != null && usernameCnt > 0) {
-            throw new BizException(400, "用户名已存在");
+            throw new BizException(ErrorCode.AUTH_USERNAME_EXISTS);
         }
         Long emailCnt = sysUserMapper.selectCount(new LambdaQueryWrapper<SysUser>().eq(SysUser::getEmail, dto.getEmail()));
         if (emailCnt != null && emailCnt > 0) {
-            throw new BizException(400, "邮箱已存在");
+            throw new BizException(ErrorCode.AUTH_EMAIL_EXISTS);
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -85,8 +88,8 @@ public class AuthServiceImpl implements AuthService {
         u.setPassword(PasswordUtil.hash(dto.getPassword()));
         u.setEmail(dto.getEmail());
         u.setRole(role.name());
-        u.setStatus(1);
-        u.setAuditStatus(role == UserRole.HR ? 0 : 1);
+        u.setStatus(CommonStatus.ENABLED.getCode());
+        u.setAuditStatus(role == UserRole.HR ? AuditStatus.PENDING.getCode() : AuditStatus.PASS.getCode());
         u.setCreatedAt(now);
         u.setUpdatedAt(now);
         sysUserMapper.insert(u);

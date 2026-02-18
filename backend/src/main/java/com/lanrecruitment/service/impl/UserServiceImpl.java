@@ -1,6 +1,7 @@
 package com.lanrecruitment.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.domain.dto.ChangePasswordDTO;
 import com.lanrecruitment.domain.dto.UpdateProfileDTO;
 import com.lanrecruitment.domain.entity.SysUser;
@@ -67,7 +68,7 @@ public class UserServiceImpl implements UserService {
     public void changePassword(ChangePasswordDTO dto) {
         SysUser u = currentUser();
         if (!PasswordUtil.matches(dto.getOldPassword(), u.getPassword())) {
-            throw new BizException(400, "旧密码错误");
+            throw new BizException(ErrorCode.USER_OLD_PASSWORD_WRONG);
         }
         u.setPassword(PasswordUtil.hash(dto.getNewPassword()));
         u.setUpdatedAt(LocalDateTime.now());
@@ -86,7 +87,7 @@ public class UserServiceImpl implements UserService {
         Long userId = StpUtil.getLoginIdAsLong();
         SysUser u = sysUserMapper.selectById(userId);
         if (u == null) {
-            throw new BizException(401, "未登录");
+            throw new BizException(ErrorCode.AUTH_NOT_LOGGED_IN);
         }
         return u;
     }

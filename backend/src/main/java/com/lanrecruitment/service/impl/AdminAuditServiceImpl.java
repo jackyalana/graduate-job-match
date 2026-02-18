@@ -1,6 +1,8 @@
 package com.lanrecruitment.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lanrecruitment.common.enums.AuditStatus;
+import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.common.enums.UserRole;
 import com.lanrecruitment.domain.dto.AuditDecisionDTO;
 import com.lanrecruitment.domain.entity.Job;
@@ -31,7 +33,7 @@ public class AdminAuditServiceImpl implements AdminAuditService {
     public List<AdminHrAuditVO> listPendingHr() {
         List<SysUser> list = sysUserMapper.selectList(new LambdaQueryWrapper<SysUser>()
                 .eq(SysUser::getRole, UserRole.HR.name())
-                .eq(SysUser::getAuditStatus, 0)
+                .eq(SysUser::getAuditStatus, AuditStatus.PENDING.getCode())
                 .orderByDesc(SysUser::getId));
         List<AdminHrAuditVO> res = new ArrayList<>();
         for (SysUser u : list) {
@@ -51,9 +53,9 @@ public class AdminAuditServiceImpl implements AdminAuditService {
     public void auditHr(AuditDecisionDTO dto) {
         SysUser u = sysUserMapper.selectById(dto.getId());
         if (u == null || UserRole.from(u.getRole()) != UserRole.HR) {
-            throw new BizException(404, "HR账号不存在");
+            throw new BizException(ErrorCode.HR_ACCOUNT_NOT_FOUND);
         }
-        u.setAuditStatus(dto.getPass() ? 1 : 2);
+        u.setAuditStatus(dto.getPass() ? AuditStatus.PASS.getCode() : AuditStatus.REJECT.getCode());
         u.setUpdatedAt(LocalDateTime.now());
         sysUserMapper.updateById(u);
     }
@@ -61,7 +63,7 @@ public class AdminAuditServiceImpl implements AdminAuditService {
     @Override
     public List<AdminJobAuditVO> listPendingJob() {
         List<Job> list = jobMapper.selectList(new LambdaQueryWrapper<Job>()
-                .eq(Job::getAuditStatus, 0)
+                .eq(Job::getAuditStatus, AuditStatus.PENDING.getCode())
                 .orderByDesc(Job::getId));
         List<AdminJobAuditVO> res = new ArrayList<>();
         for (Job j : list) {
@@ -84,9 +86,9 @@ public class AdminAuditServiceImpl implements AdminAuditService {
     public void auditJob(AuditDecisionDTO dto) {
         Job job = jobMapper.selectById(dto.getId());
         if (job == null) {
-            throw new BizException(404, "岗位不存在");
+            throw new BizException(ErrorCode.JOB_NOT_FOUND);
         }
-        job.setAuditStatus(dto.getPass() ? 1 : 2);
+        job.setAuditStatus(dto.getPass() ? AuditStatus.PASS.getCode() : AuditStatus.REJECT.getCode());
         jobMapper.updateById(job);
     }
 }

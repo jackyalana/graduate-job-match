@@ -2,7 +2,9 @@ package com.lanrecruitment.utils;
 
 import com.lanrecruitment.config.EmailProperties;
 import com.lanrecruitment.common.enums.EmailPurpose;
+import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.exception.BizException;
+import java.nio.charset.StandardCharsets;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -28,7 +30,7 @@ public class EmailClient {
                 || emailProperties.getHost() == null || emailProperties.getHost().trim().isEmpty()
                 || emailProperties.getUsername() == null || emailProperties.getUsername().trim().isEmpty()
                 || emailProperties.getPassword() == null || emailProperties.getPassword().trim().isEmpty()) {
-            throw new BizException(500, "邮件服务未配置");
+            throw new BizException(ErrorCode.EMAIL_SERVICE_NOT_CONFIGURED);
         }
 
         String action = EmailPurpose.from(purpose) == EmailPurpose.REGISTER ? "注册" : "登录";
@@ -37,16 +39,16 @@ public class EmailClient {
 
         MimeMessage message = mailSender.createMimeMessage();
         try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
+            MimeMessageHelper helper = new MimeMessageHelper(message, false, StandardCharsets.UTF_8.name());
             helper.setFrom(from);
             helper.setTo(toEmail);
             helper.setSubject(subject);
             helper.setText(content, false);
             mailSender.send(message);
         } catch (MessagingException e) {
-            throw new BizException(500, "邮件发送失败");
+            throw new BizException(ErrorCode.EMAIL_SEND_FAILED);
         } catch (RuntimeException e) {
-            throw new BizException(500, "邮件发送失败");
+            throw new BizException(ErrorCode.EMAIL_SEND_FAILED);
         }
     }
 }

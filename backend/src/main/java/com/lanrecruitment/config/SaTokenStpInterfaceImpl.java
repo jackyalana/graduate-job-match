@@ -1,6 +1,8 @@
 package com.lanrecruitment.config;
 
 import cn.dev33.satoken.stp.StpInterface;
+import com.lanrecruitment.common.enums.AuditStatus;
+import com.lanrecruitment.common.enums.CommonStatus;
 import com.lanrecruitment.common.enums.UserRole;
 import com.lanrecruitment.domain.entity.SysUser;
 import com.lanrecruitment.mapper.SysUserMapper;
@@ -35,14 +37,14 @@ public class SaTokenStpInterfaceImpl implements StpInterface {
         if (u == null) {
             return Collections.emptyList();
         }
-        if (u.getStatus() == null || u.getStatus() != 1) {
+        if (u.getStatus() == null || u.getStatus() != CommonStatus.ENABLED.getCode()) {
             return Collections.emptyList();
         }
         UserRole role = UserRole.from(u.getRole());
         if (role == null) {
             return Collections.emptyList();
         }
-        if (role == UserRole.HR && (u.getAuditStatus() == null || u.getAuditStatus() != 1)) {
+        if (role == UserRole.HR && (u.getAuditStatus() == null || u.getAuditStatus() != AuditStatus.PASS.getCode())) {
             return Collections.emptyList();
         }
         return Collections.singletonList(role.name());

@@ -1,6 +1,8 @@
 package com.lanrecruitment.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lanrecruitment.common.enums.CommonStatus;
+import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.domain.dto.IdDTO;
 import com.lanrecruitment.domain.dto.NoticeSaveDTO;
 import com.lanrecruitment.domain.entity.Notice;
@@ -23,7 +25,7 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public List<Notice> listPublic() {
         return noticeMapper.selectList(new LambdaQueryWrapper<Notice>()
-                .eq(Notice::getStatus, 1)
+                .eq(Notice::getStatus, CommonStatus.ENABLED.getCode())
                 .orderByDesc(Notice::getId));
     }
 
@@ -50,7 +52,7 @@ public class NoticeServiceImpl implements NoticeService {
 
         Notice exists = noticeMapper.selectById(dto.getId());
         if (exists == null) {
-            throw new BizException(404, "公告不存在");
+            throw new BizException(ErrorCode.NOTICE_NOT_FOUND);
         }
         exists.setTitle(dto.getTitle());
         exists.setContent(dto.getContent());

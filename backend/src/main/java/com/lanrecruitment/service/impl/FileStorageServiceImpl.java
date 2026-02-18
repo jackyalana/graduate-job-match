@@ -1,5 +1,6 @@
 package com.lanrecruitment.service.impl;
 
+import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.exception.BizException;
 import com.lanrecruitment.service.FileStorageService;
 import java.io.IOException;
@@ -38,16 +39,16 @@ public class FileStorageServiceImpl implements FileStorageService {
 
     private String store(MultipartFile file, String subDir, String[] allowedExt, long maxSize) {
         if (file == null || file.isEmpty()) {
-            throw new BizException(400, "文件不能为空");
+            throw new BizException(ErrorCode.FILE_EMPTY);
         }
         if (file.getSize() > maxSize) {
-            throw new BizException(400, "文件过大");
+            throw new BizException(ErrorCode.FILE_TOO_LARGE);
         }
 
         String original = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
         String ext = ext(original);
         if (!isAllowed(ext, allowedExt)) {
-            throw new BizException(400, "文件类型不支持");
+            throw new BizException(ErrorCode.FILE_TYPE_NOT_SUPPORTED);
         }
 
         String filename = UUID.randomUUID().toString().replace("-", "") + "." + ext;
@@ -60,7 +61,7 @@ public class FileStorageServiceImpl implements FileStorageService {
                 Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
-            throw new BizException(500, "文件保存失败");
+            throw new BizException(ErrorCode.FILE_SAVE_FAILED);
         }
 
         return "/uploads/" + subDir + "/" + filename;

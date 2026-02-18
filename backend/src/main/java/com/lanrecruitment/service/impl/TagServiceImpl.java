@@ -2,6 +2,8 @@ package com.lanrecruitment.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lanrecruitment.common.enums.CommonStatus;
+import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.domain.dto.IdDTO;
 import com.lanrecruitment.domain.dto.TagSaveDTO;
 import com.lanrecruitment.domain.entity.Tag;
@@ -24,7 +26,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> listPublic(String tagType) {
-        LambdaQueryWrapper<Tag> qw = new LambdaQueryWrapper<Tag>().eq(Tag::getStatus, 1);
+        LambdaQueryWrapper<Tag> qw = new LambdaQueryWrapper<Tag>().eq(Tag::getStatus, CommonStatus.ENABLED.getCode());
         if (tagType != null && !tagType.trim().isEmpty()) {
             qw.eq(Tag::getTagType, tagType);
         }
@@ -41,7 +43,7 @@ public class TagServiceImpl implements TagService {
             safeLimit = 50;
         }
 
-        LambdaQueryWrapper<Tag> qw = new LambdaQueryWrapper<Tag>().eq(Tag::getStatus, 1);
+        LambdaQueryWrapper<Tag> qw = new LambdaQueryWrapper<Tag>().eq(Tag::getStatus, CommonStatus.ENABLED.getCode());
         if (tagType != null && !tagType.trim().isEmpty()) {
             qw.eq(Tag::getTagType, tagType);
         }
@@ -93,7 +95,7 @@ public class TagServiceImpl implements TagService {
                     .eq(Tag::getTagName, dto.getTagName())
                     .eq(Tag::getTagType, dto.getTagType()));
             if (cnt != null && cnt > 0) {
-                throw new BizException(400, "标签已存在");
+                throw new BizException(ErrorCode.TAG_ALREADY_EXISTS);
             }
             Tag t = new Tag();
             t.setTagName(dto.getTagName());
@@ -107,7 +109,7 @@ public class TagServiceImpl implements TagService {
 
         Tag exists = tagMapper.selectById(dto.getId());
         if (exists == null) {
-            throw new BizException(404, "标签不存在");
+            throw new BizException(ErrorCode.TAG_NOT_FOUND);
         }
         exists.setTagName(dto.getTagName());
         exists.setTagType(dto.getTagType());

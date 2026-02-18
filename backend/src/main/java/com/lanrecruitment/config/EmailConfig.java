@@ -1,5 +1,6 @@
 package com.lanrecruitment.config;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -34,8 +35,7 @@ public class EmailConfig {
         javaMailProps.put("mail.smtp.starttls.required", String.valueOf(starttls));
         sender.setJavaMailProperties(javaMailProps);
 
-        sender.setDefaultEncoding("UTF-8");
+        sender.setDefaultEncoding(StandardCharsets.UTF_8.name());
         return sender;
     }
 }
-

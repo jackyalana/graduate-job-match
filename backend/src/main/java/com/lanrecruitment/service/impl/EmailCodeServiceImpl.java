@@ -1,5 +1,6 @@
 package com.lanrecruitment.service.impl;
 
+import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.exception.BizException;
 import com.lanrecruitment.service.EmailCodeService;
 import com.lanrecruitment.utils.EmailClient;
@@ -29,7 +30,7 @@ public class EmailCodeServiceImpl implements EmailCodeService {
         Long nextAllowed = sendCooldown.get(cooldownKey);
         if (nextAllowed != null && now < nextAllowed) {
             long remainSeconds = (nextAllowed - now + 999) / 1000;
-            throw new BizException(429, "操作频繁，请" + remainSeconds + "秒后再试");
+            throw new BizException(ErrorCode.EMAIL_TOO_FREQUENT, remainSeconds);
         }
         sendCooldown.put(cooldownKey, now + SEND_COOLDOWN_MILLIS);
 
@@ -42,7 +43,7 @@ public class EmailCodeServiceImpl implements EmailCodeService {
             throw e;
         } catch (Exception e) {
             sendCooldown.remove(cooldownKey);
-            throw new BizException(500, "验证码发送失败");
+            throw new BizException(ErrorCode.EMAIL_CODE_SEND_FAILED);
         }
     }
 
@@ -50,14 +51,14 @@ public class EmailCodeServiceImpl implements EmailCodeService {
     public void verifyCode(String email, String purpose, String code) {
         CodeEntry entry = cache.get(key(email, purpose));
         if (entry == null) {
-            throw new BizException(400, "验证码无效");
+            throw new BizException(ErrorCode.EMAIL_CODE_INVALID);
         }
         if (System.currentTimeMillis() > entry.expireAt) {
             cache.remove(key(email, purpose));
-            throw new BizException(400, "验证码已过期");
+            throw new BizException(ErrorCode.EMAIL_CODE_EXPIRED);
         }
         if (!entry.code.equals(code)) {
-            throw new BizException(400, "验证码错误");
+            throw new BizException(ErrorCode.EMAIL_CODE_WRONG);
         }
         cache.remove(key(email, purpose));
     }

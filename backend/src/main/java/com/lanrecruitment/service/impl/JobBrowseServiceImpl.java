@@ -2,6 +2,10 @@ package com.lanrecruitment.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lanrecruitment.common.enums.AuditStatus;
+import com.lanrecruitment.common.enums.CommonStatus;
+import com.lanrecruitment.common.enums.ErrorCode;
+import com.lanrecruitment.common.enums.YesNo;
 import com.lanrecruitment.domain.entity.Job;
 import com.lanrecruitment.domain.entity.JobTag;
 import com.lanrecruitment.domain.entity.Resume;
@@ -40,8 +44,8 @@ public class JobBrowseServiceImpl implements JobBrowseService {
         if (size < 1) size = 1;
         if (size > 50) size = 50;
         LambdaQueryWrapper<Job> qw = new LambdaQueryWrapper<Job>()
-                .eq(Job::getStatus, 1)
-                .eq(Job::getAuditStatus, 1);
+                .eq(Job::getStatus, CommonStatus.ENABLED.getCode())
+                .eq(Job::getAuditStatus, AuditStatus.PASS.getCode());
         if (keyword != null && !keyword.trim().isEmpty()) {
             qw.and(w -> w.like(Job::getJobName, keyword).or().like(Job::getDescription, keyword));
         }
@@ -77,8 +81,9 @@ public class JobBrowseServiceImpl implements JobBrowseService {
     @Override
     public JobCardVO detail(Long jobId) {
         Job j = jobMapper.selectById(jobId);
-        if (j == null || j.getStatus() == null || j.getStatus() != 1 || j.getAuditStatus() == null || j.getAuditStatus() != 1) {
-            throw new BizException(404, "岗位不存在");
+        if (j == null || j.getStatus() == null || j.getStatus() != CommonStatus.ENABLED.getCode()
+                || j.getAuditStatus() == null || j.getAuditStatus() != AuditStatus.PASS.getCode()) {
+            throw new BizException(ErrorCode.JOB_NOT_FOUND);
         }
         return toCard(j, null);
     }
@@ -89,8 +94,8 @@ public class JobBrowseServiceImpl implements JobBrowseService {
         Resume resume = resolveResume(userId, resumeId);
 
         LambdaQueryWrapper<Job> qw = new LambdaQueryWrapper<Job>()
-                .eq(Job::getStatus, 1)
-                .eq(Job::getAuditStatus, 1);
+                .eq(Job::getStatus, CommonStatus.ENABLED.getCode())
+                .eq(Job::getAuditStatus, AuditStatus.PASS.getCode());
         if (keyword != null && !keyword.trim().isEmpty()) {
             qw.and(w -> w.like(Job::getJobName, keyword).or().like(Job::getDescription, keyword));
         }
@@ -157,14 +162,14 @@ public class JobBrowseServiceImpl implements JobBrowseService {
         if (resumeId != null) {
             resume = resumeMapper.selectById(resumeId);
             if (resume == null || resume.getUserId() == null || !resume.getUserId().equals(userId)) {
-                throw new BizException(404, "简历不存在");
+                throw new BizException(ErrorCode.RESUME_NOT_FOUND);
             }
             return resume;
         }
 
         resume = resumeMapper.selectOne(new LambdaQueryWrapper<Resume>()
                 .eq(Resume::getUserId, userId)
-                .eq(Resume::getIsDefault, 1)
+                .eq(Resume::getIsDefault, YesNo.YES.getCode())
                 .last("limit 1"));
         if (resume != null) {
             return resume;

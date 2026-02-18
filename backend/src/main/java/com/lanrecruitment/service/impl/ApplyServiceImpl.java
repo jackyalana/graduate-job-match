@@ -2,6 +2,10 @@ package com.lanrecruitment.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lanrecruitment.common.enums.ApplyStatus;
+import com.lanrecruitment.common.enums.AuditStatus;
+import com.lanrecruitment.common.enums.CommonStatus;
+import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.domain.dto.ApplyJobDTO;
 import com.lanrecruitment.domain.dto.ApplyResumeUpdateDTO;
 import com.lanrecruitment.domain.entity.Job;
@@ -43,32 +47,33 @@ public class ApplyServiceImpl implements ApplyService {
 
         Resume resume = resumeMapper.selectById(dto.getResumeId());
         if (resume == null || resume.getUserId() == null || !resume.getUserId().equals(userId)) {
-            throw new BizException(404, "简历不存在");
+            throw new BizException(ErrorCode.RESUME_NOT_FOUND);
         }
-        if (resume.getStatus() == null || resume.getStatus() != 1) {
-            throw new BizException(400, "简历不可用");
+        if (resume.getStatus() == null || resume.getStatus() != CommonStatus.ENABLED.getCode()) {
+            throw new BizException(ErrorCode.RESUME_NOT_AVAILABLE);
         }
 
         Job job = jobMapper.selectById(dto.getJobId());
         if (job == null) {
-            throw new BizException(404, "岗位不存在");
+            throw new BizException(ErrorCode.JOB_NOT_FOUND);
         }
-        if (job.getStatus() == null || job.getStatus() != 1 || job.getAuditStatus() == null || job.getAuditStatus() != 1) {
-            throw new BizException(400, "岗位不可投递");
+        if (job.getStatus() == null || job.getStatus() != CommonStatus.ENABLED.getCode()
+                || job.getAuditStatus() == null || job.getAuditStatus() != AuditStatus.PASS.getCode()) {
+            throw new BizException(ErrorCode.JOB_NOT_APPLICABLE);
         }
 
         Long cnt = jobApplyMapper.selectCount(new LambdaQueryWrapper<JobApply>()
                 .eq(JobApply::getResumeId, dto.getResumeId())
                 .eq(JobApply::getJobId, dto.getJobId()));
         if (cnt != null && cnt > 0) {
-            throw new BizException(400, "请勿重复投递");
+            throw new BizException(ErrorCode.APPLY_DUPLICATE);
         }
 
         JobApply apply = new JobApply();
         apply.setJobId(dto.getJobId());
         apply.setResumeId(dto.getResumeId());
         apply.setUserId(userId);
-        apply.setStatus(0);
+        apply.setStatus(ApplyStatus.APPLIED.getCode());
         apply.setCreatedAt(LocalDateTime.now());
         jobApplyMapper.insert(apply);
     }
@@ -131,19 +136,19 @@ public class ApplyServiceImpl implements ApplyService {
         Long userId = StpUtil.getLoginIdAsLong();
         JobApply apply = jobApplyMapper.selectById(dto.getApplyId());
         if (apply == null || apply.getUserId() == null || !apply.getUserId().equals(userId)) {
-            throw new BizException(404, "投递记录不存在");
+            throw new BizException(ErrorCode.APPLY_RECORD_NOT_FOUND);
         }
         Integer status = apply.getStatus();
-        if (status != null && status >= 2) {
-            throw new BizException(400, "当前状态不可更换简历");
+        if (status != null && status >= ApplyStatus.INTERVIEW.getCode()) {
+            throw new BizException(ErrorCode.APPLY_CANNOT_CHANGE_RESUME);
         }
 
         Resume resume = resumeMapper.selectById(dto.getResumeId());
         if (resume == null || resume.getUserId() == null || !resume.getUserId().equals(userId)) {
-            throw new BizException(404, "简历不存在");
+            throw new BizException(ErrorCode.RESUME_NOT_FOUND);
         }
-        if (resume.getStatus() == null || resume.getStatus() != 1) {
-            throw new BizException(400, "简历不可用");
+        if (resume.getStatus() == null || resume.getStatus() != CommonStatus.ENABLED.getCode()) {
+            throw new BizException(ErrorCode.RESUME_NOT_AVAILABLE);
         }
 
         Long cnt = jobApplyMapper.selectCount(new LambdaQueryWrapper<JobApply>()
@@ -152,7 +157,7 @@ public class ApplyServiceImpl implements ApplyService {
                 .eq(JobApply::getResumeId, dto.getResumeId())
                 .ne(JobApply::getId, apply.getId()));
         if (cnt != null && cnt > 0) {
-            throw new BizException(400, "请勿重复投递");
+            throw new BizException(ErrorCode.APPLY_DUPLICATE);
         }
 
         apply.setResumeId(dto.getResumeId());

@@ -1,5 +1,7 @@
 package com.lanrecruitment.common;
 
+import com.lanrecruitment.common.enums.ErrorCode;
+
 public class Response<T> {
     private Integer code;
     private String message;
@@ -43,5 +45,19 @@ public class Response<T> {
         resp.setMessage(message);
         resp.setData(null);
         return resp;
+    }
+
+    public static <T> Response<T> fail(ErrorCode errorCode) {
+        if (errorCode == null) {
+            return fail((Integer) null, null);
+        }
+        return fail(errorCode.getCode(), errorCode.getMessage());
+    }
+
+    public static <T> Response<T> fail(ErrorCode errorCode, String message) {
+        if (errorCode == null) {
+            return fail((Integer) null, message);
+        }
+        return fail(errorCode.getCode(), message);
     }
 }

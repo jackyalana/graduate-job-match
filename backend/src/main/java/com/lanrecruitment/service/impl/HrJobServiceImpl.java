@@ -2,6 +2,10 @@ package com.lanrecruitment.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lanrecruitment.common.enums.ApplyStatus;
+import com.lanrecruitment.common.enums.AuditStatus;
+import com.lanrecruitment.common.enums.CommonStatus;
+import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.domain.dto.ApplyStatusUpdateDTO;
 import com.lanrecruitment.domain.dto.IdDTO;
 import com.lanrecruitment.domain.dto.JobSaveDTO;
@@ -117,7 +121,7 @@ public class HrJobServiceImpl implements HrJobService {
         SysUser hr = sysUserMapper.selectById(hrId);
         String companyName = hr == null ? null : hr.getCompanyName();
         if (companyName == null || companyName.trim().isEmpty()) {
-            throw new BizException(400, "请先在个人中心完善公司名称");
+            throw new BizException(ErrorCode.HR_COMPANY_NAME_REQUIRED);
         }
 
         if (dto.getId() == null) {
@@ -130,7 +134,7 @@ public class HrJobServiceImpl implements HrJobService {
             j.setJobType(dto.getJobType());
             j.setDescription(dto.getDescription());
             j.setStatus(dto.getStatus());
-            j.setAuditStatus(0);
+            j.setAuditStatus(AuditStatus.PENDING.getCode());
             j.setCreatedAt(now);
             j.setUpdatedAt(now);
             jobMapper.insert(j);
@@ -145,7 +149,7 @@ public class HrJobServiceImpl implements HrJobService {
         exists.setJobType(dto.getJobType());
         exists.setDescription(dto.getDescription());
         exists.setStatus(dto.getStatus());
-        exists.setAuditStatus(0);
+        exists.setAuditStatus(AuditStatus.PENDING.getCode());
         exists.setUpdatedAt(now);
         jobMapper.updateById(exists);
     }
@@ -153,7 +157,7 @@ public class HrJobServiceImpl implements HrJobService {
     @Override
     public void delete(IdDTO dto) {
         Job job = getMyJob(dto.getId());
-        job.setStatus(0);
+        job.setStatus(CommonStatus.DISABLED.getCode());
         job.setUpdatedAt(LocalDateTime.now());
         jobMapper.updateById(job);
     }
@@ -294,15 +298,15 @@ public class HrJobServiceImpl implements HrJobService {
     public void updateApplyStatus(ApplyStatusUpdateDTO dto) {
         JobApply apply = jobApplyMapper.selectById(dto.getApplyId());
         if (apply == null) {
-            throw new BizException(404, "投递记录不存在");
+            throw new BizException(ErrorCode.APPLY_RECORD_NOT_FOUND);
         }
         Job job = getMyJob(apply.getJobId());
         Integer s = dto.getStatus();
-        if (s == null || s < 0 || s > 3) {
-            throw new BizException(400, "状态不合法");
+        if (!ApplyStatus.isValid(s)) {
+            throw new BizException(ErrorCode.APPLY_STATUS_INVALID);
         }
-        if (s == 1) {
-            throw new BizException(400, "不支持已查看状态");
+        if (ApplyStatus.VIEWED.getCode() == s) {
+            throw new BizException(ErrorCode.APPLY_STATUS_VIEWED_UNSUPPORTED);
         }
         apply.setStatus(s);
         jobApplyMapper.updateById(apply);
@@ -312,7 +316,7 @@ public class HrJobServiceImpl implements HrJobService {
         Long hrId = StpUtil.getLoginIdAsLong();
         Job job = jobMapper.selectById(jobId);
         if (job == null || job.getHrId() == null || !job.getHrId().equals(hrId)) {
-            throw new BizException(404, "岗位不存在");
+            throw new BizException(ErrorCode.JOB_NOT_FOUND);
         }
         return job;
     }

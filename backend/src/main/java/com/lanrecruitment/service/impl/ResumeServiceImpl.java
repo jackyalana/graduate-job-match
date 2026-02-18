@@ -3,6 +3,8 @@ package com.lanrecruitment.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.lanrecruitment.common.enums.ErrorCode;
+import com.lanrecruitment.common.enums.YesNo;
 import com.lanrecruitment.common.enums.TagType;
 import com.lanrecruitment.domain.dto.IdDTO;
 import com.lanrecruitment.domain.dto.ResumeSaveDTO;
@@ -92,7 +94,7 @@ public class ResumeServiceImpl implements ResumeService {
             r.setExpectSalary(dto.getExpectSalary());
             r.setWorkDesc(dto.getWorkDesc());
             r.setStatus(dto.getStatus());
-            r.setIsDefault(0);
+            r.setIsDefault(YesNo.NO.getCode());
             r.setCreateTime(now);
             r.setUpdateTime(now);
             resumeMapper.insert(r);
@@ -217,7 +219,7 @@ public class ResumeServiceImpl implements ResumeService {
         Long userId = StpUtil.getLoginIdAsLong();
         Resume r = resumeMapper.selectById(resumeId);
         if (r == null || r.getUserId() == null || !r.getUserId().equals(userId)) {
-            throw new BizException(404, "简历不存在");
+            throw new BizException(ErrorCode.RESUME_NOT_FOUND);
         }
         return r;
     }
@@ -251,8 +253,8 @@ public class ResumeServiceImpl implements ResumeService {
         Long userId = StpUtil.getLoginIdAsLong();
         resumeMapper.update(null, new LambdaUpdateWrapper<Resume>()
                 .eq(Resume::getUserId, userId)
-                .set(Resume::getIsDefault, 0));
-        r.setIsDefault(1);
+                .set(Resume::getIsDefault, YesNo.NO.getCode()));
+        r.setIsDefault(YesNo.YES.getCode());
         r.setUpdateTime(LocalDateTime.now());
         resumeMapper.updateById(r);
     }
