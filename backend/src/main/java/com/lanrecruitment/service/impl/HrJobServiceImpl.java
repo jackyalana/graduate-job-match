@@ -12,6 +12,7 @@ import com.lanrecruitment.domain.dto.JobSaveDTO;
 import com.lanrecruitment.domain.entity.Job;
 import com.lanrecruitment.domain.entity.JobApply;
 import com.lanrecruitment.domain.entity.JobTag;
+import com.lanrecruitment.domain.entity.MatchScore;
 import com.lanrecruitment.domain.entity.Resume;
 import com.lanrecruitment.domain.entity.ResumeTag;
 import com.lanrecruitment.domain.entity.SysUser;
@@ -25,6 +26,7 @@ import com.lanrecruitment.exception.BizException;
 import com.lanrecruitment.mapper.JobApplyMapper;
 import com.lanrecruitment.mapper.JobMapper;
 import com.lanrecruitment.mapper.JobTagMapper;
+import com.lanrecruitment.mapper.MatchScoreMapper;
 import com.lanrecruitment.mapper.ResumeMapper;
 import com.lanrecruitment.mapper.ResumeTagMapper;
 import com.lanrecruitment.mapper.SysUserMapper;
@@ -40,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class HrJobServiceImpl implements HrJobService {
@@ -47,6 +50,7 @@ public class HrJobServiceImpl implements HrJobService {
     private final JobMapper jobMapper;
     private final JobTagMapper jobTagMapper;
     private final JobApplyMapper jobApplyMapper;
+    private final MatchScoreMapper matchScoreMapper;
     private final ResumeMapper resumeMapper;
     private final ResumeTagMapper resumeTagMapper;
     private final SysUserMapper sysUserMapper;
@@ -57,6 +61,7 @@ public class HrJobServiceImpl implements HrJobService {
             JobMapper jobMapper,
             JobTagMapper jobTagMapper,
             JobApplyMapper jobApplyMapper,
+            MatchScoreMapper matchScoreMapper,
             ResumeMapper resumeMapper,
             ResumeTagMapper resumeTagMapper,
             SysUserMapper sysUserMapper,
@@ -66,6 +71,7 @@ public class HrJobServiceImpl implements HrJobService {
         this.jobMapper = jobMapper;
         this.jobTagMapper = jobTagMapper;
         this.jobApplyMapper = jobApplyMapper;
+        this.matchScoreMapper = matchScoreMapper;
         this.resumeMapper = resumeMapper;
         this.resumeTagMapper = resumeTagMapper;
         this.sysUserMapper = sysUserMapper;
@@ -159,6 +165,20 @@ public class HrJobServiceImpl implements HrJobService {
         job.setStatus(CommonStatus.DISABLED.getCode());
         job.setUpdatedAt(LocalDateTime.now());
         jobMapper.updateById(job);
+    }
+
+    @Transactional
+    @Override
+    public void remove(IdDTO dto) {
+        Job job = getMyJob(dto.getId());
+        Long jobId = job.getId();
+        if (jobId == null) {
+            throw new BizException(ErrorCode.JOB_NOT_FOUND);
+        }
+        jobTagMapper.delete(new LambdaQueryWrapper<JobTag>().eq(JobTag::getJobId, jobId));
+        jobApplyMapper.delete(new LambdaQueryWrapper<JobApply>().eq(JobApply::getJobId, jobId));
+        matchScoreMapper.delete(new LambdaQueryWrapper<MatchScore>().eq(MatchScore::getJobId, jobId));
+        jobMapper.deleteById(jobId);
     }
 
     @Override

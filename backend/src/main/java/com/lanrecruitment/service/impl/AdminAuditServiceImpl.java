@@ -13,6 +13,7 @@ import com.lanrecruitment.mapper.SysUserMapper;
 import com.lanrecruitment.service.AdminAuditService;
 import com.lanrecruitment.domain.vo.AdminHrAuditVO;
 import com.lanrecruitment.domain.vo.AdminJobAuditVO;
+import com.lanrecruitment.domain.vo.AdminJobDetailVO;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,5 +92,29 @@ public class AdminAuditServiceImpl implements AdminAuditService {
         }
         job.setAuditStatus(dto.getPass() ? AuditStatus.PASS.getCode() : AuditStatus.REJECT.getCode());
         jobMapper.updateById(job);
+    }
+
+    @Override
+    public AdminJobDetailVO getJobDetail(Long id) {
+        Job job = jobMapper.selectById(id);
+        if (job == null) {
+            throw new BizException(ErrorCode.JOB_NOT_FOUND);
+        }
+        SysUser hr = job.getHrId() == null ? null : sysUserMapper.selectById(job.getHrId());
+        return AdminJobDetailVO.builder()
+                .id(job.getId())
+                .hrId(job.getHrId())
+                .hrUsername(hr == null ? null : hr.getUsername())
+                .jobName(job.getJobName())
+                .companyName(job.getCompanyName())
+                .city(job.getCity())
+                .salaryRange(job.getSalaryRange())
+                .jobType(job.getJobType())
+                .description(job.getDescription())
+                .status(job.getStatus())
+                .auditStatus(job.getAuditStatus())
+                .createdAt(job.getCreatedAt())
+                .updatedAt(job.getUpdatedAt())
+                .build();
     }
 }

@@ -5,12 +5,14 @@ import com.lanrecruitment.domain.dto.AuditDecisionDTO;
 import com.lanrecruitment.service.AdminAuditService;
 import com.lanrecruitment.domain.vo.AdminHrAuditVO;
 import com.lanrecruitment.domain.vo.AdminJobAuditVO;
+import com.lanrecruitment.domain.vo.AdminJobDetailVO;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Validated
@@ -43,5 +45,10 @@ public class AdminAuditController {
     public Response<Void> auditJob(@Valid @RequestBody AuditDecisionDTO dto) {
         adminAuditService.auditJob(dto);
         return Response.ok(null);
+    }
+
+    @GetMapping("/api/admin/audit/job/detail")
+    public Response<AdminJobDetailVO> jobDetail(@RequestParam("id") Long id) {
+        return Response.ok(adminAuditService.getJobDetail(id));
     }
 }

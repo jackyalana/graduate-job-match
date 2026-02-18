@@ -16,6 +16,8 @@ public interface HrJobService {
 
     void delete(IdDTO dto);
 
+    void remove(IdDTO dto);
+
     List<JobTagVO> listJobTags(Long jobId);
 
     List<HrJobApplicationVO> listApplications(Long jobId);

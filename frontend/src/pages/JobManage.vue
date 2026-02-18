@@ -45,13 +45,18 @@
             <el-button size="small" type="primary" @click="openApplies(row)">查看简历</el-button>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="240">
+        <el-table-column label="操作" width="300">
           <template #default="{ row }">
             <el-button size="small" @click="openEdit(row)">编辑</el-button>
             <el-button size="small" @click="openTags(row)">标签</el-button>
             <el-popconfirm title="确认下架该岗位？" @confirm="remove(row)">
               <template #reference>
                 <el-button size="small" type="danger">下架</el-button>
+              </template>
+            </el-popconfirm>
+            <el-popconfirm title="确认删除该岗位？删除后不可恢复" @confirm="hardRemove(row)">
+              <template #reference>
+                <el-button size="small" type="danger" plain>删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -303,6 +308,7 @@ import { listTags, searchTags } from '../api/tag'
 import { getProfile } from '../api/user'
 import {
   hrDeleteJob,
+  hrRemoveJob,
   hrListJobTags,
   hrListApplications,
   hrListJobs,
@@ -457,6 +463,12 @@ async function save() {
 async function remove(row) {
   await hrDeleteJob(row.id)
   ElMessage.success('已下架')
+  await loadJobs()
+}
+
+async function hardRemove(row) {
+  await hrRemoveJob(row.id)
+  ElMessage.success('已删除')
   await loadJobs()
 }
 

@@ -45,6 +45,12 @@ public class HrJobController {
         return Response.ok(null);
     }
 
+    @PostMapping("/api/hr/job/remove")
+    public Response<Void> remove(@Valid @RequestBody IdDTO dto) {
+        hrJobService.remove(dto);
+        return Response.ok(null);
+    }
+
     @GetMapping("/api/hr/job/tags")
     public Response<List<JobTagVO>> listJobTags(@RequestParam("jobId") Long jobId) {
         return Response.ok(hrJobService.listJobTags(jobId));
