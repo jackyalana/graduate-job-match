@@ -1,24 +1,16 @@
 package com.lanrecruitment.domain.vo;
 
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ResumeDetailVO {
     private ResumeVO resume;
     private List<ResumeTagVO> tags;
-
-    public ResumeVO getResume() {
-        return resume;
-    }
-
-    public void setResume(ResumeVO resume) {
-        this.resume = resume;
-    }
-
-    public List<ResumeTagVO> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<ResumeTagVO> tags) {
-        this.tags = tags;
-    }
 }

@@ -1,11 +1,19 @@
 package com.lanrecruitment.domain.dto;
 
+import com.lanrecruitment.common.enums.TagType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import com.lanrecruitment.common.enums.TagType;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TagSaveDTO {
     private Long id;
 
@@ -22,44 +30,4 @@ public class TagSaveDTO {
 
     @NotNull(message = "状态不能为空")
     private Integer status;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTagName() {
-        return tagName;
-    }
-
-    public void setTagName(String tagName) {
-        this.tagName = tagName;
-    }
-
-    public String getTagType() {
-        return tagType;
-    }
-
-    public void setTagType(String tagType) {
-        this.tagType = tagType;
-    }
-
-    public Integer getBaseWeight() {
-        return baseWeight;
-    }
-
-    public void setBaseWeight(Integer baseWeight) {
-        this.baseWeight = baseWeight;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
 }

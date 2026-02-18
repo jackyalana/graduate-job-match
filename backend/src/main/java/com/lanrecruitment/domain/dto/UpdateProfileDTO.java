@@ -1,8 +1,16 @@
 package com.lanrecruitment.domain.dto;
 
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdateProfileDTO {
     @NotBlank(message = "真实姓名不能为空")
     private String realName;
@@ -14,44 +22,4 @@ public class UpdateProfileDTO {
     private String school;
 
     private LocalDate graduateDate;
-
-    public String getRealName() {
-        return realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    public String getSchool() {
-        return school;
-    }
-
-    public void setSchool(String school) {
-        this.school = school;
-    }
-
-    public LocalDate getGraduateDate() {
-        return graduateDate;
-    }
-
-    public void setGraduateDate(LocalDate graduateDate) {
-        this.graduateDate = graduateDate;
-    }
 }

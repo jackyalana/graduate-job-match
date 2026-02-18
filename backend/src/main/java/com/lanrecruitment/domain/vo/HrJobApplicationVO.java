@@ -3,7 +3,15 @@ package com.lanrecruitment.domain.vo;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class HrJobApplicationVO {
     private Long applyId;
     private Integer applyStatus;
@@ -11,52 +19,4 @@ public class HrJobApplicationVO {
     private ResumeVO resume;
     private List<ResumeTagVO> resumeTags;
     private BigDecimal matchScore;
-
-    public Long getApplyId() {
-        return applyId;
-    }
-
-    public void setApplyId(Long applyId) {
-        this.applyId = applyId;
-    }
-
-    public Integer getApplyStatus() {
-        return applyStatus;
-    }
-
-    public void setApplyStatus(Integer applyStatus) {
-        this.applyStatus = applyStatus;
-    }
-
-    public LocalDateTime getApplyTime() {
-        return applyTime;
-    }
-
-    public void setApplyTime(LocalDateTime applyTime) {
-        this.applyTime = applyTime;
-    }
-
-    public ResumeVO getResume() {
-        return resume;
-    }
-
-    public void setResume(ResumeVO resume) {
-        this.resume = resume;
-    }
-
-    public List<ResumeTagVO> getResumeTags() {
-        return resumeTags;
-    }
-
-    public void setResumeTags(List<ResumeTagVO> resumeTags) {
-        this.resumeTags = resumeTags;
-    }
-
-    public BigDecimal getMatchScore() {
-        return matchScore;
-    }
-
-    public void setMatchScore(BigDecimal matchScore) {
-        this.matchScore = matchScore;
-    }
 }

@@ -1,10 +1,18 @@
 package com.lanrecruitment.domain.dto;
 
+import com.lanrecruitment.common.enums.UserRole;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import com.lanrecruitment.common.enums.UserRole;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegisterDTO {
     @NotBlank(message = "用户名不能为空")
     private String username;
@@ -21,44 +29,4 @@ public class RegisterDTO {
 
     @Pattern(regexp = UserRole.REGEX_REGISTER, message = "角色只能为USER或HR")
     private String role;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 }

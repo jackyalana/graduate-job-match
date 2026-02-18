@@ -62,6 +62,11 @@
 - DTO 入参使用 `@Validated` + `javax.validation` 做参数校验
 - Controller 不写业务逻辑（只做：入参校验、鉴权边界、调用 service、返回 Response）
 
+### Domain 实体类型
+
+- `/backend/src/main/java/com/lanrecruitment/domain` 下的类型统一使用 Lombok 写法：`@Data` + `@Builder` + `@NoArgsConstructor` + `@AllArgsConstructor`
+- 非必要禁止手写 getter / setter / 构造方法
+
 ### 数据库与查询规则
 
 - 禁止联表查询
