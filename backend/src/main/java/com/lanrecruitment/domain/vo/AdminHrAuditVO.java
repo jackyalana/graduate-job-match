@@ -14,6 +14,7 @@ public class AdminHrAuditVO {
     private Long id;
     private String username;
     private String email;
+    private String companyName;
     private Integer status;
     private Integer auditStatus;
     private LocalDateTime createdAt;

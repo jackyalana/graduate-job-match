@@ -15,7 +15,7 @@ public enum ErrorCode {
 
     USER_OLD_PASSWORD_WRONG(400, "旧密码错误"),
 
-    HR_COMPANY_NAME_REQUIRED(400, "请先在个人中心完善公司名称"),
+    HR_COMPANY_NAME_REQUIRED(400, "请先完善公司名称"),
     HR_ACCOUNT_NOT_FOUND(404, "HR账号不存在"),
 
     ADMIN_USER_NOT_FOUND(404, "用户不存在"),

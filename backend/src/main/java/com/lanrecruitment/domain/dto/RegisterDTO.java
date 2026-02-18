@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -29,4 +30,17 @@ public class RegisterDTO {
 
     @Pattern(regexp = UserRole.REGEX_REGISTER, message = "角色只能为USER或HR")
     private String role;
+
+    private String companyName;
+
+    @AssertTrue(message = "HR注册必须填写公司名称")
+    public boolean isCompanyNameValid() {
+        if (role == null || role.trim().isEmpty()) {
+            return true;
+        }
+        if (!UserRole.HR.name().equalsIgnoreCase(role.trim())) {
+            return true;
+        }
+        return companyName != null && !companyName.trim().isEmpty();
+    }
 }

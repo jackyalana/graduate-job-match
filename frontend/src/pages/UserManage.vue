@@ -11,12 +11,12 @@
         v-model="query.keyword"
         size="small"
         clearable
-        placeholder="搜索用户名 / 邮箱 / 姓名 / 手机 / 公司"
+        placeholder="搜索用户"
         style="width: 260px"
         @keyup.enter="load"
       />
       <el-select v-model="query.role" clearable placeholder="角色" style="width: 150px" @change="onFilterChange">
-        <el-option label="求职者(USER)" value="USER" />
+        <el-option label="USER" value="USER" />
         <el-option label="HR" value="HR" />
       </el-select>
       <el-select v-model="query.status" clearable placeholder="状态" style="width: 140px" @change="onFilterChange">

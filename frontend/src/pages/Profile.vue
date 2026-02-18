@@ -22,6 +22,7 @@
       <el-descriptions-item label="用户ID">{{ me.id }}</el-descriptions-item>
       <el-descriptions-item label="用户名">{{ me.username }}</el-descriptions-item>
       <el-descriptions-item label="角色">{{ roleLabel }}</el-descriptions-item>
+      <el-descriptions-item v-if="me.role === 'HR'" label="公司名称">{{ profile?.companyName || '-' }}</el-descriptions-item>
     </el-descriptions>
 
     <el-divider />
@@ -38,9 +39,6 @@
       </el-form-item>
       <el-form-item v-if="showGraduateDate" label="毕业时间">
         <el-date-picker v-model="profileForm.graduateDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
-      </el-form-item>
-      <el-form-item v-if="me && me.role === 'HR'" label="公司名称">
-        <el-input v-model="profileForm.companyName" />
       </el-form-item>
       <el-button type="primary" @click="saveProfile">保存资料</el-button>
     </el-form>
@@ -87,12 +85,12 @@ const roleLabel = computed(() => {
 
 const showRealName = computed(() => {
   const r = me.value && me.value.role
-  return r === 'USER'
+  return r === 'USER' || r === 'HR'
 })
 
 const showPhone = computed(() => {
   const r = me.value && me.value.role
-  return r === 'USER'
+  return r === 'USER' || r === 'HR'
 })
 
 const showSchool = computed(() => {
@@ -139,7 +137,8 @@ async function saveProfile() {
     payload.graduateDate = profileForm.graduateDate || null
   }
   if (r === 'HR') {
-    payload.companyName = profileForm.companyName
+    payload.realName = profileForm.realName
+    payload.phone = profileForm.phone
   }
   await updateProfile(payload)
   window.dispatchEvent(new Event('profile-changed'))

@@ -7,6 +7,7 @@
         <el-table :data="hrList" size="small" style="width: 100%">
           <el-table-column prop="id" label="ID" width="80" />
           <el-table-column prop="username" label="用户名" width="120" />
+          <el-table-column prop="companyName" label="公司名称" min-width="160" show-overflow-tooltip />
           <el-table-column prop="email" label="邮箱" min-width="200" />
           <el-table-column prop="createdAt" label="申请时间" width="180" />
           <el-table-column label="操作" width="180">

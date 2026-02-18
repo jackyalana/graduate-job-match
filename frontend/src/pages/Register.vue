@@ -5,8 +5,8 @@
 
       <div class="role-switch">
         <el-radio-group v-model="form.role">
-          <el-radio-button label="USER">求职者</el-radio-button>
-          <el-radio-button label="HR">HR</el-radio-button>
+          <el-radio-button label="USER">我要找工作</el-radio-button>
+          <el-radio-button label="HR">我要招聘</el-radio-button>
         </el-radio-group>
       </div>
 
@@ -16,6 +16,9 @@
         </el-form-item>
         <el-form-item label="密码">
           <el-input v-model="form.password" type="password" show-password placeholder="请输入密码" />
+        </el-form-item>
+        <el-form-item v-if="form.role === 'HR'" label="公司名称">
+          <el-input v-model="form.companyName" placeholder="请输入公司名称" />
         </el-form-item>
         <el-form-item label="邮箱">
           <el-input v-model="form.email" placeholder="请输入邮箱" />
@@ -44,7 +47,7 @@ import { ElMessage } from 'element-plus'
 import { register, sendEmailCode } from '../api/auth'
 
 const router = useRouter()
-const form = reactive({ role: 'USER', username: '', password: '', email: '', code: '' })
+const form = reactive({ role: 'USER', username: '', password: '', companyName: '', email: '', code: '' })
 const cooldown = ref(0)
 let timer = null
 

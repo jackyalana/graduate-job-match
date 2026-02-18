@@ -88,6 +88,9 @@ public class AuthServiceImpl implements AuthService {
         u.setPassword(PasswordUtil.hash(dto.getPassword()));
         u.setEmail(dto.getEmail());
         u.setRole(role.name());
+        if (role == UserRole.HR) {
+            u.setCompanyName(dto.getCompanyName() == null ? null : dto.getCompanyName().trim());
+        }
         u.setStatus(CommonStatus.ENABLED.getCode());
         u.setAuditStatus(role == UserRole.HR ? AuditStatus.PENDING.getCode() : AuditStatus.PASS.getCode());
         u.setCreatedAt(now);

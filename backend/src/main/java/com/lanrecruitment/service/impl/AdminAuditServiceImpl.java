@@ -41,6 +41,7 @@ public class AdminAuditServiceImpl implements AdminAuditService {
             vo.setId(u.getId());
             vo.setUsername(u.getUsername());
             vo.setEmail(u.getEmail());
+            vo.setCompanyName(u.getCompanyName());
             vo.setStatus(u.getStatus());
             vo.setAuditStatus(u.getAuditStatus());
             vo.setCreatedAt(u.getCreatedAt());

@@ -2,6 +2,7 @@ package com.lanrecruitment.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.lanrecruitment.common.enums.ErrorCode;
+import com.lanrecruitment.common.enums.UserRole;
 import com.lanrecruitment.domain.dto.ChangePasswordDTO;
 import com.lanrecruitment.domain.dto.UpdateProfileDTO;
 import com.lanrecruitment.domain.entity.SysUser;
@@ -55,11 +56,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateProfile(UpdateProfileDTO dto) {
         SysUser u = currentUser();
-        u.setRealName(dto.getRealName());
-        u.setPhone(dto.getPhone());
-        u.setCompanyName(dto.getCompanyName());
-        u.setSchool(dto.getSchool());
-        u.setGraduateDate(dto.getGraduateDate());
+        UserRole role = UserRole.from(u.getRole());
+        if (role == UserRole.HR) {
+            if (dto.getRealName() != null) u.setRealName(trimToNull(dto.getRealName()));
+            if (dto.getPhone() != null) u.setPhone(trimToNull(dto.getPhone()));
+        } else if (role == UserRole.USER) {
+            if (dto.getRealName() != null) u.setRealName(trimToNull(dto.getRealName()));
+            if (dto.getPhone() != null) u.setPhone(trimToNull(dto.getPhone()));
+            if (dto.getSchool() != null) u.setSchool(trimToNull(dto.getSchool()));
+            u.setGraduateDate(dto.getGraduateDate());
+        } else {
+            if (dto.getRealName() != null) u.setRealName(trimToNull(dto.getRealName()));
+            if (dto.getPhone() != null) u.setPhone(trimToNull(dto.getPhone()));
+            if (dto.getSchool() != null) u.setSchool(trimToNull(dto.getSchool()));
+            u.setGraduateDate(dto.getGraduateDate());
+        }
         u.setUpdatedAt(LocalDateTime.now());
         sysUserMapper.updateById(u);
     }
@@ -90,5 +101,11 @@ public class UserServiceImpl implements UserService {
             throw new BizException(ErrorCode.AUTH_NOT_LOGGED_IN);
         }
         return u;
+    }
+
+    private static String trimToNull(String raw) {
+        if (raw == null) return null;
+        String s = raw.trim();
+        return s.isEmpty() ? null : s;
     }
 }

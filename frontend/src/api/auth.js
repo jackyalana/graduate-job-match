@@ -12,8 +12,8 @@ export function loginByEmail(email, code) {
   return request.post('/api/public/auth/login/email', { email, code })
 }
 
-export function register({ username, password, email, code, role }) {
-  return request.post('/api/public/auth/register', { username, password, email, code, role })
+export function register({ username, password, email, code, role, companyName }) {
+  return request.post('/api/public/auth/register', { username, password, email, code, role, companyName })
 }
 
 export function logout() {
