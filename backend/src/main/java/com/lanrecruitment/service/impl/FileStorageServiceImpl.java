@@ -23,7 +23,7 @@ public class FileStorageServiceImpl implements FileStorageService {
 
     private final String storageBaseDir;
 
-    public FileStorageServiceImpl(@Value("${storage.base-dir:uploads}") String storageBaseDir) {
+    public FileStorageServiceImpl(@Value("${lan.storage.base-dir:uploads}") String storageBaseDir) {
         this.storageBaseDir = storageBaseDir;
     }
 

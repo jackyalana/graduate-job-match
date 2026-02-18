@@ -16,20 +16,29 @@
 2. 配置 `/backend/src/main/resources/application-dev.yml` ：
 
 ```yaml
-# 配置数据库
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/lan_recruitment?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: 123456 # 修改为你的密码
     driver-class-name: com.mysql.cj.jdbc.Driver
+  # 如果 lan.sa-token.store=redis，需要配置 Redis 连接
+  redis:
+    host: localhost
+    port: 6379
+    password: 123456
+    database: 0
 
-# 配置邮箱服务
-email:
-  host: # 你的 SMTP 服务器地址
-  from: # 你的发件人邮箱地址
-  password: # 你的邮箱服务商 SMTP 授权码
-  username: # 你的 SMTP 服务器认证账号
+lan:
+  # Sa-Token 登录态存储方式：memory（默认）/ redis
+  sa-token:
+    store: redis
+  # 配置邮箱服务
+  email:
+    host: # 你的 SMTP 服务器地址
+    from: # 你的发件人邮箱地址
+    password: # 你的邮箱服务商 SMTP 授权码
+    username: # 你的 SMTP 服务器认证账号
 ```
 
 3. 执行启动命令：

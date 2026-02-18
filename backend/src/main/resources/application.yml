@@ -11,8 +11,16 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       initialization-fail-timeout: -1
+  autoconfigure:
+    exclude:
+      - cn.dev33.satoken.dao.SaTokenDaoRedisJackson
   profiles:
     active: dev
+  redis:
+    host: localhost
+    port: 6379
+    password: 123456
+    database: 0
 
 mybatis-plus:
   configuration:
@@ -26,11 +34,13 @@ sa-token:
   is-share: true
   token-style: uuid
 
-email:
-  host:
-  from:
-  password:
-  username:
-
-storage:
-  base-dir: ${user.home}/lan-recruitment/uploads
+lan:
+  sa-token:
+    store: memory
+  email:
+    host:
+    from:
+    password:
+    username:
+  storage:
+    base-dir: ${user.home}/lan-recruitment/uploads

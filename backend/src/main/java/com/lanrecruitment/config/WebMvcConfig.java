@@ -28,7 +28,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String baseDir = env.getProperty("storage.base-dir", "uploads");
+        String baseDir = env.getProperty("lan.storage.base-dir", "uploads");
         Path basePath = Paths.get(baseDir).toAbsolutePath().normalize();
         String location = basePath.toUri().toString();
         if (!location.endsWith("/")) {

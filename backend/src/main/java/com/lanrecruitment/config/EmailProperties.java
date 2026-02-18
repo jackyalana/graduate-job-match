@@ -2,7 +2,7 @@ package com.lanrecruitment.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "email")
+@ConfigurationProperties(prefix = "lan.email")
 public class EmailProperties {
     private String host;
     private Integer port;
@@ -68,4 +68,3 @@ public class EmailProperties {
         this.starttls = starttls;
     }
 }
-
