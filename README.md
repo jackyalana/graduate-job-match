@@ -79,7 +79,7 @@ bash scripts/dev.sh
 
 ## 内置账号
 
-> 启动 SpringBoot 服务会自动注入帐号到数据库
+> 执行 backend/sql/seed_demo_data.sql 生成内置帐号
 
 - 管理员：admin / 123456
 - 求职者：user / 123456
