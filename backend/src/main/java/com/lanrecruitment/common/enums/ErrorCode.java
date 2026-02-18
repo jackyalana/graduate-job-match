@@ -18,6 +18,10 @@ public enum ErrorCode {
     HR_COMPANY_NAME_REQUIRED(400, "请先在个人中心完善公司名称"),
     HR_ACCOUNT_NOT_FOUND(404, "HR账号不存在"),
 
+    ADMIN_USER_NOT_FOUND(404, "用户不存在"),
+    ADMIN_CANNOT_OPERATE_SELF(403, "不能操作自己的账号"),
+    ADMIN_CANNOT_OPERATE_ADMIN(403, "不能操作管理员账号"),
+
     TAG_ALREADY_EXISTS(400, "标签已存在"),
     TAG_NOT_FOUND(404, "标签不存在"),
 

@@ -11,6 +11,7 @@ import JobManage from '../pages/JobManage.vue'
 import TagManage from '../pages/TagManage.vue'
 import NoticeManage from '../pages/NoticeManage.vue'
 import AuditManage from '../pages/AuditManage.vue'
+import UserManage from '../pages/UserManage.vue'
 
 const routes = [
   { path: '/', redirect: '/home' },
@@ -27,7 +28,8 @@ const routes = [
       { path: 'job', component: JobManage },
       { path: 'audit', component: AuditManage },
       { path: 'tag', component: TagManage },
-      { path: 'notice', component: NoticeManage }
+      { path: 'notice', component: NoticeManage },
+      { path: 'user', component: UserManage }
     ]
   }
 ]
@@ -63,7 +65,7 @@ router.beforeEach(async (to) => {
   if (to.path === '/resume' && role !== 'USER') return '/home'
   if (to.path === '/apply' && role !== 'USER') return '/home'
   if (to.path === '/job' && role !== 'HR') return '/home'
-  if ((to.path === '/audit' || to.path === '/tag' || to.path === '/notice') && role !== 'ADMIN') return '/home'
+  if ((to.path === '/audit' || to.path === '/tag' || to.path === '/notice' || to.path === '/user') && role !== 'ADMIN') return '/home'
   return true
 })
 

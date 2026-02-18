@@ -2,7 +2,6 @@
   <div class="wrap">
     <el-card class="card">
       <div class="title">注册账号</div>
-      <div class="desc">用户名 + 密码 + 邮箱 + 验证码</div>
 
       <div class="role-switch">
         <el-radio-group v-model="form.role">

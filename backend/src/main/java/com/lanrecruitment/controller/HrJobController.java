@@ -45,12 +45,6 @@ public class HrJobController {
         return Response.ok(null);
     }
 
-    @PostMapping("/api/hr/job/tags/save")
-    public Response<Void> saveTags(@Valid @RequestBody JobTagSaveDTO dto) {
-        hrJobService.saveTags(dto);
-        return Response.ok(null);
-    }
-
     @GetMapping("/api/hr/job/tags")
     public Response<List<JobTagVO>> listJobTags(@RequestParam("jobId") Long jobId) {
         return Response.ok(hrJobService.listJobTags(jobId));

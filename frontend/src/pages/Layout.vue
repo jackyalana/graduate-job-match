@@ -89,6 +89,10 @@
             <el-icon><Bell /></el-icon>
             <span>公告管理</span>
           </el-menu-item>
+          <el-menu-item v-if="role === 'ADMIN'" index="/user">
+            <el-icon><User /></el-icon>
+            <span>账号管理</span>
+          </el-menu-item>
         </el-menu>
       </el-aside>
 
@@ -107,7 +111,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Bell, Briefcase, CircleCheck, CollectionTag, Document, Expand, Fold, House, Tickets } from '@element-plus/icons-vue'
+import { Bell, Briefcase, CircleCheck, CollectionTag, Document, Expand, Fold, House, Tickets, User } from '@element-plus/icons-vue'
 import { logout } from '../api/auth'
 import { listNotices } from '../api/notice'
 import { getProfile } from '../api/user'

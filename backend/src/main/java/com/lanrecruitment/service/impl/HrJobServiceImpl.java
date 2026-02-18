@@ -9,9 +9,6 @@ import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.domain.dto.ApplyStatusUpdateDTO;
 import com.lanrecruitment.domain.dto.IdDTO;
 import com.lanrecruitment.domain.dto.JobSaveDTO;
-import com.lanrecruitment.domain.dto.JobTagItemDTO;
-import com.lanrecruitment.domain.dto.JobTagSaveDTO;
-import com.lanrecruitment.common.enums.TagType;
 import com.lanrecruitment.domain.entity.Job;
 import com.lanrecruitment.domain.entity.JobApply;
 import com.lanrecruitment.domain.entity.JobTag;
@@ -19,7 +16,11 @@ import com.lanrecruitment.domain.entity.Resume;
 import com.lanrecruitment.domain.entity.ResumeTag;
 import com.lanrecruitment.domain.entity.SysUser;
 import com.lanrecruitment.domain.entity.Tag;
+import com.lanrecruitment.domain.vo.HrJobApplicationVO;
+import com.lanrecruitment.domain.vo.HrJobVO;
+import com.lanrecruitment.domain.vo.JobTagVO;
 import com.lanrecruitment.domain.vo.ResumeTagVO;
+import com.lanrecruitment.domain.vo.ResumeVO;
 import com.lanrecruitment.exception.BizException;
 import com.lanrecruitment.mapper.JobApplyMapper;
 import com.lanrecruitment.mapper.JobMapper;
@@ -30,13 +31,9 @@ import com.lanrecruitment.mapper.SysUserMapper;
 import com.lanrecruitment.mapper.TagMapper;
 import com.lanrecruitment.service.HrJobService;
 import com.lanrecruitment.service.MatchService;
-import com.lanrecruitment.domain.vo.HrJobApplicationVO;
-import com.lanrecruitment.domain.vo.HrJobVO;
-import com.lanrecruitment.domain.vo.JobTagVO;
-import com.lanrecruitment.domain.vo.ResumeVO;
-import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -82,12 +79,14 @@ public class HrJobServiceImpl implements HrJobService {
         List<Job> list = jobMapper.selectList(new LambdaQueryWrapper<Job>()
                 .eq(Job::getHrId, hrId)
                 .orderByDesc(Job::getId));
-        
+
         Set<Long> jobIds = new HashSet<>();
         for (Job j : list) {
-            jobIds.add(j.getId());
+            if (j.getId() != null) {
+                jobIds.add(j.getId());
+            }
         }
-        
+
         Map<Long, Integer> applyCountMap = new HashMap<>();
         if (!jobIds.isEmpty()) {
             List<JobApply> allApplies = jobApplyMapper.selectList(new LambdaQueryWrapper<JobApply>().in(JobApply::getJobId, jobIds));
@@ -95,7 +94,7 @@ public class HrJobServiceImpl implements HrJobService {
                 applyCountMap.merge(a.getJobId(), 1, Integer::sum);
             }
         }
-        
+
         List<HrJobVO> res = new ArrayList<>();
         for (Job j : list) {
             HrJobVO vo = new HrJobVO();
@@ -163,52 +162,14 @@ public class HrJobServiceImpl implements HrJobService {
     }
 
     @Override
-    public void saveTags(JobTagSaveDTO dto) {
-        Job job = getMyJob(dto.getJobId());
-        jobTagMapper.delete(new LambdaQueryWrapper<JobTag>().eq(JobTag::getJobId, job.getId()));
-
-        if (dto.getItems() == null || dto.getItems().isEmpty()) {
-            return;
-        }
-
-        Set<Long> tagIds = new HashSet<>();
-        for (JobTagItemDTO item : dto.getItems()) {
-            tagIds.add(item.getTagId());
-        }
-        List<Tag> tags = tagMapper.selectBatchIds(tagIds);
-        Map<Long, Tag> tagMap = new HashMap<>();
-        for (Tag t : tags) {
-            tagMap.put(t.getId(), t);
-        }
-
-        for (JobTagItemDTO item : dto.getItems()) {
-            Tag t = tagMap.get(item.getTagId());
-            if (t == null) {
-                continue;
-            }
-            int base = t.getBaseWeight() == null ? 1 : t.getBaseWeight();
-            int proficiency = item.getProficiency() == null ? 1 : item.getProficiency();
-            int weight = base;
-            if (TagType.isSkill(t.getTagType())) {
-                weight = base * proficiency;
-            }
-
-            JobTag jt = new JobTag();
-            jt.setJobId(job.getId());
-            jt.setTagId(item.getTagId());
-            jt.setProficiency(TagType.isSkill(t.getTagType()) ? proficiency : null);
-            jt.setWeight(weight);
-            jobTagMapper.insert(jt);
-        }
-    }
-
-    @Override
     public List<JobTagVO> listJobTags(Long jobId) {
         Job job = getMyJob(jobId);
         List<JobTag> list = jobTagMapper.selectList(new LambdaQueryWrapper<JobTag>().eq(JobTag::getJobId, job.getId()));
         Set<Long> tagIds = new HashSet<>();
         for (JobTag jt : list) {
-            tagIds.add(jt.getTagId());
+            if (jt.getTagId() != null) {
+                tagIds.add(jt.getTagId());
+            }
         }
         List<Tag> tags = tagIds.isEmpty() ? new ArrayList<>() : tagMapper.selectBatchIds(tagIds);
         Map<Long, Tag> tagMap = new HashMap<>();
@@ -240,7 +201,9 @@ public class HrJobServiceImpl implements HrJobService {
                 .orderByDesc(JobApply::getId));
         Set<Long> resumeIds = new HashSet<>();
         for (JobApply a : applies) {
-            resumeIds.add(a.getResumeId());
+            if (a.getResumeId() != null) {
+                resumeIds.add(a.getResumeId());
+            }
         }
         List<Resume> resumes = resumeIds.isEmpty() ? new ArrayList<>() : resumeMapper.selectBatchIds(resumeIds);
         Map<Long, Resume> resumeMap = new HashMap<>();
@@ -253,7 +216,9 @@ public class HrJobServiceImpl implements HrJobService {
             List<ResumeTag> rts = resumeTagMapper.selectList(new LambdaQueryWrapper<ResumeTag>().in(ResumeTag::getResumeId, resumeIds));
             Set<Long> tagIds = new HashSet<>();
             for (ResumeTag rt : rts) {
-                if (rt.getTagId() != null) tagIds.add(rt.getTagId());
+                if (rt.getTagId() != null) {
+                    tagIds.add(rt.getTagId());
+                }
             }
             List<Tag> tags = tagIds.isEmpty() ? new ArrayList<>() : tagMapper.selectBatchIds(tagIds);
             Map<Long, Tag> tagMap = new HashMap<>();
@@ -300,7 +265,7 @@ public class HrJobServiceImpl implements HrJobService {
         if (apply == null) {
             throw new BizException(ErrorCode.APPLY_RECORD_NOT_FOUND);
         }
-        Job job = getMyJob(apply.getJobId());
+        getMyJob(apply.getJobId());
         Integer s = dto.getStatus();
         if (!ApplyStatus.isValid(s)) {
             throw new BizException(ErrorCode.APPLY_STATUS_INVALID);
@@ -321,7 +286,7 @@ public class HrJobServiceImpl implements HrJobService {
         return job;
     }
 
-    private ResumeVO toResumeVO(Resume r) {
+    private static ResumeVO toResumeVO(Resume r) {
         ResumeVO vo = new ResumeVO();
         vo.setId(r.getId());
         vo.setUserId(r.getUserId());

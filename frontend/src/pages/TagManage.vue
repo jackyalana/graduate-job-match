@@ -22,8 +22,8 @@
         <el-option label="经验(EXPERIENCE)" value="EXPERIENCE" />
       </el-select>
       <el-select v-model="query.status" clearable placeholder="状态" style="width: 140px" @change="load">
-        <el-option label="启用(1)" :value="1" />
-        <el-option label="禁用(0)" :value="0" />
+        <el-option label="启用" :value="1" />
+        <el-option label="禁用" :value="0" />
       </el-select>
       <el-button size="small" @click="load">搜索</el-button>
     </div>
@@ -85,8 +85,8 @@
       </el-form-item>
       <el-form-item label="状态">
         <el-select v-model="form.status" style="width: 140px">
-          <el-option label="启用(1)" :value="1" />
-          <el-option label="禁用(0)" :value="0" />
+          <el-option label="启用" :value="1" />
+          <el-option label="禁用" :value="0" />
         </el-select>
       </el-form-item>
     </el-form>
