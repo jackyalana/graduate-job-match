@@ -121,21 +121,23 @@
           <div class="attach-row">
             <div class="attach-info">
               <div v-if="editForm.fileUrl">
-                <div class="attach-name">{{ editForm.fileName || editForm.fileUrl }}</div>
+                <div class="attach-name-row">
+                  <div class="attach-name">{{ editForm.fileName || editForm.fileUrl }}</div>
+                  <el-popconfirm title="确认删除该附件？" @confirm="deleteAttachment">
+                    <template #reference>
+                      <el-icon class="attach-remove"><Close /></el-icon>
+                    </template>
+                  </el-popconfirm>
+                </div>
                 <div v-if="editForm.fileSize" class="attach-meta">{{ formatBytes(editForm.fileSize) }}</div>
               </div>
               <div v-else class="attach-empty">未上传</div>
             </div>
             <div class="attach-actions">
               <el-upload :show-file-list="false" :before-upload="beforeResumeUpload" :http-request="doUploadResume">
-                <el-button size="small" :loading="uploadingResume">上传/替换</el-button>
+                <el-button size="small" :loading="uploadingResume">上传</el-button>
               </el-upload>
               <el-button size="small" :disabled="!editForm.fileUrl" @click="downloadAttachment">下载</el-button>
-              <el-popconfirm title="确认删除该附件？" @confirm="deleteAttachment">
-                <template #reference>
-                  <el-button size="small" type="danger" plain :disabled="!editForm.fileUrl">删除</el-button>
-                </template>
-              </el-popconfirm>
             </div>
           </div>
         </el-form-item>
@@ -306,7 +308,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { ArrowLeft } from '@element-plus/icons-vue'
+import { ArrowLeft, Close } from '@element-plus/icons-vue'
 import { listTags, searchTags } from '../api/tag'
 import { deleteResume, listMyResumes, saveResume, saveResumeTags, setDefaultResume, getResumeDetail, uploadResumeAttachment, downloadMyResumeAttachment, deleteMyResumeAttachment } from '../api/resume'
 import { downloadBlobResponse } from '../utils/download'
@@ -619,9 +621,24 @@ onMounted(async () => {
   gap: 4px;
 }
 
+.attach-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .attach-name {
   font-size: 13px;
   color: #303133;
+}
+
+.attach-remove {
+  cursor: pointer;
+  color: #909399;
+}
+
+.attach-remove:hover {
+  color: #f56c6c;
 }
 
 .attach-meta {

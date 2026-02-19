@@ -227,7 +227,14 @@ public class ResumeServiceImpl implements ResumeService {
         r.setFileSize(null);
         r.setFileType(null);
         r.setUpdateTime(LocalDateTime.now());
-        resumeMapper.updateById(r);
+        resumeMapper.update(null, new LambdaUpdateWrapper<Resume>()
+                .eq(Resume::getId, r.getId())
+                .eq(Resume::getUserId, r.getUserId())
+                .set(Resume::getFileUrl, null)
+                .set(Resume::getFileName, null)
+                .set(Resume::getFileSize, null)
+                .set(Resume::getFileType, null)
+                .set(Resume::getUpdateTime, r.getUpdateTime()));
         return toVO(r);
     }
 

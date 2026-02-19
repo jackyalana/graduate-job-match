@@ -93,14 +93,10 @@
         <el-table-column prop="matchScore" label="匹配度" width="100" />
         <el-table-column label="标签" min-width="180">
           <template #default="{ row }">
-            <div class="apply-tags-row">
-              <el-tag v-for="t in getVisibleTags(row.resumeTags)" :key="t.tagId" size="small" effect="plain">
-                {{ t.tagName }}
-              </el-tag>
-              <span v-if="(row.resumeTags || []).length > maxVisibleTags" class="more-tags">
-                +{{ (row.resumeTags || []).length - maxVisibleTags }}
-              </span>
-            </div>
+            <el-tooltip v-if="resumeTagText(row.resumeTags)" :content="resumeTagText(row.resumeTags)" placement="top">
+              <span class="apply-tags-ellipsis">{{ resumeTagText(row.resumeTags) }}</span>
+            </el-tooltip>
+            <span v-else class="empty-text">未配置</span>
           </template>
         </el-table-column>
         <el-table-column prop="applyStatus" label="状态" width="100">
@@ -438,6 +434,14 @@ function getVisibleTags(tags) {
   return tags.slice(0, maxVisibleTags)
 }
 
+function resumeTagText(tags) {
+  const list = Array.isArray(tags) ? tags : []
+  return list
+    .map((t) => (t && t.tagName ? String(t.tagName).trim() : ''))
+    .filter((s) => s)
+    .join('、')
+}
+
 async function loadJobs() {
   jobs.value = await hrListJobs()
 }
@@ -631,6 +635,13 @@ onMounted(async () => {
   display: flex;
   flex-wrap: nowrap;
   gap: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.apply-tags-ellipsis {
+  display: block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
