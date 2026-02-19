@@ -1,5 +1,7 @@
 # lan-recruitment（毕业设计-智能招聘系统）
 
+![功能演示](docs/img/功能演示.png)
+
 ## 项目结构
 
 本仓库为 Monorepo 结构：
