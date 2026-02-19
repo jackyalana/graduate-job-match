@@ -15,7 +15,9 @@
   - `/docs/库表设计.sql`：表结构与字段含义（改动需同步考虑 SQL 与实体）
 - 运行与配置
   - `/README.md`：启动方式与内置账号说明（如与实际不一致，以代码与配置为准）
-  - `/scripts/dev.sh`：一键启动脚本（前后端并起）
+  - `/scripts/dev.sh`：一键启动脚本（macOS / Linux）
+  - `/scripts/dev.ps1`：一键启动脚本（Windows PowerShell）
+  - `/scripts/dev.cmd`：一键启动脚本（Windows cmd）
   - `/backend/src/main/resources/application.yml`：后端数据库/邮箱/存储配置
   - `/frontend/.env`：前端后端 API 地址
 
@@ -34,7 +36,7 @@
 - 初始化数据库：先执行 `/backend/sql/init.sql`（可选：`/backend/sql/seed_demo_data.sql`）
 - 后端：`cd backend && mvn -DskipTests spring-boot:run`（默认 `http://localhost:8080`）
 - 前端：`cd frontend && npm i && npm run dev`（默认 `http://localhost:5173`）
-- 一键启动：项目根目录执行 `bash scripts/dev.sh`
+- 一键启动：macOS / Linux 执行 `bash scripts/dev.sh`；Windows 执行 `scripts\dev.cmd`
 - 健康检查：`GET /api/health`
  
 - 内置账号（如有变动，以 `BootstrapDataRunner` 注入逻辑为准）：

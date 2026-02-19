@@ -73,8 +73,22 @@ npm run dev
 
 配置好前后端环境后，在项目根目录执行：
 
+- macOS / Linux：
+
 ```bash
 bash scripts/dev.sh
+```
+
+- Windows（PowerShell）：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\dev.ps1
+```
+
+- Windows（cmd）：
+
+```bat
+scripts\dev.cmd
 ```
 
 ## 内置账号
