@@ -10,7 +10,6 @@
             <el-option label="拒绝" :value="3" />
           </el-select>
           <el-input v-model="keyword" size="small" clearable placeholder="岗位关键词" style="width: 180px" @keyup.enter="load" />
-          <el-button size="small" :loading="loading" @click="load">刷新</el-button>
         </div>
       </div>
     </template>

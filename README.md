@@ -11,6 +11,17 @@
 - `/scripts`：一键启动脚本
 - `/docs`：需求与规范文档
 
+## 推荐算法实现（简述）
+
+系统内的“岗位推荐 / 简历筛选排序”基于简历标签与岗位标签计算匹配度，并按匹配度从高到低排序展示。
+
+- 向量定义：将简历与岗位都表示为稀疏向量 `{tagId -> weight}`（数据来自 `resume_tag` / `job_tag`）
+- 权重策略：标签配置包含 `baseWeight`；简历技能标签（SKILL）会结合熟练度 `proficiency` 放大权重（`baseWeight * proficiency`），非技能类按 `baseWeight`
+- 匹配度计算：使用余弦相似度 `score = dot(a,b) / (|a|*|b|)`，结果保留 4 位小数（核心实现见 `backend/src/main/java/com/lanrecruitment/service/impl/MatchServiceImpl.java`）
+- 推荐流程：按筛选条件生成候选岗位集合（默认取前 200 个候选），逐个计算匹配分并落库（`match_score`），再按 `matchScore` 倒序返回
+- HR 侧排序：HR 查看岗位投递列表时，也会为每份投递简历计算匹配分并按分数倒序排序
+- 兜底策略：当用户无可用简历时，推荐接口退化为对候选岗位随机排序返回（不计算匹配分）
+
 ## 后端启动
 
 1. 执行数据库初始化 SQL ：`/backend/sql/init.sql`

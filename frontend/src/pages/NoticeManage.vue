@@ -9,10 +9,9 @@
 
     <div class="filters">
       <el-select v-model="query.status" clearable placeholder="状态" style="width: 140px" @change="load">
-        <el-option label="上线(1)" :value="1" />
-        <el-option label="下线(0)" :value="0" />
+        <el-option label="上线" :value="1" />
+        <el-option label="下线" :value="0" />
       </el-select>
-      <el-button @click="load">刷新</el-button>
     </div>
 
     <el-table :data="notices" size="small" style="width: 100%">
