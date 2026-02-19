@@ -6,11 +6,11 @@ $BackendDir = Join-Path $RootDir 'backend'
 $FrontendDir = Join-Path $RootDir 'frontend'
 
 if (-not (Get-Command mvn -ErrorAction SilentlyContinue)) {
-  Write-Host '缺少命令：mvn'
+  Write-Host 'Missing command: mvn'
   exit 1
 }
 if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
-  Write-Host '缺少命令：npm'
+  Write-Host 'Missing command: npm'
   exit 1
 }
 
@@ -54,9 +54,9 @@ try {
   }
   [Console]::add_CancelKeyPress($cancelHandler)
 
-  Write-Host '后端：http://localhost:8080'
-  Write-Host '前端：http://localhost:5173'
-  Write-Host '按 Ctrl+C 退出'
+  Write-Host 'Backend:  http://localhost:8080'
+  Write-Host 'Frontend: http://localhost:5173'
+  Write-Host 'Press Ctrl+C to exit'
 
   while ($true) {
     $backend.Refresh()
