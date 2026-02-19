@@ -39,3 +39,4 @@ pnpm-debug.log*
 *.swp
 *.swo
 /backend/src/main/resources/application-dev.yml
+/uploads/
