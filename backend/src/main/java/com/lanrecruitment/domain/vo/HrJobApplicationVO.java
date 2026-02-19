@@ -16,6 +16,7 @@ public class HrJobApplicationVO {
     private Long applyId;
     private Integer applyStatus;
     private LocalDateTime applyTime;
+    private String applicantPhone;
     private ResumeVO resume;
     private List<ResumeTagVO> resumeTags;
     private BigDecimal matchScore;

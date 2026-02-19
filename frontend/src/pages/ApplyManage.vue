@@ -87,9 +87,9 @@
       <el-descriptions-item label="期望岗位">{{ currentResume.expectJobType }}</el-descriptions-item>
       <el-descriptions-item label="期望薪资">{{ currentResume.expectSalary }}</el-descriptions-item>
       <el-descriptions-item v-if="currentResume.fileUrl" label="附件简历">
-        <a :href="toAbsoluteUrl(currentResume.fileUrl)" target="_blank" rel="noopener noreferrer">
-          {{ currentResume.fileName || currentResume.fileUrl }}
-        </a>
+        <el-button link type="primary" @click="downloadCurrentResume">
+          下载：{{ currentResume.fileName || currentResume.fileUrl }}
+        </el-button>
       </el-descriptions-item>
     </el-descriptions>
     <div v-if="currentResume?.workDesc" class="work-desc-block">
@@ -105,7 +105,8 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { listMyApplyDetail, listMyResumes, updateApplyResume } from '../api/resume'
+import { listMyApplyDetail, listMyResumes, updateApplyResume, downloadMyResumeAttachment } from '../api/resume'
+import { downloadBlobResponse } from '../utils/download'
 
 const loading = ref(false)
 const applies = ref([])
@@ -203,6 +204,12 @@ function openJob(job) {
 function openResume(resume) {
   currentResume.value = resume || null
   resumeVisible.value = true
+}
+
+async function downloadCurrentResume() {
+  if (!currentResume.value || !currentResume.value.id) return
+  const resp = await downloadMyResumeAttachment(currentResume.value.id)
+  downloadBlobResponse(resp, currentResume.value.fileName || 'resume')
 }
 
 function toAbsoluteUrl(path) {

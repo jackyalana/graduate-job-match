@@ -8,6 +8,8 @@ import com.lanrecruitment.domain.vo.HrJobApplicationVO;
 import com.lanrecruitment.domain.vo.HrJobVO;
 import com.lanrecruitment.domain.vo.JobTagVO;
 import java.util.List;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 
 public interface HrJobService {
     List<HrJobVO> listMy();
@@ -23,4 +25,6 @@ public interface HrJobService {
     List<HrJobApplicationVO> listApplications(Long jobId);
 
     void updateApplyStatus(ApplyStatusUpdateDTO dto);
+
+    ResponseEntity<Resource> downloadResumeAttachment(Long applyId);
 }

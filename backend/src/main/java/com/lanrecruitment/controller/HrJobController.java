@@ -11,6 +11,8 @@ import com.lanrecruitment.domain.vo.HrJobVO;
 import com.lanrecruitment.domain.vo.JobTagVO;
 import java.util.List;
 import javax.validation.Valid;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,5 +67,10 @@ public class HrJobController {
     public Response<Void> updateApplyStatus(@Valid @RequestBody ApplyStatusUpdateDTO dto) {
         hrJobService.updateApplyStatus(dto);
         return Response.ok(null);
+    }
+
+    @GetMapping("/api/hr/resume/file/download")
+    public ResponseEntity<Resource> downloadResumeAttachment(@RequestParam("applyId") Long applyId) {
+        return hrJobService.downloadResumeAttachment(applyId);
     }
 }

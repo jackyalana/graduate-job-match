@@ -44,3 +44,5 @@ lan:
     username:
   storage:
     base-dir: ${user.home}/lan-recruitment/uploads
+    avatar: ${lan.storage.base-dir}/avatar
+    resume: ${lan.storage.base-dir}/resume

@@ -3,7 +3,6 @@ package com.lanrecruitment.service.impl;
 import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.exception.BizException;
 import com.lanrecruitment.service.FileStorageService;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,7 +10,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,23 +20,43 @@ public class FileStorageServiceImpl implements FileStorageService {
     private static final long AVATAR_MAX_SIZE = 2 * 1024 * 1024L;
     private static final long RESUME_MAX_SIZE = 10 * 1024 * 1024L;
 
-    private final String storageBaseDir;
+    private static final String DEFAULT_BASE_DIR = System.getProperty("user.home") + "/lan-recruitment/uploads";
 
-    public FileStorageServiceImpl(@Value("${lan.storage.base-dir:uploads}") String storageBaseDir) {
-        this.storageBaseDir = storageBaseDir;
+    private static final String AVATAR_URL_PREFIX = "/uploads/avatar/";
+    private static final String RESUME_URL_PREFIX = "/uploads/resume/";
+
+    private final Path baseDir;
+    private final Path avatarDir;
+    private final Path resumeDir;
+
+    public FileStorageServiceImpl(Environment env) {
+        Path base = Paths.get(env.getProperty("lan.storage.base-dir", DEFAULT_BASE_DIR));
+        this.baseDir = base.toAbsolutePath().normalize();
+        this.avatarDir = resolveDir(env.getProperty("lan.storage.avatar"), this.baseDir.resolve("avatar"));
+        this.resumeDir = resolveDir(env.getProperty("lan.storage.resume"), this.baseDir.resolve("resume"));
     }
 
     @Override
     public String storeAvatar(MultipartFile file) {
-        return store(file, "avatar", new String[]{"jpg", "jpeg", "png"}, AVATAR_MAX_SIZE);
+        return store(file, avatarDir, AVATAR_URL_PREFIX, new String[]{"jpg", "jpeg", "png"}, AVATAR_MAX_SIZE);
     }
 
     @Override
     public String storeResumeAttachment(MultipartFile file) {
-        return store(file, "resume", new String[]{"pdf", "jpg", "jpeg", "png"}, RESUME_MAX_SIZE);
+        return store(file, resumeDir, RESUME_URL_PREFIX, new String[]{"pdf", "jpg", "jpeg", "png"}, RESUME_MAX_SIZE);
     }
 
-    private String store(MultipartFile file, String subDir, String[] allowedExt, long maxSize) {
+    @Override
+    public Path resolveAvatarPath(String fileUrl) {
+        return resolveStoredPath(fileUrl, AVATAR_URL_PREFIX, avatarDir);
+    }
+
+    @Override
+    public Path resolveResumeAttachmentPath(String fileUrl) {
+        return resolveStoredPath(fileUrl, RESUME_URL_PREFIX, resumeDir);
+    }
+
+    private String store(MultipartFile file, Path dir, String urlPrefix, String[] allowedExt, long maxSize) {
         if (file == null || file.isEmpty()) {
             throw new BizException(ErrorCode.FILE_EMPTY);
         }
@@ -52,7 +71,6 @@ public class FileStorageServiceImpl implements FileStorageService {
         }
 
         String filename = UUID.randomUUID().toString().replace("-", "") + "." + ext;
-        Path dir = Paths.get(storageBaseDir).toAbsolutePath().normalize().resolve(subDir);
         Path target = dir.resolve(filename);
 
         try {
@@ -64,7 +82,7 @@ public class FileStorageServiceImpl implements FileStorageService {
             throw new BizException(ErrorCode.FILE_SAVE_FAILED);
         }
 
-        return "/uploads/" + subDir + "/" + filename;
+        return urlPrefix + filename;
     }
 
     private boolean isAllowed(String ext, String[] allowed) {
@@ -82,5 +100,31 @@ public class FileStorageServiceImpl implements FileStorageService {
             return "";
         }
         return filename.substring(idx + 1).toLowerCase(Locale.ROOT);
+    }
+
+    private Path resolveStoredPath(String fileUrl, String expectedPrefix, Path dir) {
+        if (fileUrl == null || fileUrl.trim().isEmpty()) {
+            return null;
+        }
+        if (!fileUrl.startsWith(expectedPrefix)) {
+            throw new BizException(ErrorCode.FILE_PATH_INVALID);
+        }
+        String filename = fileUrl.substring(expectedPrefix.length());
+        String normalizedName = Paths.get(filename).getFileName().toString();
+        if (!normalizedName.equals(filename)) {
+            throw new BizException(ErrorCode.FILE_PATH_INVALID);
+        }
+        return dir.resolve(filename).toAbsolutePath().normalize();
+    }
+
+    private Path resolveDir(String configured, Path defaultDir) {
+        if (configured == null || configured.trim().isEmpty()) {
+            return defaultDir.toAbsolutePath().normalize();
+        }
+        Path p = Paths.get(configured);
+        if (!p.isAbsolute()) {
+            p = baseDir.resolve(configured);
+        }
+        return p.toAbsolutePath().normalize();
     }
 }

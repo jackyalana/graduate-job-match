@@ -24,6 +24,23 @@ export function saveResumeTags(resumeId, items) {
   return request.post('/api/user/resume/tags/save', { resumeId, items })
 }
 
+export function uploadResumeAttachment(resumeId, file) {
+  const formData = new FormData()
+  formData.append('resumeId', resumeId)
+  formData.append('file', file)
+  return request.post('/api/user/resume/file/upload', formData)
+}
+
+export function downloadMyResumeAttachment(resumeId) {
+  return request.get('/api/user/resume/file/download', { params: { resumeId }, responseType: 'blob' })
+}
+
+export function deleteMyResumeAttachment(resumeId) {
+  const formData = new FormData()
+  formData.append('resumeId', resumeId)
+  return request.post('/api/user/resume/file/delete', formData)
+}
+
 export function applyJob(jobId, resumeId) {
   return request.post('/api/user/job/apply', { jobId, resumeId })
 }

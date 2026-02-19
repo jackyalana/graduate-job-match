@@ -47,6 +47,10 @@ export function hrUpdateApplyStatus(applyId, status) {
   return request.post('/api/hr/job/apply/status', { applyId, status })
 }
 
+export function hrDownloadResumeAttachment(applyId) {
+  return request.get('/api/hr/resume/file/download', { params: { applyId }, responseType: 'blob' })
+}
+
 export function adminListPendingHr() {
   return request.get('/api/admin/audit/hr/list')
 }

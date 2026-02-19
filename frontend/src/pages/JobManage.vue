@@ -87,6 +87,7 @@
 
       <el-table :data="filteredApplications" size="small" style="width: 100%">
         <el-table-column prop="resume.realName" label="姓名" width="100" />
+        <el-table-column prop="applicantPhone" label="手机号" width="130" />
         <el-table-column prop="resume.education" label="学历" width="110" />
         <el-table-column prop="resume.city" label="城市" width="100" />
         <el-table-column prop="matchScore" label="匹配度" width="100" />
@@ -269,18 +270,37 @@
   </el-dialog>
 
   <el-drawer v-model="resumeVisible" title="简历详情" size="780px">
-    <el-descriptions v-if="currentResume" :column="2" border>
-      <el-descriptions-item label="简历名称">{{ currentResume.resumeName }}</el-descriptions-item>
-      <el-descriptions-item label="姓名">{{ currentResume.realName }}</el-descriptions-item>
-      <el-descriptions-item label="城市">{{ currentResume.city }}</el-descriptions-item>
-      <el-descriptions-item label="学历">{{ currentResume.education }}</el-descriptions-item>
-      <el-descriptions-item label="工作年限">{{ currentResume.workYears }}</el-descriptions-item>
-      <el-descriptions-item label="期望岗位">{{ currentResume.expectJobType }}</el-descriptions-item>
-      <el-descriptions-item label="期望薪资">{{ currentResume.expectSalary }}</el-descriptions-item>
-      <el-descriptions-item v-if="currentResume.fileUrl" label="附件简历">
-        <a :href="toAbsoluteUrl(currentResume.fileUrl)" target="_blank" rel="noopener noreferrer">
-          {{ currentResume.fileName || currentResume.fileUrl }}
-        </a>
+    <el-descriptions :column="2" border>
+      <el-descriptions-item label="简历名称">
+        <span :class="{ 'empty-text': !currentResume }">{{ showResumeField(currentResume && currentResume.resumeName) }}</span>
+      </el-descriptions-item>
+      <el-descriptions-item label="姓名">
+        <span :class="{ 'empty-text': !currentResume }">{{ showResumeField(currentResume && currentResume.realName) }}</span>
+      </el-descriptions-item>
+      <el-descriptions-item label="城市">
+        <span :class="{ 'empty-text': !currentResume }">{{ showResumeField(currentResume && currentResume.city) }}</span>
+      </el-descriptions-item>
+      <el-descriptions-item label="学历">
+        <span :class="{ 'empty-text': !currentResume }">{{ showResumeField(currentResume && currentResume.education) }}</span>
+      </el-descriptions-item>
+      <el-descriptions-item label="工作年限">
+        <span :class="{ 'empty-text': !currentResume }">{{ showResumeField(currentResume && currentResume.workYears) }}</span>
+      </el-descriptions-item>
+      <el-descriptions-item label="期望岗位">
+        <span :class="{ 'empty-text': !currentResume }">{{ showResumeField(currentResume && currentResume.expectJobType) }}</span>
+      </el-descriptions-item>
+      <el-descriptions-item label="期望薪资">
+        <span :class="{ 'empty-text': !currentResume }">{{ showResumeField(currentResume && currentResume.expectSalary) }}</span>
+      </el-descriptions-item>
+      <el-descriptions-item label="附件简历">
+        <template v-if="currentResume && currentResume.fileUrl">
+          <el-button link type="primary" @click="downloadCurrentResumeAttachment">
+            下载：{{ currentResume.fileName || currentResume.fileUrl }}
+          </el-button>
+        </template>
+        <template v-else>
+          <span class="empty-text">未上传简历</span>
+        </template>
       </el-descriptions-item>
     </el-descriptions>
 
@@ -308,6 +328,7 @@ import { listTags, searchTags } from '../api/tag'
 import { getProfile } from '../api/user'
 import {
   hrDeleteJob,
+  hrDownloadResumeAttachment,
   hrRemoveJob,
   hrListJobTags,
   hrListApplications,
@@ -316,6 +337,7 @@ import {
   hrSaveJobTags,
   hrUpdateApplyStatus
 } from '../api/job'
+import { downloadBlobResponse } from '../utils/download'
 
 const jobs = ref([])
 const tags = ref([])
@@ -330,6 +352,7 @@ const currentJob = ref(null)
 const applications = ref([])
 const currentResume = ref(null)
 const currentResumeTags = ref([])
+const currentApplyId = ref(null)
 const tagSearchKeyword = ref('')
 const searchedTags = ref([])
 const tagCollapseActive = ref([])
@@ -526,7 +549,20 @@ function resetApplyFilter() {
 function openResumeDetail(row) {
   currentResume.value = (row && row.resume) || null
   currentResumeTags.value = (row && row.resumeTags) || []
+  currentApplyId.value = (row && row.applyId) || null
   resumeVisible.value = true
+}
+
+function showResumeField(value) {
+  const v = value == null ? '' : String(value).trim()
+  return v ? v : '未上传简历'
+}
+
+async function downloadCurrentResumeAttachment() {
+  if (!currentApplyId.value) return
+  const resp = await hrDownloadResumeAttachment(currentApplyId.value)
+  const fallback = (currentResume.value && currentResume.value.fileName) || 'resume'
+  downloadBlobResponse(resp, fallback)
 }
 
 function toAbsoluteUrl(path) {
@@ -604,6 +640,10 @@ onMounted(async () => {
   font-size: 12px;
   color: #909399;
   line-height: 22px;
+}
+
+.empty-text {
+  color: #909399;
 }
 
 .resume-tag-block {

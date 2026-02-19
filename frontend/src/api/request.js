@@ -18,6 +18,9 @@ request.interceptors.request.use((config) => {
 
 request.interceptors.response.use(
   (resp) => {
+    if (resp && resp.config && (resp.config.responseType === 'blob' || resp.config.responseType === 'arraybuffer')) {
+      return resp
+    }
     const data = resp.data
     if (data && typeof data.code !== 'undefined') {
       if (data.code === 0) return data.data

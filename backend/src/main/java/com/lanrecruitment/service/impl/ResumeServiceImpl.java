@@ -22,6 +22,9 @@ import com.lanrecruitment.service.ResumeService;
 import com.lanrecruitment.domain.vo.ResumeDetailVO;
 import com.lanrecruitment.domain.vo.ResumeTagVO;
 import com.lanrecruitment.domain.vo.ResumeVO;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +33,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -186,6 +195,42 @@ public class ResumeServiceImpl implements ResumeService {
         return toVO(r);
     }
 
+    @Override
+    public ResponseEntity<Resource> downloadMyAttachment(Long resumeId) {
+        Resume r = getMyResume(resumeId);
+        if (r.getFileUrl() == null || r.getFileUrl().trim().isEmpty()) {
+            throw new BizException(ErrorCode.FILE_NOT_FOUND);
+        }
+        Path path = fileStorageService.resolveResumeAttachmentPath(r.getFileUrl());
+        if (path == null) {
+            throw new BizException(ErrorCode.FILE_NOT_FOUND);
+        }
+        return buildDownloadResponse(path, r.getFileName());
+    }
+
+    @Override
+    public ResumeVO deleteMyAttachment(Long resumeId) {
+        Resume r = getMyResume(resumeId);
+        String fileUrl = r.getFileUrl();
+        if (fileUrl != null && !fileUrl.trim().isEmpty()) {
+            Path path = fileStorageService.resolveResumeAttachmentPath(fileUrl);
+            if (path != null) {
+                try {
+                    Files.deleteIfExists(path);
+                } catch (Exception e) {
+                    throw new BizException(ErrorCode.FILE_DELETE_FAILED);
+                }
+            }
+        }
+        r.setFileUrl(null);
+        r.setFileName(null);
+        r.setFileSize(null);
+        r.setFileType(null);
+        r.setUpdateTime(LocalDateTime.now());
+        resumeMapper.updateById(r);
+        return toVO(r);
+    }
+
     private List<ResumeTagVO> buildTagVOList(Long resumeId) {
         List<ResumeTag> rts = resumeTagMapper.selectList(new LambdaQueryWrapper<ResumeTag>()
                 .eq(ResumeTag::getResumeId, resumeId));
@@ -268,5 +313,36 @@ public class ResumeServiceImpl implements ResumeService {
             return "";
         }
         return filename.substring(idx + 1).toLowerCase(Locale.ROOT);
+    }
+
+    private ResponseEntity<Resource> buildDownloadResponse(Path path, String downloadName) {
+        try {
+            if (!Files.exists(path) || !Files.isReadable(path)) {
+                throw new BizException(ErrorCode.FILE_NOT_FOUND);
+            }
+            Resource resource = new UrlResource(path.toUri());
+            if (!resource.exists() || !resource.isReadable()) {
+                throw new BizException(ErrorCode.FILE_NOT_FOUND);
+            }
+            String filename = (downloadName == null || downloadName.trim().isEmpty())
+                    ? path.getFileName().toString()
+                    : downloadName;
+            String contentType = Files.probeContentType(path);
+            MediaType mediaType = contentType == null
+                    ? MediaType.APPLICATION_OCTET_STREAM
+                    : MediaType.parseMediaType(contentType);
+            return ResponseEntity.ok()
+                    .contentType(mediaType)
+                    .contentLength(Files.size(path))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
+                            .filename(filename, StandardCharsets.UTF_8)
+                            .build()
+                            .toString())
+                    .body(resource);
+        } catch (BizException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BizException(ErrorCode.FILE_READ_FAILED);
+        }
     }
 }

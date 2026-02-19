@@ -31,8 +31,12 @@ import com.lanrecruitment.mapper.ResumeMapper;
 import com.lanrecruitment.mapper.ResumeTagMapper;
 import com.lanrecruitment.mapper.SysUserMapper;
 import com.lanrecruitment.mapper.TagMapper;
+import com.lanrecruitment.service.FileStorageService;
 import com.lanrecruitment.service.HrJobService;
 import com.lanrecruitment.service.MatchService;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,6 +45,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +66,7 @@ public class HrJobServiceImpl implements HrJobService {
     private final SysUserMapper sysUserMapper;
     private final TagMapper tagMapper;
     private final MatchService matchService;
+    private final FileStorageService fileStorageService;
 
     public HrJobServiceImpl(
             JobMapper jobMapper,
@@ -66,7 +77,8 @@ public class HrJobServiceImpl implements HrJobService {
             ResumeTagMapper resumeTagMapper,
             SysUserMapper sysUserMapper,
             TagMapper tagMapper,
-            MatchService matchService
+            MatchService matchService,
+            FileStorageService fileStorageService
     ) {
         this.jobMapper = jobMapper;
         this.jobTagMapper = jobTagMapper;
@@ -77,6 +89,7 @@ public class HrJobServiceImpl implements HrJobService {
         this.sysUserMapper = sysUserMapper;
         this.tagMapper = tagMapper;
         this.matchService = matchService;
+        this.fileStorageService = fileStorageService;
     }
 
     @Override
@@ -220,15 +233,27 @@ public class HrJobServiceImpl implements HrJobService {
                 .eq(JobApply::getJobId, job.getId())
                 .orderByDesc(JobApply::getId));
         Set<Long> resumeIds = new HashSet<>();
+        Set<Long> userIds = new HashSet<>();
         for (JobApply a : applies) {
             if (a.getResumeId() != null) {
                 resumeIds.add(a.getResumeId());
+            }
+            if (a.getUserId() != null) {
+                userIds.add(a.getUserId());
             }
         }
         List<Resume> resumes = resumeIds.isEmpty() ? new ArrayList<>() : resumeMapper.selectBatchIds(resumeIds);
         Map<Long, Resume> resumeMap = new HashMap<>();
         for (Resume r : resumes) {
             resumeMap.put(r.getId(), r);
+        }
+
+        Map<Long, SysUser> userMap = new HashMap<>();
+        if (!userIds.isEmpty()) {
+            List<SysUser> users = sysUserMapper.selectBatchIds(userIds);
+            for (SysUser u : users) {
+                userMap.put(u.getId(), u);
+            }
         }
 
         Map<Long, List<ResumeTagVO>> resumeTagMap = new HashMap<>();
@@ -266,6 +291,8 @@ public class HrJobServiceImpl implements HrJobService {
             vo.setApplyId(a.getId());
             vo.setApplyStatus(a.getStatus());
             vo.setApplyTime(a.getCreatedAt());
+            SysUser user = userMap.get(a.getUserId());
+            vo.setApplicantPhone(user == null ? null : user.getPhone());
 
             Resume r = resumeMap.get(a.getResumeId());
             if (r != null) {
@@ -295,6 +322,27 @@ public class HrJobServiceImpl implements HrJobService {
         }
         apply.setStatus(s);
         jobApplyMapper.updateById(apply);
+    }
+
+    @Override
+    public ResponseEntity<Resource> downloadResumeAttachment(Long applyId) {
+        JobApply apply = jobApplyMapper.selectById(applyId);
+        if (apply == null) {
+            throw new BizException(ErrorCode.APPLY_RECORD_NOT_FOUND);
+        }
+        getMyJob(apply.getJobId());
+        Resume r = resumeMapper.selectById(apply.getResumeId());
+        if (r == null) {
+            throw new BizException(ErrorCode.RESUME_NOT_FOUND);
+        }
+        if (r.getFileUrl() == null || r.getFileUrl().trim().isEmpty()) {
+            throw new BizException(ErrorCode.FILE_NOT_FOUND);
+        }
+        Path path = fileStorageService.resolveResumeAttachmentPath(r.getFileUrl());
+        if (path == null) {
+            throw new BizException(ErrorCode.FILE_NOT_FOUND);
+        }
+        return buildDownloadResponse(path, r.getFileName());
     }
 
     private Job getMyJob(Long jobId) {
@@ -328,5 +376,36 @@ public class HrJobServiceImpl implements HrJobService {
         vo.setCreateTime(r.getCreateTime());
         vo.setUpdateTime(r.getUpdateTime());
         return vo;
+    }
+
+    private ResponseEntity<Resource> buildDownloadResponse(Path path, String downloadName) {
+        try {
+            if (!Files.exists(path) || !Files.isReadable(path)) {
+                throw new BizException(ErrorCode.FILE_NOT_FOUND);
+            }
+            Resource resource = new UrlResource(path.toUri());
+            if (!resource.exists() || !resource.isReadable()) {
+                throw new BizException(ErrorCode.FILE_NOT_FOUND);
+            }
+            String filename = (downloadName == null || downloadName.trim().isEmpty())
+                    ? path.getFileName().toString()
+                    : downloadName;
+            String contentType = Files.probeContentType(path);
+            MediaType mediaType = contentType == null
+                    ? MediaType.APPLICATION_OCTET_STREAM
+                    : MediaType.parseMediaType(contentType);
+            return ResponseEntity.ok()
+                    .contentType(mediaType)
+                    .contentLength(Files.size(path))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
+                            .filename(filename, StandardCharsets.UTF_8)
+                            .build()
+                            .toString())
+                    .body(resource);
+        } catch (BizException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BizException(ErrorCode.FILE_READ_FAILED);
+        }
     }
 }

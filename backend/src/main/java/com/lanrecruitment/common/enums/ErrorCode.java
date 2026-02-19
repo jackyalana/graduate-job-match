@@ -50,7 +50,11 @@ public enum ErrorCode {
     FILE_EMPTY(400, "文件不能为空"),
     FILE_TOO_LARGE(400, "文件过大"),
     FILE_TYPE_NOT_SUPPORTED(400, "文件类型不支持"),
-    FILE_SAVE_FAILED(500, "文件保存失败");
+    FILE_SAVE_FAILED(500, "文件保存失败"),
+    FILE_NOT_FOUND(404, "文件不存在"),
+    FILE_READ_FAILED(500, "文件读取失败"),
+    FILE_DELETE_FAILED(500, "文件删除失败"),
+    FILE_PATH_INVALID(400, "文件路径不合法");
 
     private final int code;
     private final String message;

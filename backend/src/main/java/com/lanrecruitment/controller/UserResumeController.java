@@ -9,6 +9,8 @@ import com.lanrecruitment.domain.vo.ResumeDetailVO;
 import com.lanrecruitment.domain.vo.ResumeVO;
 import java.util.List;
 import javax.validation.Valid;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,5 +70,14 @@ public class UserResumeController {
     ) {
         return Response.ok(resumeService.uploadAttachment(resumeId, file));
     }
-}
 
+    @GetMapping("/api/user/resume/file/download")
+    public ResponseEntity<Resource> downloadAttachment(@RequestParam("resumeId") Long resumeId) {
+        return resumeService.downloadMyAttachment(resumeId);
+    }
+
+    @PostMapping("/api/user/resume/file/delete")
+    public Response<ResumeVO> deleteAttachment(@RequestParam("resumeId") Long resumeId) {
+        return Response.ok(resumeService.deleteMyAttachment(resumeId));
+    }
+}

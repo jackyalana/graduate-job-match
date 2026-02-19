@@ -116,6 +116,29 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-divider content-position="left">附件简历</el-divider>
+        <el-form-item label="附件简历">
+          <div class="attach-row">
+            <div class="attach-info">
+              <div v-if="editForm.fileUrl">
+                <div class="attach-name">{{ editForm.fileName || editForm.fileUrl }}</div>
+                <div v-if="editForm.fileSize" class="attach-meta">{{ formatBytes(editForm.fileSize) }}</div>
+              </div>
+              <div v-else class="attach-empty">未上传</div>
+            </div>
+            <div class="attach-actions">
+              <el-upload :show-file-list="false" :before-upload="beforeResumeUpload" :http-request="doUploadResume">
+                <el-button size="small" :loading="uploadingResume">上传/替换</el-button>
+              </el-upload>
+              <el-button size="small" :disabled="!editForm.fileUrl" @click="downloadAttachment">下载</el-button>
+              <el-popconfirm title="确认删除该附件？" @confirm="deleteAttachment">
+                <template #reference>
+                  <el-button size="small" type="danger" plain :disabled="!editForm.fileUrl">删除</el-button>
+                </template>
+              </el-popconfirm>
+            </div>
+          </div>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="save">保存</el-button>
         </el-form-item>
@@ -285,7 +308,8 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import { listTags, searchTags } from '../api/tag'
-import { deleteResume, listMyResumes, saveResume, saveResumeTags, setDefaultResume, getResumeDetail } from '../api/resume'
+import { deleteResume, listMyResumes, saveResume, saveResumeTags, setDefaultResume, getResumeDetail, uploadResumeAttachment, downloadMyResumeAttachment, deleteMyResumeAttachment } from '../api/resume'
+import { downloadBlobResponse } from '../utils/download'
 
 const resumes = ref([])
 const tags = ref([])
@@ -297,6 +321,7 @@ const currentResume = ref(null)
 const tagSearchKeyword = ref('')
 const searchedTags = ref([])
 const tagCollapseActive = ref([])
+const uploadingResume = ref(false)
 
 const editForm = reactive({
   id: null,
@@ -405,6 +430,65 @@ async function saveCreate() {
   ElMessage.success('保存成功')
   createVisible.value = false
   await loadResumes()
+}
+
+function beforeResumeUpload(file) {
+  if (!editForm.id) {
+    ElMessage.error('请先保存简历后再上传附件')
+    return false
+  }
+  const name = (file && file.name) || ''
+  const ext = name.includes('.') ? name.split('.').pop().toLowerCase() : ''
+  const allowed = ['pdf', 'jpg', 'jpeg', 'png']
+  if (!allowed.includes(ext)) {
+    ElMessage.error('附件仅支持 pdf/jpg/jpeg/png')
+    return false
+  }
+  const max = 10 * 1024 * 1024
+  if (file.size > max) {
+    ElMessage.error('附件大小不能超过10MB')
+    return false
+  }
+  return true
+}
+
+async function doUploadResume(options) {
+  uploadingResume.value = true
+  try {
+    const res = await uploadResumeAttachment(editForm.id, options.file)
+    Object.assign(editForm, res || {})
+    ElMessage.success('附件已上传')
+    options.onSuccess(res)
+  } catch (e) {
+    options.onError(e)
+  } finally {
+    uploadingResume.value = false
+  }
+}
+
+async function downloadAttachment() {
+  if (!editForm.id) return
+  const resp = await downloadMyResumeAttachment(editForm.id)
+  downloadBlobResponse(resp, editForm.fileName || 'resume')
+}
+
+async function deleteAttachment() {
+  if (!editForm.id) return
+  const res = await deleteMyResumeAttachment(editForm.id)
+  Object.assign(editForm, res || {})
+  ElMessage.success('附件已删除')
+}
+
+function formatBytes(value) {
+  const num = Number(value)
+  if (!num || Number.isNaN(num)) return ''
+  if (num < 1024) return `${num} B`
+  const kb = num / 1024
+  if (kb < 1024) return `${kb.toFixed(1)} KB`
+  const mb = kb / 1024
+  if (mb < 1024) return `${mb.toFixed(1)} MB`
+  const gb = mb / 1024
+  return `${gb.toFixed(1)} GB`
 }
 
 async function remove(row) {
@@ -519,5 +603,40 @@ onMounted(async () => {
 
 .tag-section {
   margin-bottom: 16px;
+}
+
+.attach-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.attach-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.attach-name {
+  font-size: 13px;
+  color: #303133;
+}
+
+.attach-meta {
+  font-size: 12px;
+  color: #909399;
+}
+
+.attach-empty {
+  font-size: 13px;
+  color: #909399;
+}
+
+.attach-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 </style>
