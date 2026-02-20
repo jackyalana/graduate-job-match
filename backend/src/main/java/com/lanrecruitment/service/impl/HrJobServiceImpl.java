@@ -6,9 +6,12 @@ import com.lanrecruitment.common.enums.ApplyStatus;
 import com.lanrecruitment.common.enums.AuditStatus;
 import com.lanrecruitment.common.enums.CommonStatus;
 import com.lanrecruitment.common.enums.ErrorCode;
+import com.lanrecruitment.common.enums.TagType;
 import com.lanrecruitment.domain.dto.ApplyStatusUpdateDTO;
 import com.lanrecruitment.domain.dto.IdDTO;
 import com.lanrecruitment.domain.dto.JobSaveDTO;
+import com.lanrecruitment.domain.dto.JobTagItemDTO;
+import com.lanrecruitment.domain.dto.JobTagSaveDTO;
 import com.lanrecruitment.domain.entity.Job;
 import com.lanrecruitment.domain.entity.JobApply;
 import com.lanrecruitment.domain.entity.JobTag;
@@ -224,6 +227,56 @@ public class HrJobServiceImpl implements HrJobService {
             res.add(vo);
         }
         return res;
+    }
+
+    @Transactional
+    @Override
+    public void saveJobTags(JobTagSaveDTO dto) {
+        Job job = getMyJob(dto.getJobId());
+        Long jobId = job.getId();
+        if (jobId == null) {
+            throw new BizException(ErrorCode.JOB_NOT_FOUND);
+        }
+
+        jobTagMapper.delete(new LambdaQueryWrapper<JobTag>().eq(JobTag::getJobId, jobId));
+        matchScoreMapper.delete(new LambdaQueryWrapper<MatchScore>().eq(MatchScore::getJobId, jobId));
+
+        List<JobTagItemDTO> items = dto.getItems();
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+
+        Set<Long> tagIds = new HashSet<>();
+        for (JobTagItemDTO item : items) {
+            if (item.getTagId() != null) {
+                tagIds.add(item.getTagId());
+            }
+        }
+        List<Tag> tags = tagIds.isEmpty() ? new ArrayList<>() : tagMapper.selectBatchIds(tagIds);
+        Map<Long, Tag> tagMap = new HashMap<>();
+        for (Tag t : tags) {
+            tagMap.put(t.getId(), t);
+        }
+
+        for (JobTagItemDTO item : items) {
+            Tag t = tagMap.get(item.getTagId());
+            if (t == null) {
+                continue;
+            }
+            int base = t.getBaseWeight() == null ? 1 : t.getBaseWeight();
+            int proficiency = item.getProficiency() == null ? 1 : item.getProficiency();
+            int weight = base;
+            if (TagType.isSkill(t.getTagType())) {
+                weight = base * proficiency;
+            }
+
+            JobTag jt = new JobTag();
+            jt.setJobId(jobId);
+            jt.setTagId(item.getTagId());
+            jt.setProficiency(TagType.isSkill(t.getTagType()) ? proficiency : null);
+            jt.setWeight(weight);
+            jobTagMapper.insert(jt);
+        }
     }
 
     @Override
