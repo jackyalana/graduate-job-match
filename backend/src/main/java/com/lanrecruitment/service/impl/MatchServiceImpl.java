@@ -43,14 +43,20 @@ public class MatchServiceImpl implements MatchService {
         if (cached != null) {
             return cached;
         }
+
+        MatchScore exists = matchScoreMapper.selectOne(new LambdaQueryWrapper<MatchScore>()
+                .eq(MatchScore::getResumeId, resumeId)
+                .eq(MatchScore::getJobId, jobId));
+        if (exists != null && exists.getScore() != null) {
+            matchScoreCache.put(resumeId, jobId, exists.getScore());
+            return exists.getScore();
+        }
+
         Map<Long, Integer> resumeVec = loadResumeVector(resumeId);
         Map<Long, Integer> jobVec = loadJobVector(jobId);
         BigDecimal score = cosine(resumeVec, jobVec);
         matchScoreCache.put(resumeId, jobId, score);
 
-        MatchScore exists = matchScoreMapper.selectOne(new LambdaQueryWrapper<MatchScore>()
-                .eq(MatchScore::getResumeId, resumeId)
-                .eq(MatchScore::getJobId, jobId));
         if (exists == null) {
             MatchScore ms = new MatchScore();
             ms.setResumeId(resumeId);

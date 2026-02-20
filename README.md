@@ -24,7 +24,7 @@
 
 ### 匹配分缓存（memory / redis 可切换）
 
-为降低重复计算与提升接口可用性，系统对 `(resumeId, jobId)` 的匹配分进行缓存：`computeAndSave` 会优先命中缓存，未命中才会读取 `resume_tag/job_tag` 并计算余弦相似度。
+为降低重复计算与提升接口可用性，系统对 `(resumeId, jobId)` 的匹配分进行二级缓存：`computeAndSave` 先读取内存/Redis 缓存，未命中则读取数据库表 `match_score`，两者都未命中才会读取 `resume_tag/job_tag` 并计算余弦相似度。
 
 - 缓存开关：`lan.match.cache.store=memory|redis`（默认 memory）
 - 过期时间：静态常量（见 `backend/src/main/java/com/lanrecruitment/cache/MatchScoreCacheConstants.java`）
