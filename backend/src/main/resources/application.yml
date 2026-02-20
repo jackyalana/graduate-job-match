@@ -37,6 +37,9 @@ sa-token:
 lan:
   sa-token:
     store: memory
+  match:
+    cache:
+      store: memory
   email:
     host:
     from:

@@ -1,6 +1,7 @@
 package com.lanrecruitment.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lanrecruitment.cache.MatchScoreCache;
 import com.lanrecruitment.domain.entity.JobTag;
 import com.lanrecruitment.domain.entity.MatchScore;
 import com.lanrecruitment.domain.entity.ResumeTag;
@@ -22,22 +23,40 @@ public class MatchServiceImpl implements MatchService {
     private final ResumeTagMapper resumeTagMapper;
     private final JobTagMapper jobTagMapper;
     private final MatchScoreMapper matchScoreMapper;
+    private final MatchScoreCache matchScoreCache;
 
-    public MatchServiceImpl(ResumeTagMapper resumeTagMapper, JobTagMapper jobTagMapper, MatchScoreMapper matchScoreMapper) {
+    public MatchServiceImpl(
+            ResumeTagMapper resumeTagMapper,
+            JobTagMapper jobTagMapper,
+            MatchScoreMapper matchScoreMapper,
+            MatchScoreCache matchScoreCache
+    ) {
         this.resumeTagMapper = resumeTagMapper;
         this.jobTagMapper = jobTagMapper;
         this.matchScoreMapper = matchScoreMapper;
+        this.matchScoreCache = matchScoreCache;
     }
 
     @Override
     public BigDecimal computeAndSave(Long resumeId, Long jobId) {
-        Map<Long, Integer> resumeVec = loadResumeVector(resumeId);
-        Map<Long, Integer> jobVec = loadJobVector(jobId);
-        BigDecimal score = cosine(resumeVec, jobVec);
+        BigDecimal cached = matchScoreCache.get(resumeId, jobId);
+        if (cached != null) {
+            return cached;
+        }
 
         MatchScore exists = matchScoreMapper.selectOne(new LambdaQueryWrapper<MatchScore>()
                 .eq(MatchScore::getResumeId, resumeId)
                 .eq(MatchScore::getJobId, jobId));
+        if (exists != null && exists.getScore() != null) {
+            matchScoreCache.put(resumeId, jobId, exists.getScore());
+            return exists.getScore();
+        }
+
+        Map<Long, Integer> resumeVec = loadResumeVector(resumeId);
+        Map<Long, Integer> jobVec = loadJobVector(jobId);
+        BigDecimal score = cosine(resumeVec, jobVec);
+        matchScoreCache.put(resumeId, jobId, score);
+
         if (exists == null) {
             MatchScore ms = new MatchScore();
             ms.setResumeId(resumeId);
@@ -120,4 +139,3 @@ public class MatchServiceImpl implements MatchService {
         return BigDecimal.valueOf(score).setScale(4, RoundingMode.HALF_UP);
     }
 }
-

@@ -11,16 +11,13 @@
 - `/scripts`：一键启动脚本
 - `/docs`：需求与规范文档
 
-## 推荐算法实现
+## 推荐与匹配算法
 
-系统内的“岗位推荐 / 简历筛选排序”基于简历标签与岗位标签计算匹配度，并按匹配度从高到低排序展示。
+系统内的“岗位推荐 / 简历筛选排序”基于标签向量相似度：将简历/岗位标签映射为稀疏向量 `{tagId -> weight}`，用余弦相似度计算匹配分（保留 4 位小数），并按分数从高到低排序；当用户无可用简历时退化为随机推荐。
 
-- 向量定义：将简历与岗位都表示为稀疏向量 `{tagId -> weight}`（数据来自 `resume_tag` / `job_tag`）
-- 权重策略：标签配置包含 `baseWeight`；简历技能标签（SKILL）会结合熟练度 `proficiency` 放大权重（`baseWeight * proficiency`），非技能类按 `baseWeight`
-- 匹配度计算：使用余弦相似度 `score = dot(a,b) / (|a|*|b|)`，结果保留 4 位小数（核心实现见 `backend/src/main/java/com/lanrecruitment/service/impl/MatchServiceImpl.java`）
-- 推荐流程：按筛选条件生成候选岗位集合（默认取前 200 个候选），逐个计算匹配分并落库（`match_score`），再按 `matchScore` 倒序返回
-- HR 侧排序：HR 查看岗位投递列表时，也会为每份投递简历计算匹配分并按分数倒序排序
-- 兜底策略：当用户无可用简历时，推荐接口退化为对候选岗位随机排序返回（不计算匹配分）
+为减少重复计算，匹配分采用二级缓存：先读内存/Redis 缓存，未命中再读数据库表 `match_score`，两者都未命中才重新计算；当简历标签或岗位标签变化时会清理相关缓存与 `match_score`，确保下一次请求重新匹配。
+
+核心实现：`backend/src/main/java/com/lanrecruitment/service/impl/MatchServiceImpl.java`
 
 ## 后端启动
 
@@ -46,6 +43,10 @@ lan:
   # Sa-Token 登录态存储方式：memory（默认）/ redis
   sa-token:
     store: redis
+  # 匹配分缓存：memory（默认）/ redis
+  match:
+    cache:
+      store: redis
   # 配置邮箱服务
   email:
     host: # 你的 SMTP 服务器地址
