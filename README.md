@@ -22,6 +22,15 @@
 - HR 侧排序：HR 查看岗位投递列表时，也会为每份投递简历计算匹配分并按分数倒序排序
 - 兜底策略：当用户无可用简历时，推荐接口退化为对候选岗位随机排序返回（不计算匹配分）
 
+### 匹配分缓存（memory / redis 可切换）
+
+为降低重复计算与提升接口可用性，系统对 `(resumeId, jobId)` 的匹配分进行缓存：`computeAndSave` 会优先命中缓存，未命中才会读取 `resume_tag/job_tag` 并计算余弦相似度。
+
+- 缓存开关：`lan.match.cache.store=memory|redis`（默认 memory）
+- 过期时间：静态常量（见 `backend/src/main/java/com/lanrecruitment/cache/MatchScoreCacheConstants.java`）
+- key 前缀：`lan:recruitment:match:`（Redis 会额外维护 resume/job 反向索引用于失效）
+- 失效策略：简历标签或岗位标签变化时，会清理对应缓存并删除相关 `match_score` 记录，确保下一次请求重新匹配
+
 ## 后端启动
 
 1. 执行数据库初始化 SQL ：`/backend/sql/init.sql`
@@ -46,6 +55,10 @@ lan:
   # Sa-Token 登录态存储方式：memory（默认）/ redis
   sa-token:
     store: redis
+  # 匹配分缓存：memory（默认）/ redis
+  match:
+    cache:
+      store: redis
   # 配置邮箱服务
   email:
     host: # 你的 SMTP 服务器地址

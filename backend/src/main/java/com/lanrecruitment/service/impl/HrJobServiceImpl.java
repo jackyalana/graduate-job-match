@@ -2,6 +2,7 @@ package com.lanrecruitment.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lanrecruitment.cache.MatchScoreCache;
 import com.lanrecruitment.common.enums.ApplyStatus;
 import com.lanrecruitment.common.enums.AuditStatus;
 import com.lanrecruitment.common.enums.CommonStatus;
@@ -64,6 +65,7 @@ public class HrJobServiceImpl implements HrJobService {
     private final JobTagMapper jobTagMapper;
     private final JobApplyMapper jobApplyMapper;
     private final MatchScoreMapper matchScoreMapper;
+    private final MatchScoreCache matchScoreCache;
     private final ResumeMapper resumeMapper;
     private final ResumeTagMapper resumeTagMapper;
     private final SysUserMapper sysUserMapper;
@@ -76,6 +78,7 @@ public class HrJobServiceImpl implements HrJobService {
             JobTagMapper jobTagMapper,
             JobApplyMapper jobApplyMapper,
             MatchScoreMapper matchScoreMapper,
+            MatchScoreCache matchScoreCache,
             ResumeMapper resumeMapper,
             ResumeTagMapper resumeTagMapper,
             SysUserMapper sysUserMapper,
@@ -87,6 +90,7 @@ public class HrJobServiceImpl implements HrJobService {
         this.jobTagMapper = jobTagMapper;
         this.jobApplyMapper = jobApplyMapper;
         this.matchScoreMapper = matchScoreMapper;
+        this.matchScoreCache = matchScoreCache;
         this.resumeMapper = resumeMapper;
         this.resumeTagMapper = resumeTagMapper;
         this.sysUserMapper = sysUserMapper;
@@ -194,6 +198,7 @@ public class HrJobServiceImpl implements HrJobService {
         jobTagMapper.delete(new LambdaQueryWrapper<JobTag>().eq(JobTag::getJobId, jobId));
         jobApplyMapper.delete(new LambdaQueryWrapper<JobApply>().eq(JobApply::getJobId, jobId));
         matchScoreMapper.delete(new LambdaQueryWrapper<MatchScore>().eq(MatchScore::getJobId, jobId));
+        matchScoreCache.invalidateByJob(jobId);
         jobMapper.deleteById(jobId);
     }
 
@@ -240,6 +245,7 @@ public class HrJobServiceImpl implements HrJobService {
 
         jobTagMapper.delete(new LambdaQueryWrapper<JobTag>().eq(JobTag::getJobId, jobId));
         matchScoreMapper.delete(new LambdaQueryWrapper<MatchScore>().eq(MatchScore::getJobId, jobId));
+        matchScoreCache.invalidateByJob(jobId);
 
         List<JobTagItemDTO> items = dto.getItems();
         if (items == null || items.isEmpty()) {

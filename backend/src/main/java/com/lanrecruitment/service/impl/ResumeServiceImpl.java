@@ -3,6 +3,7 @@ package com.lanrecruitment.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.lanrecruitment.cache.MatchScoreCache;
 import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.common.enums.YesNo;
 import com.lanrecruitment.common.enums.TagType;
@@ -10,10 +11,12 @@ import com.lanrecruitment.domain.dto.IdDTO;
 import com.lanrecruitment.domain.dto.ResumeSaveDTO;
 import com.lanrecruitment.domain.dto.ResumeTagItemDTO;
 import com.lanrecruitment.domain.dto.ResumeTagSaveDTO;
+import com.lanrecruitment.domain.entity.MatchScore;
 import com.lanrecruitment.domain.entity.Resume;
 import com.lanrecruitment.domain.entity.ResumeTag;
 import com.lanrecruitment.domain.entity.Tag;
 import com.lanrecruitment.exception.BizException;
+import com.lanrecruitment.mapper.MatchScoreMapper;
 import com.lanrecruitment.mapper.ResumeMapper;
 import com.lanrecruitment.mapper.ResumeTagMapper;
 import com.lanrecruitment.mapper.TagMapper;
@@ -49,17 +52,23 @@ public class ResumeServiceImpl implements ResumeService {
     private final ResumeTagMapper resumeTagMapper;
     private final TagMapper tagMapper;
     private final FileStorageService fileStorageService;
+    private final MatchScoreMapper matchScoreMapper;
+    private final MatchScoreCache matchScoreCache;
 
     public ResumeServiceImpl(
             ResumeMapper resumeMapper,
             ResumeTagMapper resumeTagMapper,
             TagMapper tagMapper,
-            FileStorageService fileStorageService
+            FileStorageService fileStorageService,
+            MatchScoreMapper matchScoreMapper,
+            MatchScoreCache matchScoreCache
     ) {
         this.resumeMapper = resumeMapper;
         this.resumeTagMapper = resumeTagMapper;
         this.tagMapper = tagMapper;
         this.fileStorageService = fileStorageService;
+        this.matchScoreMapper = matchScoreMapper;
+        this.matchScoreCache = matchScoreCache;
     }
 
     @Override
@@ -134,6 +143,8 @@ public class ResumeServiceImpl implements ResumeService {
     public void delete(IdDTO dto) {
         Resume r = getMyResume(dto.getId());
         resumeTagMapper.delete(new LambdaQueryWrapper<ResumeTag>().eq(ResumeTag::getResumeId, r.getId()));
+        matchScoreMapper.delete(new LambdaQueryWrapper<MatchScore>().eq(MatchScore::getResumeId, r.getId()));
+        matchScoreCache.invalidateByResume(r.getId());
         resumeMapper.deleteById(r.getId());
     }
 
@@ -146,6 +157,8 @@ public class ResumeServiceImpl implements ResumeService {
     public void saveTags(ResumeTagSaveDTO dto) {
         Resume r = getMyResume(dto.getResumeId());
         resumeTagMapper.delete(new LambdaQueryWrapper<ResumeTag>().eq(ResumeTag::getResumeId, r.getId()));
+        matchScoreMapper.delete(new LambdaQueryWrapper<MatchScore>().eq(MatchScore::getResumeId, r.getId()));
+        matchScoreCache.invalidateByResume(r.getId());
 
         if (dto.getItems() == null || dto.getItems().isEmpty()) {
             return;
