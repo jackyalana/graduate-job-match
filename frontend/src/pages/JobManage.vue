@@ -80,8 +80,11 @@
         >
           <el-option v-for="t in tags" :key="t.id" :label="t.tagName" :value="t.id" />
         </el-select>
-        <el-input-number v-model="applyFilter.minScore" size="small" :min="0" :max="1" :step="0.05" controls-position="right" />
-        <div class="apply-filter-tip">最低匹配度</div>
+        <el-select v-model="applyFilter.matchLevel" size="small" clearable placeholder="匹配度" style="width: 140px">
+          <el-option label="高匹配" value="HIGH" />
+          <el-option label="中匹配" value="MEDIUM" />
+          <el-option label="低匹配" value="LOW" />
+        </el-select>
         <el-button size="small" @click="resetApplyFilter">重置</el-button>
       </div>
 
@@ -90,7 +93,13 @@
         <el-table-column prop="applicantPhone" label="手机号" width="130" />
         <el-table-column prop="resume.education" label="学历" width="110" />
         <el-table-column prop="resume.city" label="城市" width="100" />
-        <el-table-column prop="matchScore" label="匹配度" width="100" />
+        <el-table-column label="匹配度" width="100">
+          <template #default="{ row }">
+            <el-tag size="small" :type="matchTagFromScore(row.matchScore).type">
+              {{ matchTagFromScore(row.matchScore).label }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="标签" min-width="180">
           <template #default="{ row }">
             <el-tooltip v-if="resumeTagText(row.resumeTags)" :content="resumeTagText(row.resumeTags)" placement="top">
@@ -334,6 +343,7 @@ import {
   hrUpdateApplyStatus
 } from '../api/job'
 import { downloadBlobResponse } from '../utils/download'
+import { matchLevelFromScore, matchTagFromScore } from '../utils/match'
 
 const jobs = ref([])
 const tags = ref([])
@@ -367,7 +377,7 @@ const editForm = reactive({
 
 const checkedMap = reactive({})
 const proficiencyMap = reactive({})
-const applyFilter = reactive({ education: '', tagIds: [], minScore: null })
+const applyFilter = reactive({ education: '', tagIds: [], matchLevel: '' })
 
 const selectedTags = computed(() => {
   return tags.value.filter((t) => checkedMap[t.id])
@@ -413,12 +423,11 @@ const filteredApplications = computed(() => {
   const list = Array.isArray(applications.value) ? applications.value : []
   const edu = (applyFilter.education || '').trim()
   const tagIds = Array.isArray(applyFilter.tagIds) ? applyFilter.tagIds : []
-  const minScore = applyFilter.minScore
+  const matchLevel = (applyFilter.matchLevel || '').trim()
   return list.filter((a) => {
     if (edu && (!a.resume || a.resume.education !== edu)) return false
-    if (minScore != null) {
-      const s = a.matchScore == null ? null : Number(a.matchScore)
-      if (s == null || Number.isNaN(s) || s < minScore) return false
+    if (matchLevel) {
+      if (matchLevelFromScore(a.matchScore) !== matchLevel) return false
     }
     if (tagIds.length > 0) {
       const ids = (a.resumeTags || []).map((t) => t.tagId)
@@ -547,7 +556,7 @@ async function updateApply(row, status) {
 function resetApplyFilter() {
   applyFilter.education = ''
   applyFilter.tagIds = []
-  applyFilter.minScore = null
+  applyFilter.matchLevel = ''
 }
 
 function openResumeDetail(row) {
@@ -618,11 +627,6 @@ onMounted(async () => {
   align-items: center;
   gap: 10px;
   margin-bottom: 10px;
-}
-
-.apply-filter-tip {
-  font-size: 12px;
-  color: #606266;
 }
 
 .apply-tags {

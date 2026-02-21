@@ -71,12 +71,23 @@
         </el-tabs>
 
         <el-card v-for="job in displayJobs" :key="job.id" class="mb job-card" @click="openDetail(job)">
-          <div class="job-title">{{ job.jobName }}</div>
+          <div class="job-title-row">
+            <div class="job-title">{{ job.jobName }}</div>
+            <div class="job-salary">
+              <span class="salary-text">{{ job.salaryRange }}</span>
+              <el-tag
+                v-if="activeTab === 'recommend' && job.matchScore != null"
+                size="small"
+                :type="matchTagFromScore(job.matchScore).type"
+              >
+                {{ matchTagFromScore(job.matchScore).label }}
+              </el-tag>
+            </div>
+          </div>
           <div class="job-meta">
             <span v-if="job.companyName">公司：{{ job.companyName }}</span>
             <span>城市：{{ job.city }}</span>
             <span>类型：{{ job.jobType }}</span>
-            <span>薪资：{{ job.salaryRange }}</span>
             <span v-if="job.createdAt">发布时间：{{ formatDateTime(job.createdAt) }}</span>
           </div>
           <div class="job-desc">{{ job.description }}</div>
@@ -131,6 +142,7 @@ import { ArrowLeft } from '@element-plus/icons-vue'
 import { listJobs, recommendJobs as fetchRecommendJobsApi } from '../api/job'
 import { applyJob, listMyResumes } from '../api/resume'
 import { searchTags } from '../api/tag'
+import { matchTagFromScore } from '../utils/match'
 
 const filters = reactive({ 
   keyword: '', 
@@ -461,9 +473,31 @@ onBeforeUnmount(() => {
   border-color: #409eff;
 }
 
+.job-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
 .job-title {
   font-weight: 600;
-  margin-bottom: 8px;
+  min-width: 0;
+}
+
+.job-salary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.salary-text {
+  font-weight: 500;
+  font-size: small;
+  color: #419eff;
 }
 
 .job-meta {
