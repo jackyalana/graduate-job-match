@@ -1,4 +1,4 @@
-# lan-recruitment（毕业设计-智能招聘系统）
+# Lan-Recruitment（毕业设计-智能招聘系统）
 
 > 系统首页
 
