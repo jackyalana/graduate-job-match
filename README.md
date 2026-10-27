@@ -4,6 +4,7 @@
 > 启动、演示、迁移、实验和限制见 [交付报告](docs/DELIVERY_REPORT.md)；
 > 原项目与依赖来源见 [第三方声明](THIRD_PARTY_NOTICES.md)。
 > 本机演示使用隔离的合成数据库，并依次执行 V001 至 V004。
+> 可生成中文虚构岗位、学生和投递：[演示数据导入说明](docs/DEMO_DATA.md)。
 > M0 历史证据见 [M0 报告](docs/M0_REPORT.md) 与 [基线说明](docs/BASELINE.md)。
 > 以下保留上游 README；其示例默认库、默认账号与跳过测试命令不作为本次 demo 启动路线。
 

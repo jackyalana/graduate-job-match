@@ -24,6 +24,8 @@ python3 scripts/m1/start.py
 python3 scripts/m1/frontend.py
 ```
 
+需要丰富演示数据时，服务启动后按 [演示数据导入说明](DEMO_DATA.md) 执行 `python3 scripts/delivery/chinese_demo.py`。该脚本会提示设置五个既有演示账号的新密码；导入后请使用新密码，`local.py accounts` 仍显示旧的初始化密码，不适用于已重设的运行库。
+
 `setup.py` 每次创建独立全新合成库，不清理旧库；普通演示不应执行会修改数据的测试脚本。HR 登录发布岗位，管理员审核通过；学生填写画像和简历后浏览、收藏或推荐并投递；HR 在岗位管理中查看投递、邀请面试并发出录用；学生在投递记录中接受，三方可查看状态或统计。当前演示库中已有合成的已接受记录，也可创建新岗位重演。
 
 主要增量接口：学生 `POST /api/student/jobs/{id}/actions/{FAVORITE|HIDE}?active=true|false`、`POST /api/student/jobs/{id}/view`、`GET /api/student/job-actions`；投递使用旧 `POST /api/user/job/apply`，学生及企业状态更新分别为 `POST /api/user/apply/status`、`POST /api/hr/job/apply/status`，请求体 `{applyId,status,version}`；时间线分别为 `GET /api/user/apply/events?applyId=`、`GET /api/hr/job/apply/events?applyId=`，学生与对应 HR 分别通过 `/api/user/apply/attachment` 与 `/api/hr/resume/file/download` 鉴权获取快照。`GET /api/admin/statistics` 仅管理员。状态号 0–7 依次为已投递、已查看、面试中、拒绝、录用、接受、婉拒、撤回。既有推荐批次接口继续使用，算法版本变更会使旧批次失效。
