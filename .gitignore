@@ -45,3 +45,6 @@ pnpm-debug.log*
 .local/
 __pycache__/
 *.pyc
+
+# Developer-specific runtime overrides
+/backend/src/main/resources/application-local.yml
