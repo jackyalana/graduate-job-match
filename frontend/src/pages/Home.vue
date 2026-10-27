@@ -392,7 +392,10 @@ async function onApply(job) {
   }
   await applyJob(job.id, defaultResume.id)
   ElMessage.success('已投递')
-  if (activeTab.value === 'recommend') { ++recommendGeneration; activeRecommendAbort?.abort(); activeRecommendAbort = null; recommendLoadingMore.value = false; batchStale.value = true; recommendJobs.value = []; recommendHasMore.value = false; closeDetail() }
+  if (activeTab.value === 'recommend') {
+    closeDetail()
+    await resetAndFetchRecommendJobs()
+  }
 }
 
 async function loadMoreRecommendJobs(generation = recommendGeneration) {
