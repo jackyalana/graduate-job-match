@@ -63,7 +63,7 @@
               <el-option v-for="t in tagOptionsMap.EXPERIENCE" :key="t.id" :label="t.tagName" :value="t.id" />
             </el-select>
           </el-form-item>
-          <el-button type="primary" style="width: 100%" :loading="loading" @click="onSearch">查询</el-button>
+          <el-button type="primary" style="width: 100%" @click="onSearch">{{ loading ? '重新查询' : '查询' }}</el-button>
         </el-form>
       </el-card>
     </div>
@@ -171,7 +171,9 @@ const route = useRoute()
 const router = useRouter()
 
 const role = ref(localStorage.getItem('role') || 'USER')
-const loading = ref(false)
+const publicLoading = ref(false)
+const recommendLoading = ref(false)
+const loading = computed(() => role.value === 'USER' && activeTab.value === 'recommend' ? recommendLoading.value : publicLoading.value)
 const tagLoadingMap = reactive({ SKILL: false, INDUSTRY: false, EXPERIENCE: false })
 const tagOptionsMap = reactive({ SKILL: [], INDUSTRY: [], EXPERIENCE: [] })
 
@@ -186,7 +188,9 @@ const selectedJob = ref(null)
 
 const initialPageSize = 10
 const pageSize = 10
-const loadingMore = ref(false)
+const publicLoadingMore = ref(false)
+const recommendLoadingMore = ref(false)
+const loadingMore = computed(() => role.value === 'USER' && activeTab.value === 'recommend' ? recommendLoadingMore.value : publicLoadingMore.value)
 const publicHasMore = ref(true)
 const recommendHasMore = ref(true)
 const publicCursorId = ref(null)
@@ -195,6 +199,9 @@ const batchId = ref(null)
 const batchStale = ref(false)
 const loadMoreRef = ref(null)
 let observer = null
+let recommendGeneration = 0
+let activeRecommendAbort = null
+let detailGeneration = 0
 const scrollRoot = ref(null)
 const prefetchCount = ref(0)
 
@@ -229,7 +236,7 @@ function buildPublicParams() {
 }
 
 async function resetAndFetchPublicJobs() {
-  loading.value = true
+  publicLoading.value = true
   jobs.value = []
   publicCursorId.value = null
   publicHasMore.value = true
@@ -237,13 +244,13 @@ async function resetAndFetchPublicJobs() {
   try {
     await loadMore()
   } finally {
-    loading.value = false
+    publicLoading.value = false
   }
 }
 
 async function loadMorePublicJobs() {
-  if (!publicHasMore.value || loadingMore.value) return
-  loadingMore.value = true
+  if (!publicHasMore.value || publicLoadingMore.value) return
+  publicLoadingMore.value = true
   try {
     const list = await listJobs(buildPublicParams())
     const batch = Array.isArray(list) ? list : []
@@ -257,13 +264,17 @@ async function loadMorePublicJobs() {
       publicHasMore.value = false
     }
   } finally {
-    loadingMore.value = false
+    publicLoadingMore.value = false
   }
 }
 
 async function resetAndFetchRecommendJobs() {
   if (role.value !== 'USER') return
-  loading.value = true
+  const generation = ++recommendGeneration
+  activeRecommendAbort?.abort()
+  activeRecommendAbort = null
+  recommendLoadingMore.value = false
+  recommendLoading.value = true
   recommendJobs.value = []
   recommendOffset.value = 0
   batchId.value = null
@@ -271,17 +282,17 @@ async function resetAndFetchRecommendJobs() {
   recommendHasMore.value = true
   prefetchCount.value = 0
   try {
-    await loadMore()
+    await loadMoreRecommendJobs(generation)
   } catch (e) {
-    recommendJobs.value = []
+    if (generation === recommendGeneration) recommendJobs.value = []
   } finally {
-    loading.value = false
+    if (generation === recommendGeneration) recommendLoading.value = false
   }
 }
 
 async function onSearch() {
   router.push({ path: '/home', query: { keyword: filters.keyword || '' } })
-  selectedJob.value = null
+  closeDetail()
   if (role.value === 'USER' && activeTab.value === 'recommend') {
     await resetAndFetchRecommendJobs()
     return
@@ -303,7 +314,14 @@ async function onSearchTagsByType(tagType, query) {
 }
 
 async function onTabChange(name) {
-  selectedJob.value = null
+  closeDetail()
+  if (name !== 'recommend') {
+    ++recommendGeneration
+    activeRecommendAbort?.abort()
+    activeRecommendAbort = null
+    recommendLoadingMore.value = false
+    recommendLoading.value = false
+  }
   if (name === 'recommend' && role.value === 'USER') {
     await resetAndFetchRecommendJobs()
   }
@@ -318,13 +336,20 @@ function profileFieldName(value) { return ({ skills: '技能', expectedCategoryI
 function eligibilityReason(value) { return ({ FRESH_GRADUATES_NOT_ACCEPTED: '岗位不接收应届生', EDUCATION_REQUIREMENT_NOT_MET: '学历不满足要求', GRADUATION_YEAR_REQUIREMENT_NOT_MET: '毕业年份不满足要求', ALREADY_APPLIED: '已投递该岗位' })[value] || value }
 
 async function openDetail(job) {
+  const generation = ++detailGeneration
   selectedJob.value = { ...job }
   if (role.value === 'USER' && !job.match) {
-    selectedJob.value.match = await request.get(`/api/student/matches/${job.id}`)
+    try {
+      const match = await request.get(`/api/student/matches/${job.id}`, { isCurrentRequest: () => generation === detailGeneration })
+      if (generation === detailGeneration && selectedJob.value?.id === job.id) selectedJob.value.match = match
+    } catch (e) {
+      if (generation === detailGeneration) throw e
+    }
   }
 }
 
 function closeDetail() {
+  ++detailGeneration
   selectedJob.value = null
 }
 
@@ -349,12 +374,15 @@ async function onApply(job) {
   }
   await applyJob(job.id, defaultResume.id)
   ElMessage.success('已投递')
-  if (activeTab.value === 'recommend') { batchStale.value = true; recommendJobs.value = []; recommendHasMore.value = false; selectedJob.value = null }
+  if (activeTab.value === 'recommend') { ++recommendGeneration; activeRecommendAbort?.abort(); activeRecommendAbort = null; recommendLoadingMore.value = false; batchStale.value = true; recommendJobs.value = []; recommendHasMore.value = false; closeDetail() }
 }
 
-async function loadMoreRecommendJobs() {
-  if (!recommendHasMore.value || loadingMore.value) return
-  loadingMore.value = true
+async function loadMoreRecommendJobs(generation = recommendGeneration) {
+  if (generation !== recommendGeneration || !recommendHasMore.value || recommendLoadingMore.value) return
+  recommendLoadingMore.value = true
+  const controller = new AbortController()
+  activeRecommendAbort = controller
+  const config = { signal: controller.signal, isCurrentRequest: () => generation === recommendGeneration }
   try {
     const size = pageSize
     const params = {
@@ -368,11 +396,12 @@ async function loadMoreRecommendJobs() {
     let response
     if (!batchId.value) {
       delete params.pageSize
-      response = await request.post('/api/student/recommendation-batches', params)
-      batchId.value = response.batchId
+      response = await request.post('/api/student/recommendation-batches', params, config)
     } else {
-      response = await request.get(`/api/student/recommendation-batches/${batchId.value}`, { params: { page: Math.floor(recommendOffset.value / size) + 1, pageSize: size } })
+      response = await request.get(`/api/student/recommendation-batches/${batchId.value}`, { ...config, params: { page: Math.floor(recommendOffset.value / size) + 1, pageSize: size } })
     }
+    if (generation !== recommendGeneration) return
+    if (!batchId.value) batchId.value = response.batchId
     const batch = Array.isArray(response.items) ? response.items : []
     if (batch.length === 0) {
       recommendHasMore.value = false
@@ -384,13 +413,17 @@ async function loadMoreRecommendJobs() {
       recommendHasMore.value = false
     }
   } catch (e) {
+    if (generation !== recommendGeneration || controller.signal.aborted) return
     if (e.response?.data?.code === 'BATCH_STALE') {
       batchStale.value = true
       recommendHasMore.value = false
       recommendJobs.value = []
     } else throw e
   } finally {
-    loadingMore.value = false
+    if (generation === recommendGeneration && activeRecommendAbort === controller) {
+      activeRecommendAbort = null
+      recommendLoadingMore.value = false
+    }
   }
 }
 
@@ -443,7 +476,7 @@ watch(
   () => route.query.keyword,
   async (val) => {
     filters.keyword = val || ''
-    selectedJob.value = null
+    closeDetail()
     if (role.value === 'USER' && activeTab.value === 'recommend') {
       await resetAndFetchRecommendJobs()
       return
@@ -453,6 +486,9 @@ watch(
 )
 
 onBeforeUnmount(() => {
+  ++recommendGeneration
+  ++detailGeneration
+  activeRecommendAbort?.abort()
   if (observer) {
     observer.disconnect()
     observer = null

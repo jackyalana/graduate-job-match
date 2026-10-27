@@ -1,0 +1,5 @@
+PASS filter change starts Beijing while Shanghai is pending; old success/finally ignored
+PASS old page returns after refresh; list, batch ID and cursor remain from new batch
+PASS obsolete error/finally cannot overwrite new request state
+
+exit_code=0

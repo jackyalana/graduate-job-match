@@ -276,7 +276,7 @@ public class HrJobServiceImpl implements HrJobService {
                 tagIds.add(item.getTagId());
             }
         }
-        List<Tag> tags = tagIds.isEmpty() ? new ArrayList<>() : tagMapper.selectBatchIds(tagIds);
+        List<Tag> tags = tagIds.isEmpty() ? new ArrayList<>() : tagMapper.selectList(new LambdaQueryWrapper<Tag>().in(Tag::getId,tagIds).orderByAsc(Tag::getId).last("FOR UPDATE"));
         Map<Long, Tag> tagMap = new HashMap<>();
         for (Tag t : tags) {
             tagMap.put(t.getId(), t);
@@ -284,11 +284,10 @@ public class HrJobServiceImpl implements HrJobService {
 
         for (JobTagItemDTO item : items) {
             Tag t = tagMap.get(item.getTagId());
-            if (t == null) {
-                continue;
-            }
+            if (t == null || !Integer.valueOf(1).equals(t.getStatus())) throw new BizException(ErrorCode.TAG_NOT_FOUND);
             int base = t.getBaseWeight() == null ? 1 : t.getBaseWeight();
             int proficiency = item.getProficiency() == null ? 1 : item.getProficiency();
+            if (TagType.isSkill(t.getTagType()) && (proficiency < 1 || proficiency > 3)) throw new BizException(ErrorCode.VALIDATION_FAILED);
             int weight = base;
             if (TagType.isSkill(t.getTagType())) {
                 weight = base * proficiency;

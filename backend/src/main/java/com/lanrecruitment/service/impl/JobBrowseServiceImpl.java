@@ -75,7 +75,7 @@ public class JobBrowseServiceImpl implements JobBrowseService {
         if (jobType != null && !jobType.trim().isEmpty()) {
             qw.eq(Job::getJobType, jobType);
         }
-        List<Long> tagIdList = parseIds(tagIds);
+        List<Long> tagIdList = com.lanrecruitment.utils.TagIds.parse(tagIds);
         if (!tagIdList.isEmpty()) {
             List<Long> jobIds = jobTagMapper.selectList(new LambdaQueryWrapper<JobTag>().in(JobTag::getTagId, tagIdList))
                     .stream()
@@ -158,21 +158,4 @@ public class JobBrowseServiceImpl implements JobBrowseService {
         return vo;
     }
 
-    private List<Long> parseIds(String raw) {
-        if (raw == null || raw.trim().isEmpty()) {
-            return new ArrayList<>();
-        }
-        String[] parts = raw.split(",");
-        List<Long> res = new ArrayList<>();
-        for (String p : parts) {
-            if (p == null) continue;
-            String s = p.trim();
-            if (s.isEmpty()) continue;
-            try {
-                res.add(Long.parseLong(s));
-            } catch (Exception ignored) {
-            }
-        }
-        return res;
-    }
 }

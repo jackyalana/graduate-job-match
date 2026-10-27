@@ -28,6 +28,8 @@ public enum ErrorCode {
 
     TAG_ALREADY_EXISTS(400, "标签已存在"),
     TAG_NOT_FOUND(404, "标签不存在"),
+    TAG_IN_USE(409, "标签被简历、岗位或技能别名引用，无法删除、停用或修改类型"),
+    TAG_DATA_INVALID(409, "技能标签或别名数据不一致，请联系管理员维护"),
 
     NOTICE_NOT_FOUND(404, "公告不存在"),
 

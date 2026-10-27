@@ -18,6 +18,7 @@ request.interceptors.request.use((config) => {
 
 request.interceptors.response.use(
   (resp) => {
+    if (resp.config?.isCurrentRequest && !resp.config.isCurrentRequest()) return Promise.reject(new axios.CanceledError('stale request'))
     if (resp && resp.config && (resp.config.responseType === 'blob' || resp.config.responseType === 'arraybuffer')) {
       return resp
     }
@@ -37,6 +38,7 @@ request.interceptors.response.use(
     return data
   },
   async (error) => {
+    if (axios.isCancel(error) || (error.config?.isCurrentRequest && !error.config.isCurrentRequest())) return Promise.reject(error)
     const response = error.response
     let data = response && response.data
     if (data instanceof Blob && data.type.includes('json')) {

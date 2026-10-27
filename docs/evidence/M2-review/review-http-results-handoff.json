@@ -1,0 +1,503 @@
+{
+  "schema": "graduate_job_match_m1_runtime_9535ec0d",
+  "total": 71,
+  "tests": [
+    {
+      "name": "login student",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "login admin",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "login hr",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "batch valid None",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "legacy valid None",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "public valid None",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "batch valid ''",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "legacy valid ''",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "public valid ''",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "batch valid '   '",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "legacy valid '   '",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "public valid '   '",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "batch valid '1'",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "legacy valid '1'",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "public valid '1'",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "batch valid '1,2'",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "legacy valid '1,2'",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "public valid '1,2'",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "batch valid ' 1 , 2 '",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "legacy valid ' 1 , 2 '",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "public valid ' 1 , 2 '",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "batch invalid ,",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "legacy invalid ,",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "public invalid ,",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "batch invalid ,,",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "legacy invalid ,,",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "public invalid ,,",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "batch invalid 1,,2",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "legacy invalid 1,,2",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "public invalid 1,,2",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "batch invalid 1,",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "legacy invalid 1,",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "public invalid 1,",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "batch invalid  ,1",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "legacy invalid  ,1",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "public invalid  ,1",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "batch invalid abc",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "legacy invalid abc",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "public invalid abc",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "batch invalid 1,abc",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "legacy invalid 1,abc",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "public invalid 1,abc",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "batch invalid 0",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "legacy invalid 0",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "public invalid 0",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "batch invalid -1",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "legacy invalid -1",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "public invalid -1",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "batch invalid 9223372036854775808",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "legacy invalid 9223372036854775808",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "public invalid 9223372036854775808",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "create Alias Source",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "create Alias Middle",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "list tags",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "reject delete source",
+      "expected": 409,
+      "actual": 409,
+      "code": "TAG_IN_USE",
+      "requestId": true
+    },
+    {
+      "name": "reject disable source",
+      "expected": 409,
+      "actual": 409,
+      "code": "TAG_IN_USE",
+      "requestId": true
+    },
+    {
+      "name": "reject type change source",
+      "expected": 409,
+      "actual": 409,
+      "code": "TAG_IN_USE",
+      "requestId": true
+    },
+    {
+      "name": "reject delete chain node",
+      "expected": 409,
+      "actual": 409,
+      "code": "TAG_IN_USE",
+      "requestId": true
+    },
+    {
+      "name": "reject disable chain node",
+      "expected": 409,
+      "actual": 409,
+      "code": "TAG_IN_USE",
+      "requestId": true
+    },
+    {
+      "name": "reject type change chain node",
+      "expected": 409,
+      "actual": 409,
+      "code": "TAG_IN_USE",
+      "requestId": true
+    },
+    {
+      "name": "reject delete canonical",
+      "expected": 409,
+      "actual": 409,
+      "code": "TAG_IN_USE",
+      "requestId": true
+    },
+    {
+      "name": "reject disable canonical",
+      "expected": 409,
+      "actual": 409,
+      "code": "TAG_IN_USE",
+      "requestId": true
+    },
+    {
+      "name": "reject type change canonical",
+      "expected": 409,
+      "actual": 409,
+      "code": "TAG_IN_USE",
+      "requestId": true
+    },
+    {
+      "name": "safe rename and weight update",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "match still usable",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "recommendations still usable",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "HR matches still usable",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "referenced skill cannot be removed",
+      "expected": 409,
+      "actual": 409,
+      "code": "TAG_IN_USE",
+      "requestId": true
+    },
+    {
+      "name": "invalid skill proficiency rejected",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "corrupt out-of-band alias fails clearly",
+      "expected": 409,
+      "actual": 409,
+      "code": "TAG_DATA_INVALID",
+      "requestId": true
+    },
+    {
+      "name": "recommendation works after repair",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    }
+  ]
+}

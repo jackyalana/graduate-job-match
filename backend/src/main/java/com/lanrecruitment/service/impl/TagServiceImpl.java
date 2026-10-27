@@ -7,6 +7,9 @@ import com.lanrecruitment.common.enums.ErrorCode;
 import com.lanrecruitment.domain.dto.IdDTO;
 import com.lanrecruitment.domain.dto.TagSaveDTO;
 import com.lanrecruitment.domain.entity.Tag;
+import com.lanrecruitment.domain.entity.SkillTagAlias;
+import com.lanrecruitment.domain.entity.JobTag;
+import com.lanrecruitment.domain.entity.ResumeTag;
 import com.lanrecruitment.domain.vo.PageVO;
 import com.lanrecruitment.exception.BizException;
 import com.lanrecruitment.mapper.TagMapper;
@@ -19,9 +22,14 @@ import org.springframework.stereotype.Service;
 public class TagServiceImpl implements TagService {
 
     private final TagMapper tagMapper;
+    private final com.lanrecruitment.mapper.SkillTagAliasMapper aliases;
+    private final com.lanrecruitment.mapper.JobTagMapper jobTags;
+    private final com.lanrecruitment.mapper.ResumeTagMapper resumeTags;
 
-    public TagServiceImpl(TagMapper tagMapper) {
+    public TagServiceImpl(TagMapper tagMapper, com.lanrecruitment.mapper.SkillTagAliasMapper aliases,
+            com.lanrecruitment.mapper.JobTagMapper jobTags, com.lanrecruitment.mapper.ResumeTagMapper resumeTags) {
         this.tagMapper = tagMapper;
+        this.aliases=aliases; this.jobTags=jobTags; this.resumeTags=resumeTags;
     }
 
     @Override
@@ -89,6 +97,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public void save(TagSaveDTO dto) {
         if (dto.getId() == null) {
             Long cnt = tagMapper.selectCount(new LambdaQueryWrapper<Tag>()
@@ -107,9 +116,12 @@ public class TagServiceImpl implements TagService {
             return;
         }
 
-        Tag exists = tagMapper.selectById(dto.getId());
+        Tag exists = tagMapper.selectOne(new LambdaQueryWrapper<Tag>().eq(Tag::getId,dto.getId()).last("FOR UPDATE"));
         if (exists == null) {
             throw new BizException(ErrorCode.TAG_NOT_FOUND);
+        }
+        if (!java.util.Objects.equals(exists.getTagType(),dto.getTagType()) || !Integer.valueOf(1).equals(dto.getStatus())) {
+            assertNotReferenced(dto.getId());
         }
         exists.setTagName(dto.getTagName());
         exists.setTagType(dto.getTagType());
@@ -119,7 +131,18 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public void delete(IdDTO dto) {
+        Tag exists=tagMapper.selectOne(new LambdaQueryWrapper<Tag>().eq(Tag::getId,dto.getId()).last("FOR UPDATE"));
+        if (exists==null) throw new BizException(ErrorCode.TAG_NOT_FOUND);
+        assertNotReferenced(dto.getId());
         tagMapper.deleteById(dto.getId());
+    }
+
+    private void assertNotReferenced(Long id) {
+        if (aliases.selectCount(new LambdaQueryWrapper<SkillTagAlias>().eq(SkillTagAlias::getAliasTagId,id).or().eq(SkillTagAlias::getCanonicalTagId,id))>0
+                || jobTags.selectCount(new LambdaQueryWrapper<JobTag>().eq(JobTag::getTagId,id))>0
+                || resumeTags.selectCount(new LambdaQueryWrapper<ResumeTag>().eq(ResumeTag::getTagId,id))>0)
+            throw new BizException(ErrorCode.TAG_IN_USE);
     }
 }

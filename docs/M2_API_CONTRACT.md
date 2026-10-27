@@ -13,3 +13,7 @@
 批次项包含岗位字段和 `match`：`matchScore`、`recommendationScore`（均 0–100，一位小数）、`algorithmVersion`、`strategy`、`components`、`effectiveWeights`、`dimensions`、`dimensionWeights`、`matchedSkills`、`missingSkills`、`missingProfileFields`、`reasons`、`fallbackReason`。各分项四位小数，排序使用未舍入值。没有内容维度时匹配分为 null，策略 `HOT_FALLBACK`，只用热度排序。已填写而不匹配为 0。不可见岗位不因旧接口进入结果。
 
 资格原因：`FRESH_GRADUATES_NOT_ACCEPTED`、`EDUCATION_REQUIREMENT_NOT_MET`、`GRADUATION_YEAR_REQUIREMENT_NOT_MET`、`ALREADY_APPLIED`；缺失学历或毕业年放在 `missingProfileFields`。可见性失效时返回 404，不暴露隐蔽岗位详情。
+
+审核修复后的 `tagIds` 规则：缺省、null、空串或全空格表示不筛选；非空值必须是以英文逗号分隔的正整数，每项可有首尾空格，但禁止空元素、非数字、零、负数及超出 64 位范围。新批次、旧推荐及公共岗位列表共享校验，非法返回 422 `VALIDATION_FAILED`。
+
+管理员删除、停用或修改标签类型时，如果该标签被岗位、简历、别名来源或标准节点引用，返回 409 `TAG_IN_USE`，包含可读原因；别名链的中间节点也受保护。名称和权重等安全更新仍可进行。技能等级必须为 1–3；检测到历史数据损坏或无效别名时明确返回 409 `TAG_DATA_INVALID`，不会静默丢弃岗位技能要求。

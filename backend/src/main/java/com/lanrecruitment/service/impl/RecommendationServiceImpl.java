@@ -62,8 +62,8 @@ public class RecommendationServiceImpl implements RecommendationService {
         if(request.getKeyword()!=null && !request.getKeyword().trim().isEmpty())q.and(w->w.like(Job::getJobName,request.getKeyword()).or().like(Job::getDescription,request.getKeyword()));
         if(request.getCity()!=null && !request.getCity().trim().isEmpty())q.and(w->w.eq(Job::getCityCode,request.getCity()).or().eq(Job::getCity,request.getCity()));
         if(request.getJobType()!=null && !request.getJobType().trim().isEmpty())q.eq(Job::getJobType,request.getJobType());
-        if(request.getTagIds()!=null && !request.getTagIds().trim().isEmpty()) {
-            List<Long> selected=new ArrayList<>();for(String value:request.getTagIds().split(","))try{selected.add(Long.parseLong(value.trim()));}catch(NumberFormatException e){throw new BizException(ErrorCode.VALIDATION_FAILED);}
+        List<Long> selected=com.lanrecruitment.utils.TagIds.parse(request.getTagIds());
+        if(!selected.isEmpty()) {
             List<Long> matched=jobTags.selectList(new LambdaQueryWrapper<JobTag>().in(JobTag::getTagId,selected)).stream().map(JobTag::getJobId).distinct().collect(Collectors.toList());
             if(matched.isEmpty())q.eq(Job::getId,-1L);else q.in(Job::getId,matched);
         }
@@ -91,7 +91,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         for(SkillTagAlias alias:s.aliases) canonical.put(alias.getAliasTagId(),alias.getCanonicalTagId());
         for(Long alias:canonical.keySet()) {
             Tag source=tagMap.get(alias);
-            if(source==null || !"SKILL".equals(source.getTagType()))throw new IllegalStateException("Invalid skill alias source");
+            if(source==null || !"SKILL".equals(source.getTagType()) || !Integer.valueOf(1).equals(source.getStatus()))throw new BizException(ErrorCode.TAG_DATA_INVALID);
             canonicalSkill(alias,canonical,tagMap);
         }
         Map<Long,Integer> student=new LinkedHashMap<>();
@@ -107,7 +107,12 @@ public class RecommendationServiceImpl implements RecommendationService {
             Map<Long,ContentScorer.Requirement> required=new LinkedHashMap<>(); Map<Long,String> names=new HashMap<>();
             for(JobTag jt:grouped.getOrDefault(j.getId(),Collections.emptyList())) {
                 Tag t=tagMap.get(jt.getTagId());
-                if(t==null || !"SKILL".equals(t.getTagType()) || !Integer.valueOf(1).equals(t.getStatus()) || !valid(jt.getProficiency())) continue;
+                if(t==null) throw new BizException(ErrorCode.TAG_DATA_INVALID);
+                if(!"SKILL".equals(t.getTagType())) {
+                    if(jt.getProficiency()!=null) throw new BizException(ErrorCode.TAG_DATA_INVALID);
+                    continue;
+                }
+                if(!Integer.valueOf(1).equals(t.getStatus()) || !valid(jt.getProficiency())) throw new BizException(ErrorCode.TAG_DATA_INVALID);
                 int importance=t.getBaseWeight()==null ? 1 : Math.max(1,Math.min(3,t.getBaseWeight()));
                 Long key=canonicalSkill(t.getId(),canonical,tagMap); ContentScorer.Requirement prior=required.get(key);
                 required.put(key,new ContentScorer.Requirement(prior==null?jt.getProficiency():Math.max(prior.level,jt.getProficiency()),prior==null?importance:Math.max(prior.importance,importance))); names.put(key,tagMap.get(key).getTagName());
@@ -132,9 +137,9 @@ public class RecommendationServiceImpl implements RecommendationService {
     private static boolean valid(Integer value){return value!=null && value>=1 && value<=3;}
     private Long canonicalSkill(Long id,Map<Long,Long> aliases,Map<Long,Tag> tags) {
         Set<Long> seen=new HashSet<>(); Long current=id;
-        while(aliases.containsKey(current)) { if(!seen.add(current))throw new IllegalStateException("Cyclic skill alias"); current=aliases.get(current); }
+        while(aliases.containsKey(current)) { if(!seen.add(current))throw new BizException(ErrorCode.TAG_DATA_INVALID); current=aliases.get(current); }
         Tag result=tags.get(current);
-        if(result==null || !"SKILL".equals(result.getTagType()) || !Integer.valueOf(1).equals(result.getStatus()))throw new IllegalStateException("Invalid canonical skill alias");
+        if(result==null || !"SKILL".equals(result.getTagType()) || !Integer.valueOf(1).equals(result.getStatus()))throw new BizException(ErrorCode.TAG_DATA_INVALID);
         return current;
     }
     @org.springframework.scheduling.annotation.Scheduled(fixedDelay = 3600000L, initialDelay = 3600000L)
