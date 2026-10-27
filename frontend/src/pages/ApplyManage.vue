@@ -6,8 +6,10 @@
         <div class="filters">
           <el-select v-model="filterStatus" size="small" clearable placeholder="状态" style="width: 120px">
             <el-option label="已投递" :value="0" />
-            <el-option label="通过" :value="2" />
+            <el-option label="面试" :value="2" />
             <el-option label="拒绝" :value="3" />
+            <el-option label="录用" :value="4" />
+            <el-option label="已接受" :value="5" />
           </el-select>
           <el-input v-model="keyword" size="small" clearable placeholder="岗位关键词" style="width: 180px" @keyup.enter="load" />
         </div>
@@ -36,23 +38,17 @@
           </div>
         </div>
 
-        <div class="progress">
-          <div class="progress-item is-active">
-            <div class="dot" />
-            <div class="label">已投递</div>
-          </div>
-          <div class="line" :class="{ done: isResultDone(a.applyStatus) }" />
-          <div class="progress-item" :class="{ 'is-active': isResultDone(a.applyStatus), pass: a.applyStatus === 2, reject: a.applyStatus === 3 }">
-            <div class="dot" />
-            <div class="label">{{ resultText(a.applyStatus) }}</div>
-          </div>
-        </div>
+        <div class="progress">当前进度：{{ statusText(a.applyStatus) }}（同一岗位终态后不能重复投递）</div>
 
         <div v-if="a.job?.description" class="job-desc-preview">{{ a.job.description }}</div>
 
         <div class="card-actions">
+          <el-button v-if="[0,1,2].includes(a.applyStatus)" size="small" @click="changeStatus(a,7)">撤回</el-button>
+          <el-button v-if="a.applyStatus === 4" size="small" type="success" @click="changeStatus(a,5)">接受录用</el-button>
+          <el-button v-if="a.applyStatus === 4" size="small" @click="changeStatus(a,6)">婉拒录用</el-button>
+          <el-button size="small" @click="showTimeline(a)">时间线</el-button>
           <el-button size="small" @click="openJob(a.job)">查看岗位</el-button>
-          <el-button size="small" @click="openResume(a.resume)">查看简历</el-button>
+          <el-button size="small" @click="openResume(a.resume,a.applyId)">查看投递简历</el-button>
         </div>
       </el-card>
     </div>
@@ -107,6 +103,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { listMyApplyDetail, listMyResumes, updateApplyResume, downloadMyResumeAttachment } from '../api/resume'
 import { downloadBlobResponse } from '../utils/download'
+import request from '../api/request'
 
 const loading = ref(false)
 const applies = ref([])
@@ -122,6 +119,7 @@ const jobVisible = ref(false)
 const resumeVisible = ref(false)
 const currentJob = ref(null)
 const currentResume = ref(null)
+const currentApplyId = ref(null)
 
 const filteredApplies = computed(() => {
   const list = Array.isArray(applies.value) ? applies.value : []
@@ -135,10 +133,10 @@ const filteredApplies = computed(() => {
 })
 
 function statusText(status) {
-  if (status === 2) return '通过'
-  if (status === 3) return '拒绝'
-  return '已投递'
+  return ['已投递','已查看','面试中','已拒绝','已录用','已接受','已婉拒','已撤回'][status] || '未知'
 }
+async function changeStatus(a,status) { await request.post('/api/user/apply/status',{applyId:a.applyId,status,version:a.version});ElMessage.success('状态已更新');await load() }
+async function showTimeline(a) {const events=await request.get('/api/user/apply/events',{params:{applyId:a.applyId}});ElMessage.info(events.map(e=>`${statusText(e.toStatus)} ${formatShanghai(e.createdAt)}`).join(' → '))}
 
 function statusType(status) {
   if (status === 2) return 'success'
@@ -201,14 +199,15 @@ function openJob(job) {
   jobVisible.value = true
 }
 
-function openResume(resume) {
+function openResume(resume, applyId) {
   currentResume.value = resume || null
+  currentApplyId.value = applyId
   resumeVisible.value = true
 }
 
 async function downloadCurrentResume() {
-  if (!currentResume.value || !currentResume.value.id) return
-  const resp = await downloadMyResumeAttachment(currentResume.value.id)
+  if (!currentResume.value || !currentApplyId.value) return
+  const resp = await request.get('/api/user/apply/attachment',{params:{applyId:currentApplyId.value},responseType:'blob'})
   downloadBlobResponse(resp, currentResume.value.fileName || 'resume')
 }
 

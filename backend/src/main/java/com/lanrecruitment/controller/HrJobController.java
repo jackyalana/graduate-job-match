@@ -25,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class HrJobController {
 
     private final HrJobService hrJobService;
+    private final com.lanrecruitment.service.impl.ApplicationWorkflowService workflow;
 
-    public HrJobController(HrJobService hrJobService) {
+    public HrJobController(HrJobService hrJobService, com.lanrecruitment.service.impl.ApplicationWorkflowService workflow) {
         this.hrJobService = hrJobService;
+        this.workflow=workflow;
     }
 
     @GetMapping("/api/hr/job/list")
@@ -74,6 +76,8 @@ public class HrJobController {
         hrJobService.updateApplyStatus(dto);
         return Response.ok(null);
     }
+    @GetMapping("/api/hr/job/apply/events")
+    public Response<List<com.lanrecruitment.domain.entity.ApplicationEvent>> timeline(@RequestParam("applyId") Long id){return Response.ok(workflow.timeline(id,true));}
 
     @GetMapping("/api/hr/applications/{id}/attachment")
     public ResponseEntity<Resource> downloadResumeAttachmentV1(@org.springframework.web.bind.annotation.PathVariable("id") Long id) {

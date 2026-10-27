@@ -29,6 +29,12 @@ public class JobApply {
     private Long userId;
 
     private Integer status;
+    private Long version;
+    private String profileSnapshot;
+    private String resumeSnapshot;
+    private String jobSnapshot;
+    private String matchSnapshot;
+    private String attachmentSnapshot;
 
     @TableField("created_at")
     private LocalDateTime createdAt;

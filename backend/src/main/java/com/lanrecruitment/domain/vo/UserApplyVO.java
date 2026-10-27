@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 public class UserApplyVO {
     private Long applyId;
     private Integer applyStatus;
+    private Long version;
+    private Boolean hasAttachment;
     private LocalDateTime applyTime;
     private JobCardVO job;
     private ResumeVO resume;

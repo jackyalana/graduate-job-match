@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserApplyController {
 
     private final ApplyService applyService;
+    private final com.lanrecruitment.service.impl.ApplicationWorkflowService workflow;
 
-    public UserApplyController(ApplyService applyService) {
+    public UserApplyController(ApplyService applyService, com.lanrecruitment.service.impl.ApplicationWorkflowService workflow) {
         this.applyService = applyService;
+        this.workflow=workflow;
     }
 
     @PostMapping("/api/user/job/apply")
@@ -45,4 +47,10 @@ public class UserApplyController {
         applyService.updateApplyResume(dto);
         return Response.ok(null);
     }
+    @PostMapping("/api/user/apply/status")
+    public Response<Void> changeStatus(@Valid @RequestBody com.lanrecruitment.domain.dto.ApplyStatusUpdateDTO dto){workflow.transition(dto,false);return Response.ok(null);}
+    @GetMapping("/api/user/apply/events")
+    public Response<List<com.lanrecruitment.domain.entity.ApplicationEvent>> timeline(@org.springframework.web.bind.annotation.RequestParam("applyId") Long id){return Response.ok(workflow.timeline(id,false));}
+    @GetMapping("/api/user/apply/attachment")
+    public org.springframework.http.ResponseEntity<org.springframework.core.io.Resource> attachment(@org.springframework.web.bind.annotation.RequestParam("applyId") Long id){return workflow.downloadOwnAttachment(id);}
 }

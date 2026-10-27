@@ -74,6 +74,8 @@ public class HrJobServiceImpl implements HrJobService {
     private final FileStorageService fileStorageService;
     private final com.lanrecruitment.service.JobCategoryService categories;
     private final com.lanrecruitment.service.RecommendationService recommendations;
+    private final ApplicationWorkflowService workflow;
+    private final com.fasterxml.jackson.databind.ObjectMapper json;
 
     public HrJobServiceImpl(
             JobMapper jobMapper,
@@ -88,7 +90,8 @@ public class HrJobServiceImpl implements HrJobService {
             MatchService matchService,
             FileStorageService fileStorageService,
             com.lanrecruitment.service.JobCategoryService categories,
-            com.lanrecruitment.service.RecommendationService recommendations
+            com.lanrecruitment.service.RecommendationService recommendations, ApplicationWorkflowService workflow,
+            com.fasterxml.jackson.databind.ObjectMapper json
     ) {
         this.jobMapper = jobMapper;
         this.jobTagMapper = jobTagMapper;
@@ -103,6 +106,7 @@ public class HrJobServiceImpl implements HrJobService {
         this.fileStorageService = fileStorageService;
         this.categories = categories;
         this.recommendations = recommendations;
+        this.workflow=workflow;this.json=json;
     }
 
     @Override
@@ -201,9 +205,11 @@ public class HrJobServiceImpl implements HrJobService {
         j.setAcceptFreshGraduate(dto.getAcceptFreshGraduate()); j.setDeadline(dto.getDeadline());
     }
 
+    @Transactional
     @Override
     public void delete(IdDTO dto) {
         Job job = getMyJob(dto.getId());
+        job = jobMapper.selectOne(new LambdaQueryWrapper<Job>().eq(Job::getId,job.getId()).last("FOR UPDATE"));
         job.setStatus(CommonStatus.DISABLED.getCode());
         job.setVersion(job.getVersion()+1);
         job.setUpdatedAt(LocalDateTime.now());
@@ -366,16 +372,32 @@ public class HrJobServiceImpl implements HrJobService {
             HrJobApplicationVO vo = new HrJobApplicationVO();
             vo.setApplyId(a.getId());
             vo.setApplyStatus(a.getStatus());
+            vo.setVersion(a.getVersion());
             vo.setApplyTime(a.getCreatedAt());
             SysUser user = userMap.get(a.getUserId());
             vo.setApplicantPhone(user == null ? null : user.getPhone());
 
             Resume r = resumeMap.get(a.getResumeId());
+            if(a.getResumeSnapshot()!=null) {
+                try {r=json.treeToValue(json.readTree(a.getResumeSnapshot()).get("resume"),Resume.class);}
+                catch(java.io.IOException e){throw new BizException(ErrorCode.SYSTEM_ERROR);}
+            }
             if (r != null) {
                 vo.setResume(toResumeVO(r));
-                if (Integer.valueOf(1).equals(r.getStatus())) vo.setMatchScore(recommendations.applicantMatch(a.getUserId(),r.getId(),job.getId()));
+                if(a.getMatchSnapshot()!=null) {
+                    try {com.fasterxml.jackson.databind.JsonNode score=json.readTree(a.getMatchSnapshot()).get("matchScore");if(score!=null && score.isNumber())vo.setMatchScore(score.decimalValue());}
+                    catch(java.io.IOException e){throw new BizException(ErrorCode.SYSTEM_ERROR);}
+                } else if (Integer.valueOf(1).equals(r.getStatus())) vo.setMatchScore(recommendations.applicantMatch(a.getUserId(),r.getId(),job.getId()));
             }
-            vo.setResumeTags(resumeTagMap.getOrDefault(a.getResumeId(), new ArrayList<>()));
+            if(a.getResumeSnapshot()!=null) {
+                try {
+                    com.fasterxml.jackson.databind.JsonNode root=json.readTree(a.getResumeSnapshot());Map<Long,Tag> dictionary=new HashMap<>();
+                    for(com.fasterxml.jackson.databind.JsonNode node:root.path("tagDictionary")){Tag t=json.treeToValue(node,Tag.class);dictionary.put(t.getId(),t);}
+                    List<ResumeTagVO> captured=new ArrayList<>();
+                    for(com.fasterxml.jackson.databind.JsonNode node:root.path("tags")) {ResumeTag rt=json.treeToValue(node,ResumeTag.class);Tag t=dictionary.get(rt.getTagId());ResumeTagVO tv=new ResumeTagVO();tv.setTagId(rt.getTagId());tv.setProficiency(rt.getProficiency());tv.setWeight(rt.getWeight());if(t!=null){tv.setTagName(t.getTagName());tv.setTagType(t.getTagType());}captured.add(tv);}
+                    vo.setResumeTags(captured);
+                } catch(java.io.IOException e){throw new BizException(ErrorCode.SYSTEM_ERROR);}
+            } else vo.setResumeTags(resumeTagMap.getOrDefault(a.getResumeId(), new ArrayList<>()));
             res.add(vo);
         }
         res.sort(Comparator.comparing(HrJobApplicationVO::getMatchScore, Comparator.nullsLast(Comparator.reverseOrder())));
@@ -384,20 +406,7 @@ public class HrJobServiceImpl implements HrJobService {
 
     @Override
     public void updateApplyStatus(ApplyStatusUpdateDTO dto) {
-        JobApply apply = jobApplyMapper.selectById(dto.getApplyId());
-        if (apply == null) {
-            throw new BizException(ErrorCode.APPLY_RECORD_NOT_FOUND);
-        }
-        getMyJob(apply.getJobId());
-        Integer s = dto.getStatus();
-        if (!ApplyStatus.isValid(s)) {
-            throw new BizException(ErrorCode.APPLY_STATUS_INVALID);
-        }
-        if (ApplyStatus.VIEWED.getCode() == s) {
-            throw new BizException(ErrorCode.APPLY_STATUS_VIEWED_UNSUPPORTED);
-        }
-        apply.setStatus(s);
-        jobApplyMapper.updateById(apply);
+        workflow.transition(dto,true);
     }
 
     @Override
@@ -411,10 +420,11 @@ public class HrJobServiceImpl implements HrJobService {
         if (r == null) {
             throw new BizException(ErrorCode.RESUME_NOT_FOUND);
         }
-        if (r.getFileUrl() == null || r.getFileUrl().trim().isEmpty()) {
+        String attachment=apply.getResumeSnapshot()==null?r.getFileUrl():apply.getAttachmentSnapshot();
+        if (attachment == null || attachment.trim().isEmpty()) {
             throw new BizException(ErrorCode.FILE_NOT_FOUND);
         }
-        Path path = fileStorageService.resolveResumeAttachmentPath(r.getFileUrl());
+        Path path = fileStorageService.resolveResumeAttachmentPath(attachment);
         if (path == null) {
             throw new BizException(ErrorCode.FILE_NOT_FOUND);
         }

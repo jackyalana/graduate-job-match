@@ -24,6 +24,7 @@ public class JobEligibilityServiceImpl implements JobEligibilityService {
     @Override public void personalQuery(LambdaQueryWrapper<Job> query, Long userId) {
         personalQueryIncludingApplied(query,userId);
         query.notInSql(Job::getId,"SELECT job_id FROM job_apply WHERE user_id="+userId);
+        query.notInSql(Job::getId,"SELECT job_id FROM user_job_action WHERE user_id="+userId+" AND action_type='HIDE' AND active=1");
     }
     @Override public void personalQueryIncludingApplied(LambdaQueryWrapper<Job> query, Long userId) {
         visibleQuery(query);

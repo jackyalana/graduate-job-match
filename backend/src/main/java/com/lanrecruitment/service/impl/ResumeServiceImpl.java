@@ -296,7 +296,8 @@ public class ResumeServiceImpl implements ResumeService {
 
     private void assertAttachmentMutable(Resume r) {
         Long count = applications.selectCount(new LambdaQueryWrapper<com.lanrecruitment.domain.entity.JobApply>()
-            .eq(com.lanrecruitment.domain.entity.JobApply::getResumeId, r.getId()));
+            .eq(com.lanrecruitment.domain.entity.JobApply::getResumeId, r.getId())
+            .isNull(com.lanrecruitment.domain.entity.JobApply::getResumeSnapshot));
         if (count != null && count > 0) throw new BizException(ErrorCode.CONFLICT, "已有投递的附件暂不可替换或删除");
     }
 

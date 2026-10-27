@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class HrJobApplicationVO {
     private Long applyId;
     private Integer applyStatus;
+    private Long version;
     private LocalDateTime applyTime;
     private String applicantPhone;
     private ResumeVO resume;

@@ -4,7 +4,11 @@ public enum ApplyStatus {
     APPLIED(0),
     VIEWED(1),
     INTERVIEW(2),
-    REJECT(3);
+    REJECT(3),
+    OFFERED(4),
+    ACCEPTED(5),
+    DECLINED(6),
+    WITHDRAWN(7);
 
     private final int code;
 

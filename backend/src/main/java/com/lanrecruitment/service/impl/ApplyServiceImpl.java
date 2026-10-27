@@ -35,48 +35,20 @@ public class ApplyServiceImpl implements ApplyService {
     private final ResumeMapper resumeMapper;
     private final JobMapper jobMapper;
     private final com.lanrecruitment.service.JobEligibilityService eligibility;
+    private final ApplicationWorkflowService workflow;
+    private final com.fasterxml.jackson.databind.ObjectMapper json;
 
-    public ApplyServiceImpl(JobApplyMapper jobApplyMapper, ResumeMapper resumeMapper, JobMapper jobMapper, com.lanrecruitment.service.JobEligibilityService eligibility) {
+    public ApplyServiceImpl(JobApplyMapper jobApplyMapper, ResumeMapper resumeMapper, JobMapper jobMapper, com.lanrecruitment.service.JobEligibilityService eligibility, ApplicationWorkflowService workflow, com.fasterxml.jackson.databind.ObjectMapper json) {
         this.jobApplyMapper = jobApplyMapper;
         this.resumeMapper = resumeMapper;
         this.jobMapper = jobMapper;
         this.eligibility = eligibility;
+        this.workflow=workflow;this.json=json;
     }
 
     @Override
     public void apply(ApplyJobDTO dto) {
-        Long userId = StpUtil.getLoginIdAsLong();
-
-        Resume resume = resumeMapper.selectById(dto.getResumeId());
-        if (resume == null || resume.getUserId() == null || !resume.getUserId().equals(userId)) {
-            throw new BizException(ErrorCode.RESUME_NOT_FOUND);
-        }
-        if (resume.getStatus() == null || resume.getStatus() != CommonStatus.ENABLED.getCode()) {
-            throw new BizException(ErrorCode.RESUME_NOT_AVAILABLE);
-        }
-
-        Job job = jobMapper.selectById(dto.getJobId());
-        if (job == null) {
-            throw new BizException(ErrorCode.JOB_NOT_FOUND);
-        }
-        if (!eligibility.publiclyVisible(job)) {
-            throw new BizException(ErrorCode.JOB_NOT_APPLICABLE);
-        }
-
-        Long cnt = jobApplyMapper.selectCount(new LambdaQueryWrapper<JobApply>()
-                .eq(JobApply::getResumeId, dto.getResumeId())
-                .eq(JobApply::getJobId, dto.getJobId()));
-        if (cnt != null && cnt > 0) {
-            throw new BizException(ErrorCode.APPLY_DUPLICATE);
-        }
-
-        JobApply apply = new JobApply();
-        apply.setJobId(dto.getJobId());
-        apply.setResumeId(dto.getResumeId());
-        apply.setUserId(userId);
-        apply.setStatus(ApplyStatus.APPLIED.getCode());
-        apply.setCreatedAt(LocalDateTime.now());
-        jobApplyMapper.insert(apply);
+        workflow.submit(dto.getJobId(),dto.getResumeId());
     }
 
     @Override
@@ -118,15 +90,21 @@ public class ApplyServiceImpl implements ApplyService {
             UserApplyVO vo = new UserApplyVO();
             vo.setApplyId(a.getId());
             vo.setApplyStatus(a.getStatus());
+            vo.setVersion(a.getVersion());
             vo.setApplyTime(a.getCreatedAt());
             Job j = jobMap.get(a.getJobId());
+            Resume r = resumeMap.get(a.getResumeId());
+            try {
+                if(a.getJobSnapshot()!=null)j=json.treeToValue(json.readTree(a.getJobSnapshot()).get("job"),Job.class);
+                if(a.getResumeSnapshot()!=null)r=json.treeToValue(json.readTree(a.getResumeSnapshot()).get("resume"),Resume.class);
+            } catch(java.io.IOException e) {throw new BizException(ErrorCode.SYSTEM_ERROR);}
             if (j != null) {
                 vo.setJob(toJobCardVO(j));
             }
-            Resume r = resumeMap.get(a.getResumeId());
             if (r != null) {
                 vo.setResume(toResumeVO(r));
             }
+            vo.setHasAttachment(a.getAttachmentSnapshot()!=null);
             res.add(vo);
         }
         return res;
@@ -134,35 +112,7 @@ public class ApplyServiceImpl implements ApplyService {
 
     @Override
     public void updateApplyResume(ApplyResumeUpdateDTO dto) {
-        Long userId = StpUtil.getLoginIdAsLong();
-        JobApply apply = jobApplyMapper.selectById(dto.getApplyId());
-        if (apply == null || apply.getUserId() == null || !apply.getUserId().equals(userId)) {
-            throw new BizException(ErrorCode.APPLY_RECORD_NOT_FOUND);
-        }
-        Integer status = apply.getStatus();
-        if (status != null && status >= ApplyStatus.INTERVIEW.getCode()) {
-            throw new BizException(ErrorCode.APPLY_CANNOT_CHANGE_RESUME);
-        }
-
-        Resume resume = resumeMapper.selectById(dto.getResumeId());
-        if (resume == null || resume.getUserId() == null || !resume.getUserId().equals(userId)) {
-            throw new BizException(ErrorCode.RESUME_NOT_FOUND);
-        }
-        if (resume.getStatus() == null || resume.getStatus() != CommonStatus.ENABLED.getCode()) {
-            throw new BizException(ErrorCode.RESUME_NOT_AVAILABLE);
-        }
-
-        Long cnt = jobApplyMapper.selectCount(new LambdaQueryWrapper<JobApply>()
-                .eq(JobApply::getUserId, userId)
-                .eq(JobApply::getJobId, apply.getJobId())
-                .eq(JobApply::getResumeId, dto.getResumeId())
-                .ne(JobApply::getId, apply.getId()));
-        if (cnt != null && cnt > 0) {
-            throw new BizException(ErrorCode.APPLY_DUPLICATE);
-        }
-
-        apply.setResumeId(dto.getResumeId());
-        jobApplyMapper.updateById(apply);
+        throw new BizException(ErrorCode.CONFLICT, "投递后简历快照不可替换");
     }
 
     private JobCardVO toJobCardVO(Job j) {

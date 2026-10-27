@@ -16,4 +16,6 @@ public class ApplyStatusUpdateDTO {
 
     @NotNull(message = "状态不能为空")
     private Integer status;
+    @NotNull(message = "版本不能为空")
+    private Long version;
 }

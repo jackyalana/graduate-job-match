@@ -43,8 +43,8 @@ export function hrListApplications(jobId) {
   return request.get('/api/hr/job/applications', { params: { jobId } })
 }
 
-export function hrUpdateApplyStatus(applyId, status) {
-  return request.post('/api/hr/job/apply/status', { applyId, status })
+export function hrUpdateApplyStatus(applyId, status, version) {
+  return request.post('/api/hr/job/apply/status', { applyId, status, version })
 }
 
 export function hrDownloadResumeAttachment(applyId) {

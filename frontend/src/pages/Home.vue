@@ -3,6 +3,7 @@
     <div class="left">
       <el-card>
         <template #header>筛选岗位</template>
+        <div v-if="hiddenIds.length">不感兴趣的岗位：<el-button v-for="id in hiddenIds" :key="id" link @click="unhideJob(id)">恢复 #{{ id }}</el-button></div>
         <el-form label-position="top">
           <el-form-item label="关键词">
             <el-input v-model="filters.keyword" placeholder="岗位名称 / 技能" clearable />
@@ -97,6 +98,8 @@
           <div v-if="job.match && job.match.matchScore == null">完善资料可获得个性化匹配</div>
           <div v-else-if="job.match">{{ job.match.reasons.join('、') }}</div>
           <div class="job-actions" @click.stop>
+            <el-button v-if="role === 'USER'" size="small" @click="toggleFavorite(job)">{{ favoriteIds.has(job.id) ? '取消收藏' : '收藏' }}</el-button>
+            <el-button v-if="role === 'USER' && activeTab === 'recommend'" size="small" @click="hideJob(job)">不感兴趣</el-button>
             <el-button size="small" @click="openDetail(job)">查看详情</el-button>
             <el-button v-if="role === 'USER'" size="small" type="primary" @click="onApply(job)">投递简历</el-button>
           </div>
@@ -182,6 +185,8 @@ const missingProfileFields = ref([])
 const jobs = ref([])
 const recommendJobs = ref([])
 const resumes = ref([])
+const favoriteIds = ref(new Set())
+const hiddenIds = ref([])
 const activeTab = ref(role.value === 'USER' ? 'recommend' : 'latest')
 
 const selectedJob = ref(null)
@@ -338,6 +343,7 @@ function eligibilityReason(value) { return ({ FRESH_GRADUATES_NOT_ACCEPTED: '岗
 async function openDetail(job) {
   const generation = ++detailGeneration
   selectedJob.value = { ...job }
+  if (role.value === 'USER') await request.post(`/api/student/jobs/${job.id}/view`)
   if (role.value === 'USER' && !job.match) {
     try {
       const match = await request.get(`/api/student/matches/${job.id}`, { isCurrentRequest: () => generation === detailGeneration })
@@ -347,6 +353,18 @@ async function openDetail(job) {
     }
   }
 }
+async function toggleFavorite(job) {
+  const active=!favoriteIds.value.has(job.id)
+  await request.post(`/api/student/jobs/${job.id}/actions/FAVORITE`,null,{params:{active}})
+  const next=new Set(favoriteIds.value);if(active)next.add(job.id);else next.delete(job.id);favoriteIds.value=next
+  if(activeTab.value==='recommend')await resetAndFetchRecommendJobs()
+}
+async function hideJob(job) {
+  await request.post(`/api/student/jobs/${job.id}/actions/HIDE`,null,{params:{active:true}})
+  hiddenIds.value=[...new Set([...hiddenIds.value,job.id])]
+  await resetAndFetchRecommendJobs()
+}
+async function unhideJob(id) {await request.post(`/api/student/jobs/${id}/actions/HIDE`,null,{params:{active:false}});hiddenIds.value=hiddenIds.value.filter(x=>x!==id);await resetAndFetchRecommendJobs()}
 
 function closeDetail() {
   ++detailGeneration
@@ -438,6 +456,7 @@ async function loadMore() {
 onMounted(async () => {
   filters.keyword = route.query.keyword || ''
   await Promise.all([
+    role.value === 'USER' ? request.get('/api/student/job-actions').then(list=>{favoriteIds.value=new Set((list||[]).filter(x=>x.actionType==='FAVORITE'&&x.active).map(x=>x.jobId));hiddenIds.value=(list||[]).filter(x=>x.actionType==='HIDE'&&x.active).map(x=>x.jobId)}) : Promise.resolve(),
     role.value === 'USER' ? request.get('/api/student/profile').then(profile => { missingProfileFields.value = [profile.educationRank == null ? '学历' : '', profile.graduationYear == null ? '毕业年份' : ''].filter(Boolean) }) : Promise.resolve(),
     request.get('/api/public/job/categories').then(list => { categories.value = list || [] }),
     onSearchTagsByType('SKILL', ''),

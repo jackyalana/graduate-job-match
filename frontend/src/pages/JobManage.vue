@@ -111,9 +111,7 @@
         </el-table-column>
         <el-table-column prop="applyStatus" label="状态" width="100">
           <template #default="{ row }">
-            <el-tag v-if="row.applyStatus === 0 || row.applyStatus === 1" type="info">已投递</el-tag>
-            <el-tag v-else-if="row.applyStatus === 2" type="success">通过</el-tag>
-            <el-tag v-else type="danger">拒绝</el-tag>
+            <el-tag>{{ applyStatusText(row.applyStatus) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="查看简历" width="100">
@@ -121,10 +119,13 @@
             <el-button size="small" type="primary" @click="openResumeDetail(row)">查看简历</el-button>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="160">
+        <el-table-column label="操作" width="280">
           <template #default="{ row }">
-            <el-button size="small" type="success" @click="updateApply(row, 2)">通过</el-button>
-            <el-button size="small" type="danger" @click="updateApply(row, 3)">拒绝</el-button>
+            <el-button v-if="row.applyStatus === 0" size="small" @click="updateApply(row, 1)">标记查看</el-button>
+            <el-button v-if="row.applyStatus === 0 || row.applyStatus === 1" size="small" @click="updateApply(row, 2)">邀请面试</el-button>
+            <el-button v-if="row.applyStatus === 2" size="small" type="success" @click="updateApply(row, 4)">发出录用</el-button>
+            <el-button v-if="[0,1,2].includes(row.applyStatus)" size="small" type="danger" @click="updateApply(row, 3)">拒绝</el-button>
+            <el-button size="small" @click="showTimeline(row)">时间线</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -580,10 +581,12 @@ function closeApplyList() {
 }
 
 async function updateApply(row, status) {
-  await hrUpdateApplyStatus(row.applyId, status)
+  await hrUpdateApplyStatus(row.applyId, status, row.version)
   ElMessage.success('已更新')
   applications.value = await hrListApplications(currentJob.value.id)
 }
+function applyStatusText(status) { return ['已投递','已查看','面试中','已拒绝','已录用','已接受','已婉拒','已撤回'][status] || '未知' }
+async function showTimeline(row) { const events=await request.get('/api/hr/job/apply/events',{params:{applyId:row.applyId}});ElMessage.info(events.map(e=>`${applyStatusText(e.toStatus)} ${formatShanghai(e.createdAt)}`).join(' → ')) }
 
 function resetApplyFilter() {
   applyFilter.education = ''
