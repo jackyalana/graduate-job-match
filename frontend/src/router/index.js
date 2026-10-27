@@ -5,6 +5,7 @@ import Login from '../pages/Login.vue'
 import Register from '../pages/Register.vue'
 import Home from '../pages/Home.vue'
 import Profile from '../pages/Profile.vue'
+import StudentProfile from '../pages/StudentProfile.vue'
 import ResumeManage from '../pages/ResumeManage.vue'
 import ApplyManage from '../pages/ApplyManage.vue'
 import JobManage from '../pages/JobManage.vue'
@@ -23,6 +24,7 @@ const routes = [
     children: [
       { path: 'home', component: Home },
       { path: 'profile', component: Profile },
+      { path: 'student-profile', component: StudentProfile },
       { path: 'resume', component: ResumeManage },
       { path: 'apply', component: ApplyManage },
       { path: 'job', component: JobManage },
@@ -62,6 +64,7 @@ router.beforeEach(async (to) => {
   }
 
   const role = localStorage.getItem('role')
+  if (to.path === '/student-profile' && role !== 'USER') return '/home'
   if (to.path === '/resume' && role !== 'USER') return '/home'
   if (to.path === '/apply' && role !== 'USER') return '/home'
   if (to.path === '/job' && role !== 'HR') return '/home'

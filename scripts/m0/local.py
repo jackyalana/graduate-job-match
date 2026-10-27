@@ -28,8 +28,37 @@ def spawn(name, command, cwd=ROOT, env=None):
     process = subprocess.Popen(command, cwd=cwd, env=env, stdout=log,
                                stderr=subprocess.STDOUT, start_new_session=True)
     pidfile.write_text(str(process.pid))
+    (LOCAL / (name + '.identity.json')).write_text(json.dumps({'pid': process.pid, 'start': process_start(process.pid), 'marker': process_marker(name)}))
     print(name, 'pid', process.pid, 'log', str(log.name))
     return process
+
+def process_start(pid):
+    result = subprocess.run(['/bin/ps', '-p', str(pid), '-o', 'lstart='], capture_output=True, text=True)
+    if result.returncode != 0 or not result.stdout.strip(): raise RuntimeError('Cannot verify process start time')
+    return result.stdout.strip()
+
+def process_marker(name):
+    return {'mysql': str(LOCAL/'mysql/bin/mysqld'),
+            'backend': str(ROOT/'backend/target/backend-1.0.0-SNAPSHOT.jar'),
+            'frontend': 'npm run dev --host 127.0.0.1 --port 15173 --strictPort'}[name]
+
+def stop_owned(name):
+    path = LOCAL/(name+'.pid')
+    if not path.exists(): return
+    metadata = LOCAL/(name+'.identity.json')
+    if not metadata.exists(): raise RuntimeError(name+' has a legacy pidfile without start identity; refusing to signal')
+    identity = json.loads(metadata.read_text())
+    pid = int(path.read_text())
+    if identity['pid'] != pid or identity['marker'] != process_marker(name): raise RuntimeError('PID identity mismatch')
+    try:
+        command = subprocess.run(['/bin/ps','-p',str(pid),'-o','command='],capture_output=True,text=True,check=True).stdout
+        if process_start(pid) != identity['start'] or identity['marker'] not in command or os.getpgid(pid) != pid:
+            raise RuntimeError('Process identity changed; refusing to signal')
+        os.killpg(pid, signal.SIGTERM)
+    except ProcessLookupError:
+        pass
+    path.unlink()
+    metadata.unlink()
 
 def mysql(sql, initial=False):
     command = [MYSQL, '--no-defaults' if initial else '--defaults-extra-file='+str(LOCAL/'mysql-root.cnf'),
@@ -91,18 +120,10 @@ def main():
         print('Usernames: demo_admin / demo_student / demo_student2 / demo_hr / demo_hr2 / demo_hr_pending')
         print('Random password shared by these synthetic accounts:', credentials()['demoPassword'])
     elif action == 'backend-stop':
-        path=LOCAL/'backend.pid'
-        if path.exists():
-            os.killpg(int(path.read_text()), signal.SIGTERM)
-            path.unlink()
+        stop_owned('backend')
     elif action == 'stop':
-        # PIDs belong to this script's detached process groups, never kill arbitrary ports.
         for name in ['frontend','backend','mysql']:
-            path=LOCAL/(name+'.pid')
-            if path.exists():
-                try: os.killpg(int(path.read_text()), signal.SIGTERM)
-                except ProcessLookupError: pass
-                path.unlink()
+            stop_owned(name)
     else: raise ValueError(action)
 
 if __name__=='__main__': main()

@@ -76,6 +76,15 @@ public class UserResumeController {
         return resumeService.downloadMyAttachment(resumeId);
     }
 
+    @PostMapping("/api/student/resumes/{id}/attachment")
+    public Response<ResumeVO> uploadAttachmentV1(@org.springframework.web.bind.annotation.PathVariable("id") Long id,
+            @RequestParam("file") MultipartFile file) { return Response.ok(resumeService.uploadAttachment(id,file)); }
+
+    @GetMapping("/api/student/resumes/{id}/attachment")
+    public ResponseEntity<Resource> downloadAttachmentV1(@org.springframework.web.bind.annotation.PathVariable("id") Long id) {
+        return resumeService.downloadMyAttachment(id);
+    }
+
     @PostMapping("/api/user/resume/file/delete")
     public Response<ResumeVO> deleteAttachment(@RequestParam("resumeId") Long resumeId) {
         return Response.ok(resumeService.deleteMyAttachment(resumeId));

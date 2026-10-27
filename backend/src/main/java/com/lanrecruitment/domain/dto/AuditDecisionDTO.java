@@ -16,4 +16,6 @@ public class AuditDecisionDTO {
 
     @NotNull(message = "pass不能为空")
     private Boolean pass;
+
+    private Long version;
 }

@@ -13,4 +13,5 @@ public class CurrentUserVO {
     private Long id;
     private String username;
     private String role;
+    private Boolean emailVerified;
 }

@@ -13,6 +13,11 @@
           <el-form-item label="岗位类型">
             <el-input v-model="filters.jobType" placeholder="如：后端开发" clearable />
           </el-form-item>
+          <el-form-item label="岗位类别"><el-select v-model="filters.categoryId" clearable placeholder="全部类别">
+            <el-option v-for="category in categories" :key="category.id" :label="category.name" :value="category.id" />
+          </el-select></el-form-item>
+          <el-form-item label="最低月薪（元）"><el-input-number v-model="filters.salaryMin" :min="0" /></el-form-item>
+          <el-form-item label="最高月薪（元）"><el-input-number v-model="filters.salaryMax" :min="0" /></el-form-item>
           <el-form-item label="技能">
             <el-select
               v-model="filters.skillTagIds"
@@ -64,6 +69,7 @@
     </div>
 
     <div class="right">
+      <el-alert v-if="role === 'USER' && missingProfileFields.length" :title="'完善 ' + missingProfileFields.join('、') + ' 后可看到更多符合条件的岗位'" type="info" :closable="false" show-icon />
       <template v-if="!selectedJob">
         <el-tabs v-model="activeTab" class="job-tabs" @tab-change="onTabChange">
           <el-tab-pane v-if="role === 'USER'" label="推荐岗位" name="recommend" />
@@ -80,7 +86,7 @@
                 size="small"
                 :type="matchTagFromScore(job.matchScore).type"
               >
-                {{ matchTagFromScore(job.matchScore).label }}
+                旧版标签相似度：{{ matchTagFromScore(job.matchScore).label }}
               </el-tag>
             </div>
           </div>
@@ -135,6 +141,7 @@
 </template>
 
 <script setup>
+import { formatShanghai } from '../utils/time'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -143,11 +150,13 @@ import { listJobs, recommendJobs as fetchRecommendJobsApi } from '../api/job'
 import { applyJob, listMyResumes } from '../api/resume'
 import { searchTags } from '../api/tag'
 import { matchTagFromScore } from '../utils/match'
+import request from '../api/request'
 
 const filters = reactive({ 
   keyword: '', 
   city: '', 
-  jobType: '', 
+  jobType: '',
+  categoryId: null, salaryMin: null, salaryMax: null,
   skillTagIds: [], 
   industryTagIds: [], 
   experienceTagIds: [] 
@@ -160,6 +169,8 @@ const loading = ref(false)
 const tagLoadingMap = reactive({ SKILL: false, INDUSTRY: false, EXPERIENCE: false })
 const tagOptionsMap = reactive({ SKILL: [], INDUSTRY: [], EXPERIENCE: [] })
 
+const categories = ref([])
+const missingProfileFields = ref([])
 const jobs = ref([])
 const recommendJobs = ref([])
 const resumes = ref([])
@@ -202,6 +213,7 @@ function buildPublicParams() {
     keyword: filters.keyword,
     city: filters.city,
     jobType: filters.jobType,
+    categoryId: filters.categoryId, salaryMin: filters.salaryMin, salaryMax: filters.salaryMax,
     tagIds: allTagIds.value.length > 0 ? allTagIds.value.join(',') : undefined,
     cursorId: publicCursorId.value,
     pageSize: publicCursorId.value == null ? initialPageSize : pageSize
@@ -290,30 +302,7 @@ async function onTabChange(name) {
   }
 }
 
-function formatDateTime(value) {
-  if (!value) return ''
-  if (typeof value === 'string') {
-    const normalized = value.replace('T', ' ')
-    const withoutMs = normalized.split('.')[0]
-    return withoutMs.length >= 16 ? withoutMs.slice(0, 16) : withoutMs
-  }
-  if (Array.isArray(value) && value.length >= 3) {
-    const year = value[0]
-    const month = value[1] || 1
-    const day = value[2] || 1
-    const hour = value[3] || 0
-    const minute = value[4] || 0
-    const pad2 = (n) => String(n).padStart(2, '0')
-    return `${year}-${pad2(month)}-${pad2(day)} ${pad2(hour)}:${pad2(minute)}`
-  }
-  try {
-    const d = new Date(value)
-    const pad2 = (n) => String(n).padStart(2, '0')
-    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`
-  } catch (e) {
-    return ''
-  }
-}
+function formatDateTime(value) { return formatShanghai(value) }
 
 function openDetail(job) {
   selectedJob.value = job
@@ -336,7 +325,12 @@ async function onApply(job) {
     router.push('/resume')
     return
   }
-  const defaultResume = resumes.value.find((r) => r.isDefault === 1) || resumes.value[0]
+  const defaultResume = resumes.value.find((r) => r.isDefault === 1 && r.status === 1)
+  if (!defaultResume) {
+    ElMessage.warning('请先设置有效的默认简历')
+    router.push('/resume')
+    return
+  }
   await applyJob(job.id, defaultResume.id)
   ElMessage.success('已投递')
 }
@@ -350,6 +344,7 @@ async function loadMoreRecommendJobs() {
       keyword: filters.keyword || undefined,
       city: filters.city || undefined,
       jobType: filters.jobType || undefined,
+      categoryId: filters.categoryId, salaryMin: filters.salaryMin, salaryMax: filters.salaryMax,
       tagIds: allTagIds.value.length > 0 ? allTagIds.value.join(',') : undefined,
       offset: recommendOffset.value,
       pageSize: size
@@ -381,6 +376,8 @@ async function loadMore() {
 onMounted(async () => {
   filters.keyword = route.query.keyword || ''
   await Promise.all([
+    role.value === 'USER' ? request.get('/api/student/profile').then(profile => { missingProfileFields.value = [profile.educationRank == null ? '学历' : '', profile.graduationYear == null ? '毕业年份' : ''].filter(Boolean) }) : Promise.resolve(),
+    request.get('/api/public/job/categories').then(list => { categories.value = list || [] }),
     onSearchTagsByType('SKILL', ''),
     onSearchTagsByType('INDUSTRY', ''),
     onSearchTagsByType('EXPERIENCE', '')

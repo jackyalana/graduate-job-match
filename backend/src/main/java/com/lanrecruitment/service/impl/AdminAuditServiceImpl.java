@@ -72,6 +72,7 @@ public class AdminAuditServiceImpl implements AdminAuditService {
             AdminJobAuditVO vo = new AdminJobAuditVO();
             vo.setId(j.getId());
             vo.setHrId(j.getHrId());
+            vo.setVersion(j.getVersion());
             vo.setJobName(j.getJobName());
             vo.setCity(j.getCity());
             vo.setSalaryRange(j.getSalaryRange());
@@ -90,8 +91,12 @@ public class AdminAuditServiceImpl implements AdminAuditService {
         if (job == null) {
             throw new BizException(ErrorCode.JOB_NOT_FOUND);
         }
-        job.setAuditStatus(dto.getPass() ? AuditStatus.PASS.getCode() : AuditStatus.REJECT.getCode());
-        jobMapper.updateById(job);
+        if (dto.getVersion()==null || !dto.getVersion().equals(job.getVersion())) throw new BizException(ErrorCode.CONFLICT);
+        com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper<Job> update=new com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper<Job>()
+            .eq(Job::getId,job.getId()).eq(Job::getAuditStatus,AuditStatus.PENDING.getCode()).eq(Job::getVersion,dto.getVersion())
+            .set(Job::getAuditStatus,dto.getPass() ? AuditStatus.PASS.getCode() : AuditStatus.REJECT.getCode())
+            .set(Job::getVersion,dto.getVersion()+1).set(Job::getUpdatedAt,LocalDateTime.now());
+        if (jobMapper.update(null,update)!=1) throw new BizException(ErrorCode.CONFLICT);
     }
 
     @Override

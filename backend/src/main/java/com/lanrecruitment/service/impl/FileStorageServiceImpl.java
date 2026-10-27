@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileStorageServiceImpl implements FileStorageService {
 
     private static final long AVATAR_MAX_SIZE = 2 * 1024 * 1024L;
-    private static final long RESUME_MAX_SIZE = 10 * 1024 * 1024L;
+    private static final long RESUME_MAX_SIZE = 5 * 1024 * 1024L;
 
     private static final String DEFAULT_BASE_DIR = System.getProperty("user.home") + "/lan-recruitment/uploads";
 
@@ -43,7 +43,18 @@ public class FileStorageServiceImpl implements FileStorageService {
 
     @Override
     public String storeResumeAttachment(MultipartFile file) {
-        return store(file, resumeDir, RESUME_URL_PREFIX, new String[]{"pdf", "jpg", "jpeg", "png"}, RESUME_MAX_SIZE);
+        if (file == null || file.isEmpty()) throw new BizException(ErrorCode.FILE_EMPTY);
+        if (file.getSize() > RESUME_MAX_SIZE) throw new BizException(ErrorCode.FILE_TOO_LARGE);
+        if (!"application/pdf".equalsIgnoreCase(file.getContentType()) || !"pdf".equals(ext(file.getOriginalFilename() == null ? "" : file.getOriginalFilename())))
+            throw new BizException(ErrorCode.FILE_TYPE_NOT_SUPPORTED);
+        try (InputStream in = file.getInputStream()) {
+            byte[] header = new byte[5];
+            int count = 0, n;
+            while (count < header.length && (n = in.read(header, count, header.length - count)) > 0) count += n;
+            if (count != 5 || !java.util.Arrays.equals(header, new byte[]{'%', 'P', 'D', 'F', '-'}))
+                throw new BizException(ErrorCode.FILE_TYPE_NOT_SUPPORTED);
+        } catch (java.io.IOException e) { throw new BizException(ErrorCode.FILE_READ_FAILED); }
+        return store(file, resumeDir, RESUME_URL_PREFIX, new String[]{"pdf"}, RESUME_MAX_SIZE);
     }
 
     @Override

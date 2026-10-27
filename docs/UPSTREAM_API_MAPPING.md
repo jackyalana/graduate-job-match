@@ -1,6 +1,6 @@
 # 上游 API 与 SDD 映射
 
-状态：M0 待审核。以下是实际 controller 路由，不是目标 API 已实现声明。源码根为 `backend/src/main/java/com/lanrecruitment/`。M0 没有改变接口，数字 `code=0` 为成功；多数失败也是 HTTP 200。目标 SDD 使用 OK/requestId 和真实 HTTP 状态，需要统一适配，不可让旧路径绕过。
+状态：M0 历史快照；M1 当前权限与接口请以 M1_API_CONTRACT.md 为准。以下是 M0 上游 controller 路由，不是目标 API 已实现声明。源码根为 `backend/src/main/java/com/lanrecruitment/`。M0 没有改变接口，数字 `code=0` 为成功；多数失败也是 HTTP 200。目标 SDD 使用 OK/requestId 和真实 HTTP 状态，需要统一适配，不可让旧路径绕过。
 
 ## 需求映射
 
@@ -60,7 +60,7 @@ HTTP/1.1 200
 | POST | `/api/public/auth/login/email` | 公开 | AuthController.java:33 |
 | POST | `/api/public/auth/register` | 公开 | AuthController.java:38 |
 | POST | `/api/public/auth/code` | 公开 | AuthController.java:44 |
-| POST | `/api/common/auth/logout` | 已登录 | AuthController.java:50 |
+| POST | `/api/common/auth/logout` | 已登录的 USER / HR / ADMIN | AuthController.java:50 |
 | GET | `/api/health` | 公开 | HealthController.java:12 |
 | GET | `/api/hr/job/list` | HR | HrJobController.java:33 |
 | POST | `/api/hr/job/save` | HR | HrJobController.java:38 |
@@ -88,11 +88,11 @@ HTTP/1.1 200
 | GET | `/api/user/apply/list` | USER | UserApplyController.java:33 |
 | GET | `/api/user/apply/list/detail` | USER | UserApplyController.java:38 |
 | POST | `/api/user/apply/resume/update` | USER | UserApplyController.java:43 |
-| GET | `/api/common/user/me` | USER | UserController.java:29 |
-| GET | `/api/common/user/profile` | USER | UserController.java:34 |
-| POST | `/api/common/user/profile/update` | USER | UserController.java:39 |
-| POST | `/api/common/user/password/change` | USER | UserController.java:45 |
-| POST | `/api/common/user/avatar/upload` | USER | UserController.java:51 |
+| GET | `/api/common/user/me` | 已登录的 USER / HR / ADMIN | UserController.java:29 |
+| GET | `/api/common/user/profile` | 已登录的 USER / HR / ADMIN | UserController.java:34 |
+| POST | `/api/common/user/profile/update` | 已登录的 USER / HR / ADMIN | UserController.java:39 |
+| POST | `/api/common/user/password/change` | 已登录的 USER / HR / ADMIN | UserController.java:45 |
+| POST | `/api/common/user/avatar/upload` | 已登录的 USER / HR / ADMIN | UserController.java:51 |
 | GET | `/api/user/resume/list` | USER | UserResumeController.java:32 |
 | GET | `/api/user/resume/detail` | USER | UserResumeController.java:37 |
 | POST | `/api/user/resume/save` | USER | UserResumeController.java:42 |

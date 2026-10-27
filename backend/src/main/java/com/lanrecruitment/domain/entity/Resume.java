@@ -61,6 +61,8 @@ public class Resume {
     @TableField("is_default")
     private Integer isDefault;
 
+    private Long version;
+
     private Integer status;
 
     @TableField("create_time")

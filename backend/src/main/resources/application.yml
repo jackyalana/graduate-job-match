@@ -5,21 +5,25 @@ spring:
   application:
     name: lan-recruitment-backend
   datasource:
-    url: jdbc:mysql://localhost:3306/lan_recruitment?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: root
-    password: 123456
+    url: ${APP_DB_URL}
+    username: ${APP_DB_USER}
+    password: ${APP_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       initialization-fail-timeout: -1
   autoconfigure:
     exclude:
       - cn.dev33.satoken.dao.SaTokenDaoRedisJackson
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
   profiles:
     active: dev
   redis:
     host: localhost
     port: 6379
-    password: 123456
+    password: ${APP_REDIS_PASSWORD:}
     database: 0
 
 mybatis-plus:
@@ -33,6 +37,10 @@ sa-token:
   is-concurrent: true
   is-share: true
   token-style: uuid
+  is-read-header: true
+  is-read-cookie: false
+  is-read-body: false
+  is-write-header: false
 
 lan:
   sa-token:

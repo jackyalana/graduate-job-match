@@ -1,0 +1,3 @@
+PASS: dev profile rejects absent and fixed 000000 codes even when demo flag is true; HTTP 400, EMAIL_CODE_INVALID.
+
+exit_code=0

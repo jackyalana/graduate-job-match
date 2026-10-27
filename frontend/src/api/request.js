@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 const request = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '',
   timeout: 15000,
-  withCredentials: true
+  withCredentials: false
 })
 
 request.interceptors.request.use((config) => {
@@ -23,7 +23,7 @@ request.interceptors.response.use(
     }
     const data = resp.data
     if (data && typeof data.code !== 'undefined') {
-      if (data.code === 0) return data.data
+      if (data.code === "OK") return data.data
       if (data.code === 401) {
         localStorage.removeItem('token')
         localStorage.removeItem('role')
@@ -36,7 +36,20 @@ request.interceptors.response.use(
     }
     return data
   },
-  (error) => Promise.reject(error)
+  async (error) => {
+    const response = error.response
+    let data = response && response.data
+    if (data instanceof Blob && data.type.includes('json')) {
+      try { data = JSON.parse(await data.text()) } catch (_) { data = null }
+    }
+    if (response && response.status === 401) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('role')
+      if (window.location.pathname !== '/login') window.location.href = '/login'
+    }
+    if (data && data.message) ElMessage.error(data.message)
+    return Promise.reject(error)
+  }
 )
 
 export default request

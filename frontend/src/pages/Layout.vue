@@ -65,6 +65,9 @@
             <el-icon><House /></el-icon>
             <span>首页</span>
           </el-menu-item>
+          <el-menu-item v-if="role === 'USER'" index="/student-profile">
+            <el-icon><Document /></el-icon><span>求职画像</span>
+          </el-menu-item>
           <el-menu-item v-if="role === 'USER'" index="/resume">
             <el-icon><Document /></el-icon>
             <span>简历管理</span>
@@ -97,6 +100,7 @@
       </el-aside>
 
       <el-main class="main">
+        <el-alert v-if="isDemo" title="本地演示环境：页面和数据仅供合成测试" type="info" :closable="false" show-icon />
         <router-view />
       </el-main>
     </el-container>
@@ -108,6 +112,9 @@
 </template>
 
 <script setup>
+import { formatShanghai } from '../utils/time'
+const isDemo = import.meta.env.VITE_DEMO === 'true'
+
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -211,36 +218,7 @@ function onAsideResizeEnd() {
   window.removeEventListener('mouseup', onAsideResizeEnd)
 }
 
-function formatNoticeTime(value) {
-  if (!value) return ''
-  if (typeof value === 'string') {
-    const normalized = value.replace('T', ' ')
-    const withoutMs = normalized.split('.')[0]
-    return withoutMs.length >= 16 ? withoutMs.slice(0, 16) : withoutMs
-  }
-  if (Array.isArray(value) && value.length >= 3) {
-    const year = value[0]
-    const month = value[1] || 1
-    const day = value[2] || 1
-    const hour = value[3] || 0
-    const minute = value[4] || 0
-    const second = value[5] || 0
-    try {
-      const d = new Date(year, month - 1, day, hour, minute, second)
-      const pad2 = (n) => String(n).padStart(2, '0')
-      return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`
-    } catch (e) {
-      return ''
-    }
-  }
-  try {
-    const d = new Date(value)
-    const pad2 = (n) => String(n).padStart(2, '0')
-    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`
-  } catch (e) {
-    return ''
-  }
-}
+function formatNoticeTime(value) { return formatShanghai(value) }
 
 async function loadNotices() {
   if (noticeLoading.value) return

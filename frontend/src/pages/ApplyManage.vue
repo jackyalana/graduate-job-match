@@ -102,6 +102,7 @@
 </template>
 
 <script setup>
+import { formatShanghai } from '../utils/time'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { listMyApplyDetail, listMyResumes, updateApplyResume, downloadMyResumeAttachment } from '../api/resume'
@@ -218,30 +219,7 @@ function toAbsoluteUrl(path) {
   return base + path
 }
 
-function formatDateTime(value) {
-  if (!value) return ''
-  if (typeof value === 'string') {
-    const normalized = value.replace('T', ' ')
-    const withoutMs = normalized.split('.')[0]
-    return withoutMs.length >= 16 ? withoutMs.slice(0, 16) : withoutMs
-  }
-  if (Array.isArray(value) && value.length >= 3) {
-    const year = value[0]
-    const month = value[1] || 1
-    const day = value[2] || 1
-    const hour = value[3] || 0
-    const minute = value[4] || 0
-    const pad2 = (n) => String(n).padStart(2, '0')
-    return `${year}-${pad2(month)}-${pad2(day)} ${pad2(hour)}:${pad2(minute)}`
-  }
-  try {
-    const d = new Date(value)
-    const pad2 = (n) => String(n).padStart(2, '0')
-    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`
-  } catch (e) {
-    return ''
-  }
-}
+function formatDateTime(value) { return formatShanghai(value) }
 
 onMounted(load)
 </script>

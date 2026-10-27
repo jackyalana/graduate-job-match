@@ -1,63 +1,33 @@
 package com.lanrecruitment.common;
 
 import com.lanrecruitment.common.enums.ErrorCode;
+import org.slf4j.MDC;
 
 public class Response<T> {
-    private Integer code;
+    private String code;
     private String message;
     private T data;
+    private String requestId;
+    private Object details;
 
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
+    public String getCode() { return code; }
+    public String getMessage() { return message; }
+    public T getData() { return data; }
+    public String getRequestId() { return requestId; }
+    public Object getDetails() { return details; }
+    public Response<T> withDetails(Object value) { this.details=value; return this; }
 
     public static <T> Response<T> ok(T data) {
-        Response<T> resp = new Response<>();
-        resp.setCode(0);
-        resp.setMessage("OK");
-        resp.setData(data);
-        return resp;
+        Response<T> response = new Response<>();
+        response.code = "OK"; response.message = "OK"; response.data = data;
+        response.requestId = MDC.get("requestId");
+        return response;
     }
-
-    public static <T> Response<T> fail(Integer code, String message) {
-        Response<T> resp = new Response<>();
-        resp.setCode(code);
-        resp.setMessage(message);
-        resp.setData(null);
-        return resp;
+    public static <T> Response<T> fail(ErrorCode error, String message) {
+        Response<T> response = new Response<>();
+        response.code = error == null ? "SYSTEM_ERROR" : error.name();
+        response.message = message; response.requestId = MDC.get("requestId");
+        return response;
     }
-
-    public static <T> Response<T> fail(ErrorCode errorCode) {
-        if (errorCode == null) {
-            return fail((Integer) null, null);
-        }
-        return fail(errorCode.getCode(), errorCode.getMessage());
-    }
-
-    public static <T> Response<T> fail(ErrorCode errorCode, String message) {
-        if (errorCode == null) {
-            return fail((Integer) null, message);
-        }
-        return fail(errorCode.getCode(), message);
-    }
+    public static <T> Response<T> fail(ErrorCode error) { return fail(error, error.getMessage()); }
 }

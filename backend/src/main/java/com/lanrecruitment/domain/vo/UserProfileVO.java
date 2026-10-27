@@ -15,6 +15,7 @@ public class UserProfileVO {
     private String username;
     private String email;
     private String role;
+    private Boolean emailVerified;
     private String companyName;
     private String avatar;
     private Integer status;

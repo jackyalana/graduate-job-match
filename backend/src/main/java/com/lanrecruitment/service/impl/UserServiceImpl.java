@@ -19,9 +19,10 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final SysUserMapper sysUserMapper;
+    private final com.lanrecruitment.mapper.StudentProfileMapper profiles;
 
-    public UserServiceImpl(SysUserMapper sysUserMapper) {
-        this.sysUserMapper = sysUserMapper;
+    public UserServiceImpl(SysUserMapper sysUserMapper, com.lanrecruitment.mapper.StudentProfileMapper profiles) {
+        this.sysUserMapper = sysUserMapper; this.profiles = profiles;
     }
 
     @Override
@@ -31,6 +32,7 @@ public class UserServiceImpl implements UserService {
         vo.setId(u.getId());
         vo.setUsername(u.getUsername());
         vo.setRole(u.getRole());
+        vo.setEmailVerified(u.getEmailVerified());
         return vo;
     }
 
@@ -42,6 +44,7 @@ public class UserServiceImpl implements UserService {
         vo.setUsername(u.getUsername());
         vo.setEmail(u.getEmail());
         vo.setRole(u.getRole());
+        vo.setEmailVerified(u.getEmailVerified());
         vo.setCompanyName(u.getCompanyName());
         vo.setAvatar(u.getAvatar());
         vo.setStatus(u.getStatus());
@@ -53,9 +56,12 @@ public class UserServiceImpl implements UserService {
         return vo;
     }
 
+    @org.springframework.transaction.annotation.Transactional
     @Override
     public void updateProfile(UpdateProfileDTO dto) {
         SysUser u = currentUser();
+        u = sysUserMapper.selectOne(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<SysUser>().eq(SysUser::getId,u.getId()).last("FOR UPDATE"));
+        String previousSchool = u.getSchool();
         UserRole role = UserRole.from(u.getRole());
         if (role == UserRole.HR) {
             if (dto.getRealName() != null) u.setRealName(trimToNull(dto.getRealName()));
@@ -73,6 +79,11 @@ public class UserServiceImpl implements UserService {
         }
         u.setUpdatedAt(LocalDateTime.now());
         sysUserMapper.updateById(u);
+        if (UserRole.USER.name().equals(u.getRole()) && !java.util.Objects.equals(previousSchool, u.getSchool())) {
+            com.lanrecruitment.domain.entity.StudentProfile p=profiles.selectOne(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<com.lanrecruitment.domain.entity.StudentProfile>().eq(com.lanrecruitment.domain.entity.StudentProfile::getUserId,u.getId()));
+            if (p==null) { p=new com.lanrecruitment.domain.entity.StudentProfile(); p.setUserId(u.getId()); p.setProfileVersion(1L); profiles.insert(p); }
+            else { p.setProfileVersion(p.getProfileVersion()+1); profiles.updateById(p); }
+        }
     }
 
     @Override

@@ -72,6 +72,7 @@ public class HrJobServiceImpl implements HrJobService {
     private final TagMapper tagMapper;
     private final MatchService matchService;
     private final FileStorageService fileStorageService;
+    private final com.lanrecruitment.service.JobCategoryService categories;
 
     public HrJobServiceImpl(
             JobMapper jobMapper,
@@ -84,7 +85,8 @@ public class HrJobServiceImpl implements HrJobService {
             SysUserMapper sysUserMapper,
             TagMapper tagMapper,
             MatchService matchService,
-            FileStorageService fileStorageService
+            FileStorageService fileStorageService,
+            com.lanrecruitment.service.JobCategoryService categories
     ) {
         this.jobMapper = jobMapper;
         this.jobTagMapper = jobTagMapper;
@@ -97,6 +99,7 @@ public class HrJobServiceImpl implements HrJobService {
         this.tagMapper = tagMapper;
         this.matchService = matchService;
         this.fileStorageService = fileStorageService;
+        this.categories = categories;
     }
 
     @Override
@@ -129,7 +132,11 @@ public class HrJobServiceImpl implements HrJobService {
             vo.setCompanyName(j.getCompanyName());
             vo.setCity(j.getCity());
             vo.setSalaryRange(j.getSalaryRange());
-            vo.setJobType(j.getJobType());
+            vo.setJobType(j.getJobType()); vo.setDescription(j.getDescription());
+            vo.setCategoryId(j.getCategoryId()); vo.setCityCode(j.getCityCode()); vo.setSalaryMin(j.getSalaryMin());
+            vo.setSalaryMax(j.getSalaryMax()); vo.setSalaryNegotiable(j.getSalaryNegotiable()); vo.setEducationMinRank(j.getEducationMinRank());
+            vo.setGraduateYearMin(j.getGraduateYearMin()); vo.setGraduateYearMax(j.getGraduateYearMax());
+            vo.setAcceptFreshGraduate(j.getAcceptFreshGraduate()); vo.setDeadline(j.getDeadline()); vo.setVersion(j.getVersion());
             vo.setStatus(j.getStatus());
             vo.setAuditStatus(j.getAuditStatus());
             vo.setCreatedAt(j.getCreatedAt());
@@ -142,6 +149,7 @@ public class HrJobServiceImpl implements HrJobService {
     @Override
     public void save(JobSaveDTO dto) {
         Long hrId = StpUtil.getLoginIdAsLong();
+        categories.requireExisting(dto.getCategoryId());
         LocalDateTime now = LocalDateTime.now();
         SysUser hr = sysUserMapper.selectById(hrId);
         String companyName = hr == null ? null : hr.getCompanyName();
@@ -158,6 +166,7 @@ public class HrJobServiceImpl implements HrJobService {
             j.setSalaryRange(dto.getSalaryRange());
             j.setJobType(dto.getJobType());
             j.setDescription(dto.getDescription());
+            copyConditions(dto, j);
             j.setStatus(dto.getStatus());
             j.setAuditStatus(AuditStatus.PENDING.getCode());
             j.setCreatedAt(now);
@@ -167,22 +176,33 @@ public class HrJobServiceImpl implements HrJobService {
         }
 
         Job exists = getMyJob(dto.getId());
-        exists.setJobName(dto.getJobName());
-        exists.setCompanyName(companyName.trim());
-        exists.setCity(dto.getCity());
-        exists.setSalaryRange(dto.getSalaryRange());
-        exists.setJobType(dto.getJobType());
-        exists.setDescription(dto.getDescription());
-        exists.setStatus(dto.getStatus());
-        exists.setAuditStatus(AuditStatus.PENDING.getCode());
-        exists.setUpdatedAt(now);
-        jobMapper.updateById(exists);
+        if (dto.getVersion()==null || !dto.getVersion().equals(exists.getVersion())) throw new BizException(ErrorCode.CONFLICT);
+        com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper<Job> update = new com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper<Job>()
+          .eq(Job::getId,exists.getId()).eq(Job::getHrId,hrId).eq(Job::getVersion,dto.getVersion())
+          .set(Job::getJobName,dto.getJobName()).set(Job::getCompanyName,companyName.trim())
+          .set(Job::getCity,dto.getCity()).set(Job::getSalaryRange,dto.getSalaryRange()).set(Job::getJobType,dto.getJobType())
+          .set(Job::getDescription,dto.getDescription()).set(Job::getStatus,dto.getStatus())
+          .set(Job::getCategoryId,dto.getCategoryId()).set(Job::getCityCode,dto.getCityCode())
+          .set(Job::getSalaryMin,dto.getSalaryMin()).set(Job::getSalaryMax,dto.getSalaryMax()).set(Job::getSalaryNegotiable,dto.getSalaryNegotiable())
+          .set(Job::getEducationMinRank,dto.getEducationMinRank()).set(Job::getGraduateYearMin,dto.getGraduateYearMin())
+          .set(Job::getGraduateYearMax,dto.getGraduateYearMax()).set(Job::getAcceptFreshGraduate,dto.getAcceptFreshGraduate())
+          .set(Job::getDeadline,dto.getDeadline()).set(Job::getAuditStatus,AuditStatus.PENDING.getCode())
+          .set(Job::getVersion,dto.getVersion()+1).set(Job::getUpdatedAt,now);
+        if (jobMapper.update(null,update)!=1) throw new BizException(ErrorCode.CONFLICT);
+    }
+
+    private void copyConditions(JobSaveDTO dto, Job j) {
+        j.setCategoryId(dto.getCategoryId()); j.setCityCode(dto.getCityCode()); j.setSalaryMin(dto.getSalaryMin());
+        j.setSalaryMax(dto.getSalaryMax()); j.setSalaryNegotiable(dto.getSalaryNegotiable()); j.setEducationMinRank(dto.getEducationMinRank());
+        j.setGraduateYearMin(dto.getGraduateYearMin()); j.setGraduateYearMax(dto.getGraduateYearMax());
+        j.setAcceptFreshGraduate(dto.getAcceptFreshGraduate()); j.setDeadline(dto.getDeadline());
     }
 
     @Override
     public void delete(IdDTO dto) {
         Job job = getMyJob(dto.getId());
         job.setStatus(CommonStatus.DISABLED.getCode());
+        job.setVersion(job.getVersion()+1);
         job.setUpdatedAt(LocalDateTime.now());
         jobMapper.updateById(job);
     }
@@ -190,16 +210,8 @@ public class HrJobServiceImpl implements HrJobService {
     @Transactional
     @Override
     public void remove(IdDTO dto) {
-        Job job = getMyJob(dto.getId());
-        Long jobId = job.getId();
-        if (jobId == null) {
-            throw new BizException(ErrorCode.JOB_NOT_FOUND);
-        }
-        jobTagMapper.delete(new LambdaQueryWrapper<JobTag>().eq(JobTag::getJobId, jobId));
-        jobApplyMapper.delete(new LambdaQueryWrapper<JobApply>().eq(JobApply::getJobId, jobId));
-        matchScoreMapper.delete(new LambdaQueryWrapper<MatchScore>().eq(MatchScore::getJobId, jobId));
-        matchScoreCache.invalidateByJob(jobId);
-        jobMapper.deleteById(jobId);
+        // The old remove endpoint becomes a close operation and never deletes applications.
+        delete(dto);
     }
 
     @Override
@@ -238,6 +250,9 @@ public class HrJobServiceImpl implements HrJobService {
     @Override
     public void saveJobTags(JobTagSaveDTO dto) {
         Job job = getMyJob(dto.getJobId());
+        job = jobMapper.selectOne(new LambdaQueryWrapper<Job>().eq(Job::getId,job.getId()).last("FOR UPDATE"));
+        job.setAuditStatus(AuditStatus.PENDING.getCode()); job.setVersion(job.getVersion()+1); job.setUpdatedAt(LocalDateTime.now());
+        jobMapper.updateById(job);
         Long jobId = job.getId();
         if (jobId == null) {
             throw new BizException(ErrorCode.JOB_NOT_FOUND);

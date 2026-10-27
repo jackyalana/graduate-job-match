@@ -17,6 +17,18 @@ public class HrJobVO {
     private String city;
     private String salaryRange;
     private String jobType;
+    private String description;
+    private Long categoryId;
+    private String cityCode;
+    private Integer salaryMin;
+    private Integer salaryMax;
+    private Boolean salaryNegotiable;
+    private Integer educationMinRank;
+    private Integer graduateYearMin;
+    private Integer graduateYearMax;
+    private Boolean acceptFreshGraduate;
+    private LocalDateTime deadline;
+    private Long version;
     private Integer status;
     private Integer auditStatus;
     private LocalDateTime createdAt;

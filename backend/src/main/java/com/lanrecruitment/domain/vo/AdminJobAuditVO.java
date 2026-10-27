@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class AdminJobAuditVO {
     private Long id;
     private Long hrId;
+    private Long version;
     private String jobName;
     private String city;
     private String salaryRange;

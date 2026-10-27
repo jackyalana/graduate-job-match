@@ -1,0 +1,359 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.lanrecruitment:backend >---------------------
+[INFO] Building lan-recruitment-backend 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact mysql:mysql-connector-java:jar:8.0.33 has been relocated to com.mysql:mysql-connector-j:jar:8.0.33: MySQL Connector/J artifacts moved to reverse-DNS compliant Maven 2+ coordinates.
+[INFO] 
+[INFO] --- resources:3.2.0:resources (default-resources) @ backend ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Using 'UTF-8' encoding to copy filtered properties files.
+[INFO] Copying 2 resources
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ backend ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 138 source files to /Users/guanghao/private/graduate-job-match/backend/target/classes
+[INFO] 
+[INFO] --- resources:3.2.0:testResources (default-testResources) @ backend ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Using 'UTF-8' encoding to copy filtered properties files.
+[INFO] skip non existing resourceDirectory /Users/guanghao/private/graduate-job-match/backend/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.10.1:testCompile (default-testCompile) @ backend ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 5 source files to /Users/guanghao/private/graduate-job-match/backend/target/test-classes
+[INFO] /Users/guanghao/private/graduate-job-match/backend/src/test/java/com/lanrecruitment/service/impl/MatchServiceImplTest.java: /Users/guanghao/private/graduate-job-match/backend/src/test/java/com/lanrecruitment/service/impl/MatchServiceImplTest.java使用了未经检查或不安全的操作。
+[INFO] /Users/guanghao/private/graduate-job-match/backend/src/test/java/com/lanrecruitment/service/impl/MatchServiceImplTest.java: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+[INFO] 
+[INFO] --- surefire:2.22.2:test (default-test) @ backend ---
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.lanrecruitment.cache.InMemoryMatchScoreCacheTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.03 s - in com.lanrecruitment.cache.InMemoryMatchScoreCacheTest
+[INFO] Running com.lanrecruitment.config.SaTokenDaoStoreConfigTest
+10:47:14.588 [main] DEBUG org.springframework.context.annotation.AnnotationConfigApplicationContext - Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@5b239d7d
+10:47:14.592 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalConfigurationAnnotationProcessor'
+10:47:14.658 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.event.internalEventListenerProcessor'
+10:47:14.659 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.event.internalEventListenerFactory'
+10:47:14.659 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalAutowiredAnnotationProcessor'
+10:47:14.660 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalCommonAnnotationProcessor'
+10:47:14.662 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'saTokenDaoStoreConfigTest.TestBeans'
+10:47:14.663 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'saTokenDaoStoreConfig'
+10:47:14.664 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'redisConnectionFactory'
+10:47:14.854 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'saTokenDaoMemory'
+10:47:14.871 [main] DEBUG org.springframework.context.annotation.AnnotationConfigApplicationContext - Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@5b239d7d, started on Tue Oct 27 10:47:14 CST 2026
+10:47:14.873 [main] DEBUG org.springframework.context.annotation.AnnotationConfigApplicationContext - Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@70fab835
+10:47:14.873 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalConfigurationAnnotationProcessor'
+10:47:14.875 [main] DEBUG org.springframework.core.env.PropertySourcesPropertyResolver - Found key 'lan.sa-token.store' in PropertySource 'configurationProperties' with value of type String
+10:47:14.876 [main] DEBUG org.springframework.core.env.PropertySourcesPropertyResolver - Found key 'lan.sa-token.store' in PropertySource 'configurationProperties' with value of type String
+10:47:14.876 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.event.internalEventListenerProcessor'
+10:47:14.876 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.event.internalEventListenerFactory'
+10:47:14.876 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalAutowiredAnnotationProcessor'
+10:47:14.877 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalCommonAnnotationProcessor'
+10:47:14.877 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'saTokenDaoStoreConfigTest.TestBeans'
+10:47:14.877 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'saTokenDaoStoreConfig'
+10:47:14.877 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'redisConnectionFactory'
+10:47:14.877 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'saTokenDaoRedis'
+10:47:14.878 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Autowiring by type from bean name 'saTokenDaoRedis' via factory method to bean named 'redisConnectionFactory'
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class [B as writing converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.String as reading converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Number to class [B as writing converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Number as reading converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Enum to class [B as writing converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Enum as reading converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Boolean to class [B as writing converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Boolean as reading converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class [B as writing converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.util.Date as reading converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.UUID to class [B as writing converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.util.UUID as reading converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class [B as writing converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalDateTime as reading converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDate to class [B as writing converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalDate as reading converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalTime to class [B as writing converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalTime as reading converter
+10:47:14.964 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZonedDateTime to class [B as writing converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.ZonedDateTime as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class [B as writing converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Instant as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZoneId to class [B as writing converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.ZoneId as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Period to class [B as writing converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Period as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Duration to class [B as writing converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Duration as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalDateTime as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class java.util.Date as writing converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalDate as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDate to class java.util.Date as writing converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalTime as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalTime to class java.util.Date as writing converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.Instant as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class java.util.Date as writing converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class java.time.Instant as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class java.time.LocalDateTime as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZoneId to class java.lang.String as writing converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.ZoneId as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Duration to class java.lang.String as writing converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Duration as reading converter
+10:47:14.965 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Period to class java.lang.String as writing converter
+10:47:14.966 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Period as reading converter
+10:47:14.966 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.LocalDate as reading converter
+10:47:14.966 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.LocalDateTime as reading converter
+10:47:14.966 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Instant as reading converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class [B as writing converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.String as reading converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Number to class [B as writing converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Number as reading converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Enum to class [B as writing converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Enum as reading converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Boolean to class [B as writing converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Boolean as reading converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class [B as writing converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.util.Date as reading converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.UUID to class [B as writing converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.util.UUID as reading converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class [B as writing converter
+10:47:14.972 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalDateTime as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDate to class [B as writing converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalDate as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalTime to class [B as writing converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalTime as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZonedDateTime to class [B as writing converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.ZonedDateTime as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class [B as writing converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Instant as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZoneId to class [B as writing converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.ZoneId as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Period to class [B as writing converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Period as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Duration to class [B as writing converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Duration as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalDateTime as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class java.util.Date as writing converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalDate as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDate to class java.util.Date as writing converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalTime as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalTime to class java.util.Date as writing converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.Instant as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class java.util.Date as writing converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class java.time.Instant as reading converter
+10:47:14.973 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class java.time.LocalDateTime as reading converter
+10:47:14.974 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZoneId to class java.lang.String as writing converter
+10:47:14.974 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.ZoneId as reading converter
+10:47:14.974 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Duration to class java.lang.String as writing converter
+10:47:14.974 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Duration as reading converter
+10:47:14.974 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Period to class java.lang.String as writing converter
+10:47:14.974 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Period as reading converter
+10:47:14.974 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.LocalDate as reading converter
+10:47:14.974 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.LocalDateTime as reading converter
+10:47:14.974 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Instant as reading converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class [B as writing converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.String as reading converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Number to class [B as writing converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Number as reading converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Enum to class [B as writing converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Enum as reading converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Boolean to class [B as writing converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Boolean as reading converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class [B as writing converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.util.Date as reading converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.UUID to class [B as writing converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.util.UUID as reading converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class [B as writing converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalDateTime as reading converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDate to class [B as writing converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalDate as reading converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalTime to class [B as writing converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalTime as reading converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZonedDateTime to class [B as writing converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.ZonedDateTime as reading converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class [B as writing converter
+10:47:14.986 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Instant as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZoneId to class [B as writing converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.ZoneId as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Period to class [B as writing converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Period as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Duration to class [B as writing converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Duration as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalDateTime as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class java.util.Date as writing converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalDate as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDate to class java.util.Date as writing converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalTime as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalTime to class java.util.Date as writing converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.Instant as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class java.util.Date as writing converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class java.time.Instant as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class java.time.LocalDateTime as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZoneId to class java.lang.String as writing converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.ZoneId as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Duration to class java.lang.String as writing converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Duration as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Period to class java.lang.String as writing converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Period as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.LocalDate as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.LocalDateTime as reading converter
+10:47:14.987 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Instant as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.String as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Number to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Number as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Enum to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Enum as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Boolean to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Boolean as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.util.Date as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.UUID to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.util.UUID as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalDateTime as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDate to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalDate as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalTime to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalTime as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZonedDateTime to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.ZonedDateTime as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Instant as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZoneId to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.ZoneId as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Period to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Period as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Duration to class [B as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Duration as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalDateTime as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class java.util.Date as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalDate as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDate to class java.util.Date as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalTime as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalTime to class java.util.Date as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.Instant as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class java.util.Date as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class java.time.Instant as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class java.time.LocalDateTime as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZoneId to class java.lang.String as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.ZoneId as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Duration to class java.lang.String as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Duration as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Period to class java.lang.String as writing converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Period as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.LocalDate as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.LocalDateTime as reading converter
+10:47:14.989 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Instant as reading converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class [B as writing converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.String as reading converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Number to class [B as writing converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Number as reading converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Enum to class [B as writing converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Enum as reading converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.Boolean to class [B as writing converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.lang.Boolean as reading converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class [B as writing converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.util.Date as reading converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.UUID to class [B as writing converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.util.UUID as reading converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class [B as writing converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalDateTime as reading converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDate to class [B as writing converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalDate as reading converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalTime to class [B as writing converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.LocalTime as reading converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZonedDateTime to class [B as writing converter
+10:47:14.993 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.ZonedDateTime as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class [B as writing converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Instant as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZoneId to class [B as writing converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.ZoneId as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Period to class [B as writing converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Period as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Duration to class [B as writing converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class [B to class java.time.Duration as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalDateTime as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class java.util.Date as writing converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalDate as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDate to class java.util.Date as writing converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.LocalTime as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalTime to class java.util.Date as writing converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.util.Date to class java.time.Instant as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class java.util.Date as writing converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.LocalDateTime to class java.time.Instant as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Instant to class java.time.LocalDateTime as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.ZoneId to class java.lang.String as writing converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.ZoneId as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Duration to class java.lang.String as writing converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Duration as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.time.Period to class java.lang.String as writing converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Period as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.LocalDate as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.LocalDateTime as reading converter
+10:47:14.994 [main] DEBUG org.springframework.data.convert.CustomConversions - Adding converter from class java.lang.String to class java.time.Instant as reading converter
+10:47:15.004 [main] DEBUG org.springframework.context.annotation.AnnotationConfigApplicationContext - Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@70fab835, started on Tue Oct 27 10:47:14 CST 2026
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.479 s - in com.lanrecruitment.config.SaTokenDaoStoreConfigTest
+[INFO] Running com.lanrecruitment.config.MatchScoreCacheConfigTest
+10:47:15.006 [main] DEBUG org.springframework.context.annotation.AnnotationConfigApplicationContext - Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@997d532
+10:47:15.007 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalConfigurationAnnotationProcessor'
+10:47:15.012 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.event.internalEventListenerProcessor'
+10:47:15.012 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.event.internalEventListenerFactory'
+10:47:15.012 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalAutowiredAnnotationProcessor'
+10:47:15.013 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalCommonAnnotationProcessor'
+10:47:15.013 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'matchScoreCacheConfigTest.TestBeans'
+10:47:15.013 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'matchScoreCacheConfig'
+10:47:15.013 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'redisConnectionFactory'
+10:47:15.015 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'stringRedisTemplate'
+10:47:15.015 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Autowiring by type from bean name 'stringRedisTemplate' via factory method to bean named 'redisConnectionFactory'
+10:47:15.017 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'matchScoreCacheMemory'
+10:47:15.019 [main] DEBUG org.springframework.context.annotation.AnnotationConfigApplicationContext - Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@997d532, started on Tue Oct 27 10:47:15 CST 2026
+10:47:15.020 [main] DEBUG org.springframework.context.annotation.AnnotationConfigApplicationContext - Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@6b3871d6
+10:47:15.021 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalConfigurationAnnotationProcessor'
+10:47:15.022 [main] DEBUG org.springframework.core.env.PropertySourcesPropertyResolver - Found key 'lan.match.cache.store' in PropertySource 'configurationProperties' with value of type String
+10:47:15.022 [main] DEBUG org.springframework.core.env.PropertySourcesPropertyResolver - Found key 'lan.match.cache.store' in PropertySource 'configurationProperties' with value of type String
+10:47:15.022 [main] DEBUG org.springframework.core.env.PropertySourcesPropertyResolver - Found key 'lan.match.cache.store' in PropertySource 'configurationProperties' with value of type String
+10:47:15.023 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.event.internalEventListenerProcessor'
+10:47:15.023 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.event.internalEventListenerFactory'
+10:47:15.023 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalAutowiredAnnotationProcessor'
+10:47:15.023 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalCommonAnnotationProcessor'
+10:47:15.023 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'matchScoreCacheConfigTest.TestBeans'
+10:47:15.023 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'matchScoreCacheConfig'
+10:47:15.023 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'redisConnectionFactory'
+10:47:15.024 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'stringRedisTemplate'
+10:47:15.024 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Autowiring by type from bean name 'stringRedisTemplate' via factory method to bean named 'redisConnectionFactory'
+10:47:15.024 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'redisClient'
+10:47:15.024 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Autowiring by type from bean name 'redisClient' via factory method to bean named 'stringRedisTemplate'
+10:47:15.024 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'matchScoreCacheRedis'
+10:47:15.024 [main] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Autowiring by type from bean name 'matchScoreCacheRedis' via factory method to bean named 'redisClient'
+10:47:15.025 [main] DEBUG org.springframework.context.annotation.AnnotationConfigApplicationContext - Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@6b3871d6, started on Tue Oct 27 10:47:15 CST 2026
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 s - in com.lanrecruitment.config.MatchScoreCacheConfigTest
+[INFO] Running com.lanrecruitment.service.impl.MatchServiceImplTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.092 s - in com.lanrecruitment.service.impl.MatchServiceImplTest
+[INFO] Running com.lanrecruitment.service.impl.FileStorageServiceImplTest
+10:47:15.125 [main] DEBUG org.springframework.core.env.PropertySourcesPropertyResolver - Found key 'lan.storage.base-dir' in PropertySource 'mockProperties' with value of type String
+10:47:15.129 [main] DEBUG org.springframework.core.env.PropertySourcesPropertyResolver - Found key 'lan.storage.base-dir' in PropertySource 'mockProperties' with value of type String
+10:47:15.129 [main] DEBUG org.springframework.core.env.PropertySourcesPropertyResolver - Found key 'lan.storage.avatar' in PropertySource 'mockProperties' with value of type String
+10:47:15.129 [main] DEBUG org.springframework.core.env.PropertySourcesPropertyResolver - Found key 'lan.storage.resume' in PropertySource 'mockProperties' with value of type String
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 s - in com.lanrecruitment.service.impl.FileStorageServiceImplTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.2.2:jar (default-jar) @ backend ---
+[INFO] Building jar: /Users/guanghao/private/graduate-job-match/backend/target/backend-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- spring-boot:2.7.18:repackage (repackage) @ backend ---
+[INFO] Replacing main artifact with repackaged archive
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.367 s
+[INFO] Finished at: 2026-10-27T10:47:15+08:00
+[INFO] ------------------------------------------------------------------------
+
+exit_code=0

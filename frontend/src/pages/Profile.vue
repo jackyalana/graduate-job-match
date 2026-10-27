@@ -22,6 +22,7 @@
       <el-descriptions-item label="用户ID">{{ me.id }}</el-descriptions-item>
       <el-descriptions-item label="用户名">{{ me.username }}</el-descriptions-item>
       <el-descriptions-item label="角色">{{ roleLabel }}</el-descriptions-item>
+      <el-descriptions-item label="邮箱验证">{{ me.emailVerified ? '已验证' : '未验证' }}</el-descriptions-item>
       <el-descriptions-item v-if="me.role === 'HR'" label="公司名称">{{ profile?.companyName || '-' }}</el-descriptions-item>
     </el-descriptions>
 

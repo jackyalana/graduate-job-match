@@ -3,7 +3,9 @@ package com.lanrecruitment.common.enums;
 public enum ErrorCode {
     VALIDATION_FAILED(400, "参数校验失败"),
     SYSTEM_ERROR(500, "系统异常"),
+    CONFLICT(409, "数据已变化或操作不允许，请刷新后重试"),
 
+    AUTH_LOGIN_RATE_LIMITED(429, "登录尝试过多，请稍后再试"),
     AUTH_INVALID_CREDENTIALS(400, "用户名或密码错误"),
     AUTH_ACCOUNT_NOT_FOUND(400, "账号不存在"),
     AUTH_NOT_LOGGED_IN(401, "未登录"),

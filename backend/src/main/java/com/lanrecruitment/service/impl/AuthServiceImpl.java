@@ -24,14 +24,25 @@ public class AuthServiceImpl implements AuthService {
 
     private final SysUserMapper sysUserMapper;
     private final EmailCodeService emailCodeService;
+    private final org.springframework.core.env.Environment environment;
+    private final LoginRateLimiter loginRateLimiter;
 
-    public AuthServiceImpl(SysUserMapper sysUserMapper, EmailCodeService emailCodeService) {
+    public AuthServiceImpl(SysUserMapper sysUserMapper, EmailCodeService emailCodeService,
+            org.springframework.core.env.Environment environment, LoginRateLimiter loginRateLimiter) {
         this.sysUserMapper = sysUserMapper;
         this.emailCodeService = emailCodeService;
+        this.environment = environment;
+        this.loginRateLimiter = loginRateLimiter;
     }
 
     @Override
     public String loginByPassword(LoginByPasswordDTO dto) {
+        loginRateLimiter.check(dto.getUsername());
+        try { return doPasswordLogin(dto); }
+        catch (BizException e) { loginRateLimiter.recordFailure(dto.getUsername()); throw e; }
+    }
+
+    private String doPasswordLogin(LoginByPasswordDTO dto) {
         SysUser user = sysUserMapper.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, dto.getUsername()));
         if (user == null) {
             throw new BizException(ErrorCode.AUTH_INVALID_CREDENTIALS);
@@ -45,12 +56,20 @@ public class AuthServiceImpl implements AuthService {
         if (!PasswordUtil.matches(dto.getPassword(), user.getPassword())) {
             throw new BizException(ErrorCode.AUTH_INVALID_CREDENTIALS);
         }
+        loginRateLimiter.clear(dto.getUsername());
         StpUtil.login(user.getId());
         return StpUtil.getTokenValue();
     }
 
     @Override
     public String loginByEmail(LoginByEmailDTO dto) {
+        String limitKey="email:"+dto.getEmail();
+        loginRateLimiter.check(limitKey);
+        try { return doEmailLogin(dto,limitKey); }
+        catch (BizException e) { loginRateLimiter.recordFailure(limitKey); throw e; }
+    }
+
+    private String doEmailLogin(LoginByEmailDTO dto, String limitKey) {
         emailCodeService.verifyCode(dto.getEmail(), EmailPurpose.LOGIN.name(), dto.getCode());
         SysUser user = sysUserMapper.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getEmail, dto.getEmail()));
         if (user == null) {
@@ -62,13 +81,24 @@ public class AuthServiceImpl implements AuthService {
         if (UserRole.isHr(user.getRole()) && (user.getAuditStatus() == null || user.getAuditStatus() != AuditStatus.PASS.getCode())) {
             throw new BizException(ErrorCode.AUTH_HR_PENDING_AUDIT);
         }
+        loginRateLimiter.clear(limitKey);
         StpUtil.login(user.getId());
         return StpUtil.getTokenValue();
     }
 
     @Override
     public void register(RegisterDTO dto) {
-        emailCodeService.verifyCode(dto.getEmail(), EmailPurpose.REGISTER.name(), dto.getCode());
+        boolean demo = environment.acceptsProfiles(org.springframework.core.env.Profiles.of("demo"))
+                && environment.getProperty("lan.demo.local-registration",Boolean.class,false);
+        if (demo) {
+            org.springframework.web.context.request.ServletRequestAttributes attrs = (org.springframework.web.context.request.ServletRequestAttributes) org.springframework.web.context.request.RequestContextHolder.currentRequestAttributes();
+            String remote=attrs.getRequest().getRemoteAddr();
+            if (!"127.0.0.1".equals(remote) && !"::1".equals(remote) && !"0:0:0:0:0:0:0:1".equals(remote))
+                throw new BizException(ErrorCode.AUTH_ROLE_INVALID, "演示注册仅允许本机访问");
+        } else {
+            if (dto.getCode()==null || dto.getCode().trim().isEmpty()) throw new BizException(ErrorCode.EMAIL_CODE_INVALID);
+            emailCodeService.verifyCode(dto.getEmail(), EmailPurpose.REGISTER.name(), dto.getCode());
+        }
         UserRole role = dto.getRole() == null ? UserRole.USER : UserRole.from(dto.getRole());
         if (role == null || role == UserRole.ADMIN) {
             throw new BizException(ErrorCode.AUTH_ROLE_INVALID);
@@ -87,6 +117,7 @@ public class AuthServiceImpl implements AuthService {
         u.setUsername(dto.getUsername());
         u.setPassword(PasswordUtil.hash(dto.getPassword()));
         u.setEmail(dto.getEmail());
+        u.setEmailVerified(!demo);
         u.setRole(role.name());
         if (role == UserRole.HR) {
             u.setCompanyName(dto.getCompanyName() == null ? null : dto.getCompanyName().trim());

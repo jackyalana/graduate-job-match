@@ -39,7 +39,7 @@ public class FileStorageServiceImplTest {
                 "file",
                 "r.pdf",
                 "application/pdf",
-                new byte[]{4, 5, 6}
+                "%PDF-1.4\n%%EOF".getBytes(java.nio.charset.StandardCharsets.US_ASCII)
         ));
         assertThat(resumeUrl).startsWith("/uploads/resume/");
         Path resumePath = storage.resolveResumeAttachmentPath(resumeUrl);

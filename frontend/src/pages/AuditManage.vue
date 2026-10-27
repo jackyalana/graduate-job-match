@@ -9,7 +9,7 @@
           <el-table-column prop="username" label="用户名" width="120" />
           <el-table-column prop="companyName" label="公司名称" min-width="160" show-overflow-tooltip />
           <el-table-column prop="email" label="邮箱" min-width="200" />
-          <el-table-column prop="createdAt" label="申请时间" width="180" />
+          <el-table-column label="申请时间" width="180"><template #default="{ row }">{{ formatShanghai(row.createdAt) }}</template></el-table-column>
           <el-table-column label="操作" width="180">
             <template #default="{ row }">
               <el-button size="small" type="success" @click="decisionHr(row, true)">通过</el-button>
@@ -26,7 +26,7 @@
           <el-table-column prop="city" label="城市" width="100" />
           <el-table-column prop="jobType" label="类型" width="100" />
           <el-table-column prop="salaryRange" label="薪资" width="130" />
-          <el-table-column prop="createdAt" label="提交时间" width="180" />
+          <el-table-column label="提交时间" width="180"><template #default="{ row }">{{ formatShanghai(row.createdAt) }}</template></el-table-column>
           <el-table-column label="操作" width="240">
             <template #default="{ row }">
               <el-button size="small" @click="openJobDetail(row)">详情</el-button>
@@ -59,8 +59,8 @@
         <span v-else-if="jobDetail.auditStatus === 2">拒绝</span>
         <span v-else>{{ jobDetail.auditStatus == null ? '-' : jobDetail.auditStatus }}</span>
       </el-descriptions-item>
-      <el-descriptions-item label="创建时间">{{ jobDetail.createdAt || '-' }}</el-descriptions-item>
-      <el-descriptions-item label="更新时间">{{ jobDetail.updatedAt || '-' }}</el-descriptions-item>
+      <el-descriptions-item label="创建时间">{{ formatShanghai(jobDetail.createdAt) || '-' }}</el-descriptions-item>
+      <el-descriptions-item label="更新时间">{{ formatShanghai(jobDetail.updatedAt) || '-' }}</el-descriptions-item>
     </el-descriptions>
 
     <div v-if="jobDetail && jobDetail.description" style="margin-top: 12px">
@@ -71,6 +71,7 @@
 </template>
 
 <script setup>
+import { formatShanghai } from '../utils/time'
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { adminDecisionHr, adminDecisionJob, adminGetJobDetail, adminListPendingHr, adminListPendingJob } from '../api/job'
@@ -96,7 +97,7 @@ async function decisionHr(row, pass) {
 }
 
 async function decisionJob(row, pass) {
-  await adminDecisionJob(row.id, pass)
+  await adminDecisionJob(row.id, pass, row.version)
   ElMessage.success('已处理')
   await load()
 }

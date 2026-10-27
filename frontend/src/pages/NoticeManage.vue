@@ -23,7 +23,7 @@
           <el-tag v-else type="info">下线</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createdAt" label="创建时间" width="180" />
+      <el-table-column label="创建时间" width="180"><template #default="{ row }">{{ formatShanghai(row.createdAt) }}</template></el-table-column>
       <el-table-column label="操作" width="200">
         <template #default="{ row }">
           <el-button size="small" @click="openEdit(row)">编辑</el-button>
@@ -60,6 +60,7 @@
 </template>
 
 <script setup>
+import { formatShanghai } from '../utils/time'
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { adminDeleteNotice, adminListNotices, adminSaveNotice } from '../api/notice'

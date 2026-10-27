@@ -174,6 +174,28 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12"><el-form-item label="岗位类别"><el-select v-model="editForm.categoryId" clearable>
+          <el-option v-for="category in categories" :key="category.id" :label="category.name" :value="category.id" />
+        </el-select></el-form-item></el-col>
+        <el-col :span="12"><el-form-item label="城市代码"><el-input v-model="editForm.cityCode" /></el-form-item></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="8"><el-form-item label="最低月薪（元）"><el-input-number v-model="editForm.salaryMin" :min="0" /></el-form-item></el-col>
+        <el-col :span="8"><el-form-item label="最高月薪（元）"><el-input-number v-model="editForm.salaryMax" :min="0" /></el-form-item></el-col>
+        <el-col :span="8"><el-form-item label="薪资面议"><el-switch v-model="editForm.salaryNegotiable" /></el-form-item></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="8"><el-form-item label="最低学历"><el-select v-model="editForm.educationMinRank" clearable>
+          <el-option label="专科" :value="1" /><el-option label="本科" :value="2" /><el-option label="硕士" :value="3" /><el-option label="博士" :value="4" />
+        </el-select></el-form-item></el-col>
+        <el-col :span="8"><el-form-item label="最早毕业年份"><el-input-number v-model="editForm.graduateYearMin" :min="1900" :max="2100" /></el-form-item></el-col>
+        <el-col :span="8"><el-form-item label="最晚毕业年份"><el-input-number v-model="editForm.graduateYearMax" :min="1900" :max="2100" /></el-form-item></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12"><el-form-item label="接受应届生"><el-switch v-model="editForm.acceptFreshGraduate" /></el-form-item></el-col>
+        <el-col :span="12"><el-form-item label="截止时间（北京时间）"><el-date-picker v-model="editForm.deadlineLocal" type="datetime" value-format="YYYY-MM-DD HH:mm" /></el-form-item></el-col>
+      </el-row>
       <el-row>
         <el-col :span="24">
           <el-form-item label="岗位描述">
@@ -343,6 +365,7 @@ import {
   hrUpdateApplyStatus
 } from '../api/job'
 import { downloadBlobResponse } from '../utils/download'
+import request from '../api/request'
 import { matchLevelFromScore, matchTagFromScore } from '../utils/match'
 
 const jobs = ref([])
@@ -353,6 +376,7 @@ const editVisible = ref(false)
 const tagVisible = ref(false)
 const resumeVisible = ref(false)
 const showApplyList = ref(false)
+const categories = ref([])
 
 const currentJob = ref(null)
 const applications = ref([])
@@ -372,7 +396,8 @@ const editForm = reactive({
   salaryRange: '',
   jobType: '',
   description: '',
-  status: 1
+  status: 1, categoryId: null, cityCode: null, salaryMin: null, salaryMax: null, salaryNegotiable: false,
+  educationMinRank: null, graduateYearMin: null, graduateYearMax: null, acceptFreshGraduate: false, deadlineLocal: null, version: null
 })
 
 const checkedMap = reactive({})
@@ -452,6 +477,7 @@ function resumeTagText(tags) {
 }
 
 async function loadJobs() {
+  categories.value = await request.get('/api/public/job/categories')
   jobs.value = await hrListJobs()
 }
 
@@ -479,18 +505,22 @@ function openCreate() {
     salaryRange: '',
     jobType: '',
     description: '',
-    status: 1
+    status: 1, categoryId: null, cityCode: null, salaryMin: null, salaryMax: null, salaryNegotiable: false,
+    educationMinRank: null, graduateYearMin: null, graduateYearMax: null, acceptFreshGraduate: false, deadlineLocal: null, version: null
   })
   editVisible.value = true
 }
 
 function openEdit(row) {
   Object.assign(editForm, JSON.parse(JSON.stringify(row)))
+  editForm.deadlineLocal = row.deadline ? new Date(new Date(row.deadline.replace(' ', 'T')+'Z').getTime()+8*3600*1000).toISOString().slice(0,16).replace('T',' ') : null
   editVisible.value = true
 }
 
 async function save() {
-  await hrSaveJob(editForm)
+  const payload = { ...editForm, deadline: editForm.deadlineLocal ? new Date(new Date(editForm.deadlineLocal.replace(' ', 'T')+'Z').getTime()-8*3600*1000).toISOString().slice(0,16).replace('T',' ') : null }
+  delete payload.deadlineLocal
+  await hrSaveJob(payload)
   ElMessage.success('保存成功（岗位将进入待审核）')
   editVisible.value = false
   await loadJobs()

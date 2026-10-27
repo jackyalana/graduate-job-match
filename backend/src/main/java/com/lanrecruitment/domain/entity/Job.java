@@ -38,6 +38,17 @@ public class Job {
 
     private String description;
 
+    private Long categoryId;
+    private String cityCode;
+    private Integer salaryMin;
+    private Integer salaryMax;
+    private Boolean salaryNegotiable;
+    private Integer educationMinRank;
+    private Integer graduateYearMin;
+    private Integer graduateYearMax;
+    private Boolean acceptFreshGraduate;
+    private java.time.LocalDateTime deadline;
+    private Long version;
     private Integer status;
 
     @TableField("audit_status")

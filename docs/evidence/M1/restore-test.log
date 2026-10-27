@@ -1,0 +1,9 @@
+sys_user source count 8 restored count 8
+student_profile source count 2 restored count 2
+student_city_preference source count 2 restored count 2
+resume source count 3 restored count 3
+job source count 4 restored count 4
+job_apply source count 1 restored count 1
+PASS: synthetic backup restored into new schema graduate_job_match_m1_restore_b8eab6c4 backup is private under .local; no existing database overwritten.
+
+exit_code=0

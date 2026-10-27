@@ -26,6 +26,8 @@ public class SysUser {
 
     private String email;
 
+    private Boolean emailVerified;
+
     private String role;
 
     @TableField("company_name")

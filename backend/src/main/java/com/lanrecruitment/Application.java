@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @MapperScan("com.lanrecruitment.mapper")
 public class Application {
     public static void main(String[] args) {
+        // DATETIME values and eligibility comparisons use UTC; UI converts for display.
+        java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("UTC"));
         SpringApplication.run(Application.class, args);
     }
 }

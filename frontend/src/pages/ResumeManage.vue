@@ -122,7 +122,7 @@
             <div class="attach-info">
               <div v-if="editForm.fileUrl">
                 <div class="attach-name-row">
-                  <div class="attach-name">{{ editForm.fileName || editForm.fileUrl }}</div>
+                  <div class="attach-name">{{ editForm.fileName || 'PDF 附件' }}</div>
                   <el-popconfirm title="确认删除该附件？" @confirm="deleteAttachment">
                     <template #reference>
                       <el-icon class="attach-remove"><Close /></el-icon>
@@ -441,14 +441,14 @@ function beforeResumeUpload(file) {
   }
   const name = (file && file.name) || ''
   const ext = name.includes('.') ? name.split('.').pop().toLowerCase() : ''
-  const allowed = ['pdf', 'jpg', 'jpeg', 'png']
+  const allowed = ['pdf']
   if (!allowed.includes(ext)) {
-    ElMessage.error('附件仅支持 pdf/jpg/jpeg/png')
+    ElMessage.error('附件仅支持 PDF')
     return false
   }
-  const max = 10 * 1024 * 1024
+  const max = 5 * 1024 * 1024
   if (file.size > max) {
-    ElMessage.error('附件大小不能超过10MB')
+    ElMessage.error('附件大小不能超过5MB')
     return false
   }
   return true

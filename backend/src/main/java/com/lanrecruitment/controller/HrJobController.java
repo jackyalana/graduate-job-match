@@ -75,6 +75,11 @@ public class HrJobController {
         return Response.ok(null);
     }
 
+    @GetMapping("/api/hr/applications/{id}/attachment")
+    public ResponseEntity<Resource> downloadResumeAttachmentV1(@org.springframework.web.bind.annotation.PathVariable("id") Long id) {
+        return hrJobService.downloadResumeAttachment(id);
+    }
+
     @GetMapping("/api/hr/resume/file/download")
     public ResponseEntity<Resource> downloadResumeAttachment(@RequestParam("applyId") Long applyId) {
         return hrJobService.downloadResumeAttachment(applyId);

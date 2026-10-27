@@ -54,6 +54,8 @@ public class ResumeServiceImpl implements ResumeService {
     private final FileStorageService fileStorageService;
     private final MatchScoreMapper matchScoreMapper;
     private final MatchScoreCache matchScoreCache;
+    private final com.lanrecruitment.mapper.JobApplyMapper applications;
+    private final com.lanrecruitment.mapper.SysUserMapper users;
 
     public ResumeServiceImpl(
             ResumeMapper resumeMapper,
@@ -61,7 +63,9 @@ public class ResumeServiceImpl implements ResumeService {
             TagMapper tagMapper,
             FileStorageService fileStorageService,
             MatchScoreMapper matchScoreMapper,
-            MatchScoreCache matchScoreCache
+            MatchScoreCache matchScoreCache,
+            com.lanrecruitment.mapper.JobApplyMapper applications,
+            com.lanrecruitment.mapper.SysUserMapper users
     ) {
         this.resumeMapper = resumeMapper;
         this.resumeTagMapper = resumeTagMapper;
@@ -69,6 +73,8 @@ public class ResumeServiceImpl implements ResumeService {
         this.fileStorageService = fileStorageService;
         this.matchScoreMapper = matchScoreMapper;
         this.matchScoreCache = matchScoreCache;
+        this.applications = applications;
+        this.users = users;
     }
 
     @Override
@@ -95,6 +101,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public void save(ResumeSaveDTO dto) {
         Long userId = StpUtil.getLoginIdAsLong();
         LocalDateTime now = LocalDateTime.now();
@@ -136,26 +143,30 @@ public class ResumeServiceImpl implements ResumeService {
         exists.setWorkDesc(dto.getWorkDesc());
         exists.setStatus(dto.getStatus());
         exists.setUpdateTime(now);
+        exists.setVersion(exists.getVersion()+1);
         resumeMapper.updateById(exists);
     }
 
     @Override
     public void delete(IdDTO dto) {
         Resume r = getMyResume(dto.getId());
-        resumeTagMapper.delete(new LambdaQueryWrapper<ResumeTag>().eq(ResumeTag::getResumeId, r.getId()));
+        r.setStatus(0); r.setIsDefault(0); r.setVersion(r.getVersion()+1); r.setUpdateTime(LocalDateTime.now());
+        resumeMapper.updateById(r);
         matchScoreMapper.delete(new LambdaQueryWrapper<MatchScore>().eq(MatchScore::getResumeId, r.getId()));
         matchScoreCache.invalidateByResume(r.getId());
-        resumeMapper.deleteById(r.getId());
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public void setDefault(IdDTO dto) {
         setDefaultById(dto.getId());
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public void saveTags(ResumeTagSaveDTO dto) {
         Resume r = getMyResume(dto.getResumeId());
+        r.setVersion(r.getVersion()+1); resumeMapper.updateById(r);
         resumeTagMapper.delete(new LambdaQueryWrapper<ResumeTag>().eq(ResumeTag::getResumeId, r.getId()));
         matchScoreMapper.delete(new LambdaQueryWrapper<MatchScore>().eq(MatchScore::getResumeId, r.getId()));
         matchScoreCache.invalidateByResume(r.getId());
@@ -198,8 +209,10 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public ResumeVO uploadAttachment(Long resumeId, MultipartFile file) {
         Resume r = getMyResume(resumeId);
+        assertAttachmentMutable(r);
         String url = fileStorageService.storeResumeAttachment(file);
         r.setFileUrl(url);
+        r.setVersion(r.getVersion()+1);
         r.setFileName(file.getOriginalFilename());
         r.setFileSize(file.getSize());
         r.setFileType(ext(file.getOriginalFilename()));
@@ -224,6 +237,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public ResumeVO deleteMyAttachment(Long resumeId) {
         Resume r = getMyResume(resumeId);
+        assertAttachmentMutable(r);
         String fileUrl = r.getFileUrl();
         if (fileUrl != null && !fileUrl.trim().isEmpty()) {
             Path path = fileStorageService.resolveResumeAttachmentPath(fileUrl);
@@ -247,6 +261,7 @@ public class ResumeServiceImpl implements ResumeService {
                 .set(Resume::getFileName, null)
                 .set(Resume::getFileSize, null)
                 .set(Resume::getFileType, null)
+                .set(Resume::getVersion, r.getVersion()+1)
                 .set(Resume::getUpdateTime, r.getUpdateTime()));
         return toVO(r);
     }
@@ -278,6 +293,12 @@ public class ResumeServiceImpl implements ResumeService {
             res.add(vo);
         }
         return res;
+    }
+
+    private void assertAttachmentMutable(Resume r) {
+        Long count = applications.selectCount(new LambdaQueryWrapper<com.lanrecruitment.domain.entity.JobApply>()
+            .eq(com.lanrecruitment.domain.entity.JobApply::getResumeId, r.getId()));
+        if (count != null && count > 0) throw new BizException(ErrorCode.CONFLICT, "已有投递的附件暂不可替换或删除");
     }
 
     private Resume getMyResume(Long resumeId) {
@@ -315,7 +336,11 @@ public class ResumeServiceImpl implements ResumeService {
 
     private void setDefaultById(Long resumeId) {
         Resume r = getMyResume(resumeId);
+        if (!Integer.valueOf(1).equals(r.getStatus())) throw new BizException(ErrorCode.RESUME_NOT_AVAILABLE);
         Long userId = StpUtil.getLoginIdAsLong();
+        // Serialize default switches for the same student on the existing user row.
+        users.selectOne(new LambdaQueryWrapper<com.lanrecruitment.domain.entity.SysUser>()
+            .eq(com.lanrecruitment.domain.entity.SysUser::getId,userId).last("FOR UPDATE"));
         resumeMapper.update(null, new LambdaUpdateWrapper<Resume>()
                 .eq(Resume::getUserId, userId)
                 .set(Resume::getIsDefault, YesNo.NO.getCode()));

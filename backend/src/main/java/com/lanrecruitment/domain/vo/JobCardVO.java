@@ -19,6 +19,16 @@ public class JobCardVO {
     private String salaryRange;
     private String jobType;
     private String description;
+    private Long categoryId;
+    private String cityCode;
+    private Integer salaryMin;
+    private Integer salaryMax;
+    private Boolean salaryNegotiable;
+    private Integer educationMinRank;
+    private Integer graduateYearMin;
+    private Integer graduateYearMax;
+    private Boolean acceptFreshGraduate;
+    private LocalDateTime deadline;
     private BigDecimal matchScore;
     private LocalDateTime createdAt;
 }

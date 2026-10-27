@@ -2,6 +2,7 @@
   <div class="wrap">
     <el-card class="card">
       <div class="title">注册账号</div>
+      <el-alert v-if="isDemo" title="本地演示注册：请使用合成信息，邮箱不会验证" type="info" :closable="false" />
 
       <div class="role-switch">
         <el-radio-group v-model="form.role">
@@ -23,7 +24,7 @@
         <el-form-item label="邮箱">
           <el-input v-model="form.email" placeholder="请输入邮箱" />
         </el-form-item>
-        <el-form-item label="验证码">
+        <el-form-item v-if="!isDemo" label="验证码">
           <el-input v-model="form.code" placeholder="请输入验证码">
             <template #append>
               <el-button :disabled="cooldown > 0" @click="onSendRegisterCode">
@@ -46,6 +47,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { register, sendEmailCode } from '../api/auth'
 
+const isDemo = import.meta.env.VITE_DEMO === 'true'
 const router = useRouter()
 const form = reactive({ role: 'USER', username: '', password: '', companyName: '', email: '', code: '' })
 const cooldown = ref(0)
@@ -81,7 +83,7 @@ async function onSendRegisterCode() {
 
 async function onRegister() {
   await register(form)
-  ElMessage.success('注册成功，请登录')
+  ElMessage.success(isDemo ? '演示注册成功，邮箱未验证' : '注册成功，请登录')
   router.push('/login')
 }
 

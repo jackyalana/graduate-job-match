@@ -136,33 +136,14 @@ public class AdminUserServiceImpl implements AdminUserService {
         u.setStatus(dto.getStatus());
         u.setUpdatedAt(LocalDateTime.now());
         sysUserMapper.updateById(u);
+        if (Integer.valueOf(0).equals(dto.getStatus())) StpUtil.logout(u.getId());
     }
 
     @Transactional
     @Override
     public void deleteUser(IdDTO dto) {
-        Long currentAdminId = StpUtil.getLoginIdAsLong();
-        if (dto.getId() != null && dto.getId().equals(currentAdminId)) {
-            throw new BizException(ErrorCode.ADMIN_CANNOT_OPERATE_SELF);
-        }
-
-        SysUser u = sysUserMapper.selectById(dto.getId());
-        if (u == null) {
-            throw new BizException(ErrorCode.ADMIN_USER_NOT_FOUND);
-        }
-        if (UserRole.ADMIN.name().equals(u.getRole())) {
-            throw new BizException(ErrorCode.ADMIN_CANNOT_OPERATE_ADMIN);
-        }
-
-        Long userId = u.getId();
-        if (UserRole.USER.name().equals(u.getRole())) {
-            deleteUserData(userId);
-        } else if (UserRole.HR.name().equals(u.getRole())) {
-            deleteHrData(userId);
-        }
-
-        loginLogMapper.delete(new LambdaQueryWrapper<LoginLog>().eq(LoginLog::getUserId, userId));
-        sysUserMapper.deleteById(userId);
+        // M1 guard: the legacy endpoint must not physically delete application history.
+        throw new BizException(ErrorCode.CONFLICT, "账号删除暂不可用，请停用账号");
     }
 
     private void deleteUserData(Long userId) {

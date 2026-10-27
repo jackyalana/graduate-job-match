@@ -63,8 +63,8 @@ export function adminListPendingJob() {
   return request.get('/api/admin/audit/job/list')
 }
 
-export function adminDecisionJob(id, pass) {
-  return request.post('/api/admin/audit/job/decision', { id, pass })
+export function adminDecisionJob(id, pass, version) {
+  return request.post('/api/admin/audit/job/decision', { id, pass, version })
 }
 
 export function adminGetJobDetail(id) {

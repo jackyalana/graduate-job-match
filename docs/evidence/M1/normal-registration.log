@@ -1,0 +1,3 @@
+PASS: dev profile rejects code-less registration even when demo flag is true; HTTP 400, EMAIL_CODE_INVALID.
+
+exit_code=0

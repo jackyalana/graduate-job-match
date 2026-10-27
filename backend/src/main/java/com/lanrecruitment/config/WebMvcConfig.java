@@ -10,53 +10,34 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-
     private final Environment env;
-    private static final String DEFAULT_BASE_DIR = System.getProperty("user.home") + "/lan-recruitment/uploads";
-
-    public WebMvcConfig(Environment env) {
-        this.env = env;
-    }
-
+    public WebMvcConfig(Environment env) { this.env = env; }
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("*")
-                .allowedMethods("GET", "POST", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
+        registry.addMapping("/api/**")
+          .allowedOrigins(env.getProperty("lan.cors.origins", "http://127.0.0.1:15173,http://127.0.0.1:15174,http://localhost:5173").split(","))
+          .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+          .allowedHeaders("Content-Type", "satoken")
+          .exposedHeaders("X-Request-Id", "Content-Disposition")
+          .allowCredentials(false);
     }
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        Path basePath = Paths.get(env.getProperty("lan.storage.base-dir", DEFAULT_BASE_DIR)).toAbsolutePath().normalize();
-        Path avatarPath = resolveDir(basePath, env.getProperty("lan.storage.avatar"), basePath.resolve("avatar"));
-        Path resumePath = resolveDir(basePath, env.getProperty("lan.storage.resume"), basePath.resolve("resume"));
-
-        registry.addResourceHandler("/uploads/avatar/**")
-                .addResourceLocations(toLocation(avatarPath));
-        registry.addResourceHandler("/uploads/resume/**")
-                .addResourceLocations(toLocation(resumePath));
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(toLocation(basePath));
+        Path base = Paths.get(env.getProperty("lan.storage.base-dir", System.getProperty("user.home") + "/lan-recruitment/uploads")).toAbsolutePath().normalize();
+        Path avatar = resolve(base, env.getProperty("lan.storage.avatar"), "avatar");
+        Path resume = resolve(base, env.getProperty("lan.storage.resume"), "resume");
+        // Only avatars may be static. Reject overlapping configured roots, including symlink aliases.
+        try {
+            java.nio.file.Files.createDirectories(avatar);
+            java.nio.file.Files.createDirectories(resume);
+            avatar = avatar.toRealPath(); resume = resume.toRealPath();
+        } catch (java.io.IOException e) { throw new IllegalStateException("Storage directories unavailable", e); }
+        if (avatar.startsWith(resume) || resume.startsWith(avatar)) throw new IllegalStateException("Avatar and resume paths overlap");
+        String location = avatar.toUri().toString();
+        registry.addResourceHandler("/uploads/avatar/**").addResourceLocations(location.endsWith("/") ? location : location + "/");
     }
-
-    private Path resolveDir(Path basePath, String configured, Path defaultDir) {
-        if (configured == null || configured.trim().isEmpty()) {
-            return defaultDir.toAbsolutePath().normalize();
-        }
-        Path p = Paths.get(configured);
-        if (!p.isAbsolute()) {
-            p = basePath.resolve(configured);
-        }
-        return p.toAbsolutePath().normalize();
-    }
-
-    private String toLocation(Path basePath) {
-        String location = basePath.toUri().toString();
-        if (!location.endsWith("/")) {
-            location = location + "/";
-        }
-        return location;
+    private Path resolve(Path base, String value, String fallback) {
+        Path p = value == null || value.trim().isEmpty() ? base.resolve(fallback) : Paths.get(value);
+        return (p.isAbsolute() ? p : base.resolve(p)).toAbsolutePath().normalize();
     }
 }

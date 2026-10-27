@@ -1,0 +1,45 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.lanrecruitment:backend >---------------------
+[INFO] Building lan-recruitment-backend 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact mysql:mysql-connector-java:jar:8.0.33 has been relocated to com.mysql:mysql-connector-j:jar:8.0.33: MySQL Connector/J artifacts moved to reverse-DNS compliant Maven 2+ coordinates.
+[INFO] 
+[INFO] --- resources:3.2.0:resources (default-resources) @ backend ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Using 'UTF-8' encoding to copy filtered properties files.
+[INFO] Copying 2 resources
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ backend ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 130 source files to /Users/guanghao/private/graduate-job-match/backend/target/classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /Users/guanghao/private/graduate-job-match/backend/src/main/java/com/lanrecruitment/config/SaTokenConfig.java:[28,44] 无法将类 cn.dev33.satoken.exception.NotLoginException中的方法 newInstance应用到给定类型;
+  需要: java.lang.String,java.lang.String,java.lang.String,java.lang.String
+  找到: java.lang.String,java.lang.String,java.lang.String
+  原因: 实际参数列表和形式参数列表长度不同
+[INFO] 1 error
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.182 s
+[INFO] Finished at: 2026-10-27T10:23:27+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile (default-compile) on project backend: Compilation failure
+[ERROR] /Users/guanghao/private/graduate-job-match/backend/src/main/java/com/lanrecruitment/config/SaTokenConfig.java:[28,44] 无法将类 cn.dev33.satoken.exception.NotLoginException中的方法 newInstance应用到给定类型;
+[ERROR]   需要: java.lang.String,java.lang.String,java.lang.String,java.lang.String
+[ERROR]   找到: java.lang.String,java.lang.String,java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+exit_code=1

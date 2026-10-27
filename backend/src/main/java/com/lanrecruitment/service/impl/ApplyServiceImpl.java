@@ -34,11 +34,13 @@ public class ApplyServiceImpl implements ApplyService {
     private final JobApplyMapper jobApplyMapper;
     private final ResumeMapper resumeMapper;
     private final JobMapper jobMapper;
+    private final com.lanrecruitment.service.JobEligibilityService eligibility;
 
-    public ApplyServiceImpl(JobApplyMapper jobApplyMapper, ResumeMapper resumeMapper, JobMapper jobMapper) {
+    public ApplyServiceImpl(JobApplyMapper jobApplyMapper, ResumeMapper resumeMapper, JobMapper jobMapper, com.lanrecruitment.service.JobEligibilityService eligibility) {
         this.jobApplyMapper = jobApplyMapper;
         this.resumeMapper = resumeMapper;
         this.jobMapper = jobMapper;
+        this.eligibility = eligibility;
     }
 
     @Override
@@ -57,8 +59,7 @@ public class ApplyServiceImpl implements ApplyService {
         if (job == null) {
             throw new BizException(ErrorCode.JOB_NOT_FOUND);
         }
-        if (job.getStatus() == null || job.getStatus() != CommonStatus.ENABLED.getCode()
-                || job.getAuditStatus() == null || job.getAuditStatus() != AuditStatus.PASS.getCode()) {
+        if (!eligibility.publiclyVisible(job)) {
             throw new BizException(ErrorCode.JOB_NOT_APPLICABLE);
         }
 

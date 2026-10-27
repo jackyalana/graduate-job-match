@@ -8,6 +8,8 @@ spring:
     username: graduate_demo
     password: ${M0_DB_PASSWORD}
 lan:
+  demo:
+    local-registration: true
   sa-token:
     store: memory
   match:

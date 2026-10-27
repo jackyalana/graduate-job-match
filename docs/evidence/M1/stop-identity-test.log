@@ -1,0 +1,3 @@
+PASS: unrelated command not signalled; no M1 process group affected
+
+exit_code=0
