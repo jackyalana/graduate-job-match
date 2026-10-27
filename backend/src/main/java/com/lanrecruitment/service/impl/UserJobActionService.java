@@ -20,8 +20,8 @@ public class UserJobActionService {
   if(active && !eligibility.publiclyVisible(jobs.selectById(jobId)))throw new BizException(ErrorCode.JOB_NOT_FOUND);
   UserJobAction a=actions.selectOne(new LambdaQueryWrapper<UserJobAction>().eq(UserJobAction::getUserId,user).eq(UserJobAction::getJobId,jobId).eq(UserJobAction::getActionType,type));
   if(a!=null && Boolean.valueOf(active).equals(a.getActive()))return;
-  if(a==null){a=new UserJobAction();a.setUserId(user);a.setJobId(jobId);a.setActionType(type);a.setActive(active);a.setUpdatedAt(LocalDateTime.now());actions.insert(a);}
-  else {a.setActive(active);a.setUpdatedAt(LocalDateTime.now());actions.updateById(a);}
+  if(a==null){a=new UserJobAction();a.setUserId(user);a.setJobId(jobId);a.setActionType(type);a.setActive(active);a.setUpdatedAt(LocalDateTime.now().withNano(0));actions.insert(a);}
+  else {a.setActive(active);a.setUpdatedAt(LocalDateTime.now().withNano(0));actions.updateById(a);}
   workflow.recordBehavior(user,jobId,active?type:"UN"+type,UUID.randomUUID().toString());
  }
  @Transactional public void view(Long jobId){Long user=StpUtil.getLoginIdAsLong();if(!eligibility.publiclyVisible(jobs.selectById(jobId)))throw new BizException(ErrorCode.JOB_NOT_FOUND);

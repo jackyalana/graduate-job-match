@@ -14,6 +14,12 @@ public final class RecommendationCalculator {
             Map<Long,ContentScorer.Requirement> requiredSkills, Map<Long,String> names,
             Long desiredCategory, Long jobCategory, Set<String> desiredCities, String jobCity,
             Integer desiredSalary, Integer maxSalary, Boolean negotiable, double hot) {
+        return calculate(jobId,studentSkills,requiredSkills,names,desiredCategory,jobCategory,desiredCities,jobCity,desiredSalary,maxSalary,negotiable,hot,null);
+    }
+    public static MatchExplanation calculate(long jobId, Map<Long,Integer> studentSkills,
+            Map<Long,ContentScorer.Requirement> requiredSkills, Map<Long,String> names,
+            Long desiredCategory, Long jobCategory, Set<String> desiredCities, String jobCity,
+            Integer desiredSalary, Integer maxSalary, Boolean negotiable, double hot, Double cf) {
         MatchExplanation out=new MatchExplanation(); out.setJobId(jobId);
         Double skill=ContentScorer.skill(studentSkills,requiredSkills);
         Double category=desiredCategory==null || jobCategory==null ? null : desiredCategory.equals(jobCategory)?1.0:0.0;
@@ -41,13 +47,15 @@ public final class RecommendationCalculator {
         if(Double.valueOf(1).equals(salary)) out.getReasons().add("最高月薪满足期望");
         if(!out.getMatchedSkills().isEmpty()) out.getReasons().add("满足部分岗位技能要求");
         Double content=ContentScorer.content(skill,category,city,salary);
-        out.setRawContent(content); out.setRawRecommendation(ContentScorer.recommendation(content,hot));
+        double wc=content==null?0:(cf==null?0.8:0.6),wf=cf==null?0:(content==null?0.625:0.25),wh=(content==null?(cf==null?1.0:0.375):(cf==null?0.2:0.15));
+        double recommendation=wc*(content==null?0:content)+wf*(cf==null?0:cf)+wh*hot;
+        out.setRawContent(content); out.setRawRecommendation(recommendation);
         out.setMatchScore(round(content==null?null:100*content,1));
-        out.setRecommendationScore(round(100*ContentScorer.recommendation(content,hot),1));
-        out.setStrategy(content==null?"HOT_FALLBACK":"CONTENT_HOT");
-        out.setFallbackReason(content==null?"NO_AVAILABLE_CONTENT":"NO_VALID_NEIGHBORS");
-        out.getComponents().put("content",round(content,4));out.getComponents().put("collaborative",null);out.getComponents().put("hot",round(hot,4));
-        out.getEffectiveWeights().put("content",content==null?0.0:0.8);out.getEffectiveWeights().put("collaborative",0.0);out.getEffectiveWeights().put("hot",content==null?1.0:0.2);
+        out.setRecommendationScore(round(100*recommendation,1));
+        out.setStrategy(cf!=null?"HYBRID":content==null?"HOT_FALLBACK":"CONTENT_HOT");
+        out.setFallbackReason(cf!=null?null:content==null?"NO_AVAILABLE_CONTENT":"NO_VALID_NEIGHBORS");
+        out.getComponents().put("content",round(content,4));out.getComponents().put("collaborative",round(cf,4));out.getComponents().put("hot",round(hot,4));
+        out.getEffectiveWeights().put("content",wc);out.getEffectiveWeights().put("collaborative",wf);out.getEffectiveWeights().put("hot",wh);
         return out;
     }
 }

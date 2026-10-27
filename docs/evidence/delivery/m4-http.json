@@ -1,0 +1,445 @@
+{
+  "tests": [
+    {
+      "name": "password login admin",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login student",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login student2",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login hr",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create category",
+      "method": "POST",
+      "path": "/api/admin/job/categories",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "categories",
+      "method": "GET",
+      "path": "/api/public/job/categories",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create CF demo 0",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list HR jobs for CF demo 0",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "load pending version 1",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve 1",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create CF demo 1",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list HR jobs for CF demo 1",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "load pending version 2",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve 2",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create CF demo 2",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list HR jobs for CF demo 2",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "load pending version 3",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve 3",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create CF demo 3",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list HR jobs for CF demo 3",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "load pending version 4",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve 4",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "cold batch",
+      "method": "POST",
+      "path": "/api/student/recommendation-batches",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student view",
+      "method": "POST",
+      "path": "/api/student/jobs/1/view",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "repeat student view idempotent",
+      "method": "POST",
+      "path": "/api/student/jobs/1/view",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "neighbor view",
+      "method": "POST",
+      "path": "/api/student/jobs/1/view",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student view",
+      "method": "POST",
+      "path": "/api/student/jobs/2/view",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "repeat student view idempotent",
+      "method": "POST",
+      "path": "/api/student/jobs/2/view",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "neighbor view",
+      "method": "POST",
+      "path": "/api/student/jobs/2/view",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student view",
+      "method": "POST",
+      "path": "/api/student/jobs/3/view",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "repeat student view idempotent",
+      "method": "POST",
+      "path": "/api/student/jobs/3/view",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "neighbor view",
+      "method": "POST",
+      "path": "/api/student/jobs/3/view",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "neighbor favorite target",
+      "method": "POST",
+      "path": "/api/student/jobs/4/actions/FAVORITE",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "favorite idempotent",
+      "method": "POST",
+      "path": "/api/student/jobs/4/actions/FAVORITE",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "old batch stale after view",
+      "method": "GET",
+      "path": "/api/student/recommendation-batches/35dbda55-2e76-4cb1-a56a-db7c9f68d3e9",
+      "expected_http": 409,
+      "actual_http": 409,
+      "code": "BATCH_STALE",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "CF enabled",
+      "method": "POST",
+      "path": "/api/student/recommendation-batches",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "cancel neighbor favorite",
+      "method": "POST",
+      "path": "/api/student/jobs/4/actions/FAVORITE",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "CF sees cancellation",
+      "method": "POST",
+      "path": "/api/student/recommendation-batches",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "hide job",
+      "method": "POST",
+      "path": "/api/student/jobs/4/actions/HIDE",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "hidden job excluded",
+      "method": "POST",
+      "path": "/api/student/recommendation-batches",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "unhide job",
+      "method": "POST",
+      "path": "/api/student/jobs/4/actions/HIDE",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "unhidden job restored",
+      "method": "POST",
+      "path": "/api/student/recommendation-batches",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "admin statistics",
+      "method": "GET",
+      "path": "/api/admin/statistics",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student cannot read admin stats",
+      "method": "GET",
+      "path": "/api/admin/statistics",
+      "expected_http": 403,
+      "actual_http": 403,
+      "code": "FORBIDDEN",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    }
+  ],
+  "total": 44
+}

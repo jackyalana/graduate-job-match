@@ -84,6 +84,7 @@
             <el-icon><CircleCheck /></el-icon>
             <span>审核管理</span>
           </el-menu-item>
+          <el-menu-item v-if="role === 'ADMIN'" index="/statistics"><el-icon><Tickets /></el-icon><span>基础统计</span></el-menu-item>
           <el-menu-item v-if="role === 'ADMIN'" index="/tag">
             <el-icon><CollectionTag /></el-icon>
             <span>标签库管理</span>

@@ -28,15 +28,19 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final StudentCityPreferenceMapper cities; private final JobApplyMapper applies;
     private final RecommendationBatchMapper batches; private final JobEligibilityService eligibility; private final ObjectMapper json;
     private final SkillTagAliasMapper aliases;
+    private final BehaviorEventMapper behaviors;
+    private final UserJobActionMapper actions;
     public RecommendationServiceImpl(JobMapper jobs, ResumeMapper resumes, ResumeTagMapper resumeTags, JobTagMapper jobTags,
             TagMapper tags, StudentProfileMapper profiles, StudentCityPreferenceMapper cities, JobApplyMapper applies,
-            RecommendationBatchMapper batches, JobEligibilityService eligibility, ObjectMapper json, SkillTagAliasMapper aliases) {
+            RecommendationBatchMapper batches, JobEligibilityService eligibility, ObjectMapper json, SkillTagAliasMapper aliases,
+            BehaviorEventMapper behaviors, UserJobActionMapper actions) {
         this.jobs=jobs;this.resumes=resumes;this.resumeTags=resumeTags;this.jobTags=jobTags;this.tags=tags;
-        this.profiles=profiles;this.cities=cities;this.applies=applies;this.batches=batches;this.eligibility=eligibility;this.json=json;this.aliases=aliases;
+        this.profiles=profiles;this.cities=cities;this.applies=applies;this.batches=batches;this.eligibility=eligibility;this.json=json;this.aliases=aliases;this.behaviors=behaviors;this.actions=actions;
     }
     private static class Snapshot {
         StudentProfile profile; Resume resume; List<StudentCityPreference> cities; List<ResumeTag> resumeTags;
-        List<Job> jobs; List<JobTag> jobTags; List<Tag> tags; List<SkillTagAlias> aliases; List<JobApply> applies; String hash;
+        List<Job> jobs; List<JobTag> jobTags; List<Tag> tags; List<SkillTagAlias> aliases; List<JobApply> applies;
+        List<UserJobAction> favorites; Map<Long,Map<Long,Integer>> vectors; Long userId; String hash;
     }
     private Resume resolve(Long user,Long id) {
         if(id!=null) {
@@ -51,7 +55,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         return snapshot(user,request,now,false);
     }
     private Snapshot snapshot(Long user,RecommendationRequest request,LocalDateTime now,boolean includeApplied) {
-        Snapshot s=new Snapshot(); s.resume=resolve(user,request.getResumeId());
+        Snapshot s=new Snapshot(); s.userId=user; s.resume=resolve(user,request.getResumeId());
         s.profile=profiles.selectOne(new LambdaQueryWrapper<StudentProfile>().eq(StudentProfile::getUserId,user));
         s.cities=cities.selectList(new LambdaQueryWrapper<StudentCityPreference>().eq(StudentCityPreference::getUserId,user).orderByAsc(StudentCityPreference::getId));
         s.resumeTags=s.resume==null ? Collections.emptyList() : resumeTags.selectList(new LambdaQueryWrapper<ResumeTag>().eq(ResumeTag::getResumeId,s.resume.getId()).orderByAsc(ResumeTag::getId));
@@ -72,14 +76,18 @@ public class RecommendationServiceImpl implements RecommendationService {
         s.jobTags=ids.isEmpty()?Collections.emptyList():jobTags.selectList(new LambdaQueryWrapper<JobTag>().in(JobTag::getJobId,ids).orderByAsc(JobTag::getId));
         s.tags=tags.selectList(new LambdaQueryWrapper<Tag>().orderByAsc(Tag::getId));
         s.aliases=aliases.selectList(new LambdaQueryWrapper<SkillTagAlias>().orderByAsc(SkillTagAlias::getAliasTagId));
-        s.applies=applies.selectList(new LambdaQueryWrapper<JobApply>().ge(JobApply::getCreatedAt,now.minusDays(30)).le(JobApply::getCreatedAt,now).orderByAsc(JobApply::getId));
+        s.applies=applies.selectList(new LambdaQueryWrapper<JobApply>().select(JobApply::getId,JobApply::getJobId,JobApply::getUserId,JobApply::getCreatedAt).ge(JobApply::getCreatedAt,now.minusDays(90)).le(JobApply::getCreatedAt,now).orderByAsc(JobApply::getId));
+        List<BehaviorEvent> activity=behaviors.selectList(new LambdaQueryWrapper<BehaviorEvent>().ge(BehaviorEvent::getEventTime,now.minusDays(90)).le(BehaviorEvent::getEventTime,now).orderByAsc(BehaviorEvent::getId));
+        s.vectors=CollaborativeScorer.vectors(activity,s.applies,now);
+        s.favorites=actions.selectList(new LambdaQueryWrapper<UserJobAction>().eq(UserJobAction::getActionType,"FAVORITE").eq(UserJobAction::getActive,true).ge(UserJobAction::getUpdatedAt,now.minusDays(30)).le(UserJobAction::getUpdatedAt,now).orderByAsc(UserJobAction::getId));
         try {
             List<Object> signature=new ArrayList<>(); signature.add(ContentScorer.VERSION); signature.add(s.profile); signature.add(s.cities);
             signature.add(s.resume==null?null:Arrays.asList(s.resume.getId(),s.resume.getVersion(),s.resume.getStatus(),s.resume.getIsDefault()));
             signature.add(s.resumeTags);signature.add(s.jobs);signature.add(s.jobTags);signature.add(s.tags);signature.add(s.aliases);
             Set<String> uniquePairs=new TreeSet<>();
-            for(JobApply application:s.applies) if(application.getJobId()!=null && application.getUserId()!=null) uniquePairs.add(application.getJobId()+":"+application.getUserId());
-            signature.add(uniquePairs);
+            for(JobApply application:s.applies) if(application.getCreatedAt()!=null && !application.getCreatedAt().isBefore(now.minusDays(30)) && application.getJobId()!=null && application.getUserId()!=null) uniquePairs.add(application.getJobId()+":"+application.getUserId());
+            Set<String> favoritePairs=new TreeSet<>();for(UserJobAction a:s.favorites)favoritePairs.add(a.getJobId()+":"+a.getUserId());
+            signature.add(uniquePairs);signature.add(favoritePairs);signature.add(s.vectors);
             byte[] hash=MessageDigest.getInstance("SHA-256").digest(json.writeValueAsBytes(signature));
             StringBuilder b=new StringBuilder();for(byte x:hash)b.append(String.format("%02x",x & 255));s.hash=b.toString();
         } catch (Exception e) { throw new IllegalStateException("Cannot calculate input fingerprint",e); }
@@ -99,8 +107,10 @@ public class RecommendationServiceImpl implements RecommendationService {
             if(t!=null && "SKILL".equals(t.getTagType()) && Integer.valueOf(1).equals(t.getStatus()) && valid(rt.getProficiency())) student.merge(canonicalSkill(rt.getTagId(),canonical,tagMap),rt.getProficiency(),Math::max); }
         Map<Long,List<JobTag>> grouped=s.jobTags.stream().collect(Collectors.groupingBy(JobTag::getJobId));
         Map<Long,Set<Long>> applicants=new HashMap<>();
-        for(JobApply a:s.applies) if(a.getJobId()!=null && a.getUserId()!=null) applicants.computeIfAbsent(a.getJobId(),k->new HashSet<>()).add(a.getUserId());
-        long max=s.jobs.stream().mapToLong(j->applicants.getOrDefault(j.getId(),Collections.emptySet()).size()).max().orElse(0);
+        for(JobApply a:s.applies) if(a.getCreatedAt()!=null && !a.getCreatedAt().isBefore(now.minusDays(30)) && a.getJobId()!=null && a.getUserId()!=null) applicants.computeIfAbsent(a.getJobId(),k->new HashSet<>()).add(a.getUserId());
+        Map<Long,Set<Long>> favoriteUsers=new HashMap<>();for(UserJobAction a:s.favorites)favoriteUsers.computeIfAbsent(a.getJobId(),k->new HashSet<>()).add(a.getUserId());
+        long max=s.jobs.stream().mapToLong(j->5L*applicants.getOrDefault(j.getId(),Collections.emptySet()).size()+3L*favoriteUsers.getOrDefault(j.getId(),Collections.emptySet()).size()).max().orElse(0);
+        Map<Long,Double> cf=CollaborativeScorer.scores(s.userId,s.jobs.stream().map(Job::getId).collect(Collectors.toList()),s.vectors);
         Set<String> cityCodes=s.cities.stream().map(StudentCityPreference::getCityCode).collect(Collectors.toSet());
         List<Map<String,Object>> result=new ArrayList<>();
         for(Job j:s.jobs) {
@@ -118,8 +128,9 @@ public class RecommendationServiceImpl implements RecommendationService {
                 required.put(key,new ContentScorer.Requirement(prior==null?jt.getProficiency():Math.max(prior.level,jt.getProficiency()),prior==null?importance:Math.max(prior.importance,importance))); names.put(key,tagMap.get(key).getTagName());
             }
             double days=j.getCreatedAt()==null?0:Math.max(0,Duration.between(j.getCreatedAt(),now).toMillis()/86400000.0);
-            double hot=ContentScorer.hot(applicants.getOrDefault(j.getId(),Collections.emptySet()).size(),max,days);
-            MatchExplanation e=RecommendationCalculator.calculate(j.getId(),student,required,names,s.profile==null?null:s.profile.getExpectedCategoryId(),j.getCategoryId(),cityCodes,j.getCityCode(),s.profile==null?null:s.profile.getSalaryMin(),j.getSalaryMax(),j.getSalaryNegotiable(),hot);
+            long h=5L*applicants.getOrDefault(j.getId(),Collections.emptySet()).size()+3L*favoriteUsers.getOrDefault(j.getId(),Collections.emptySet()).size();
+            double pop=max==0?0:Math.log1p(h)/Math.log1p(max);double hot=0.8*pop+0.2*Math.exp(-days/30.0);
+            MatchExplanation e=RecommendationCalculator.calculate(j.getId(),student,required,names,s.profile==null?null:s.profile.getExpectedCategoryId(),j.getCategoryId(),cityCodes,j.getCityCode(),s.profile==null?null:s.profile.getSalaryMin(),j.getSalaryMax(),j.getSalaryNegotiable(),hot,cf==null?null:cf.get(j.getId()));
             Map<String,Object> item=new LinkedHashMap<>(); item.put("id",j.getId());item.put("jobName",j.getJobName());item.put("companyName",j.getCompanyName());item.put("city",j.getCity());item.put("jobType",j.getJobType());item.put("salaryRange",j.getSalaryRange());item.put("description",j.getDescription());item.put("createdAt",j.getCreatedAt());
             item.put("match",e);item.put("_sortR",e.getRawRecommendation());item.put("_sortC",e.getRawContent());result.add(item);
         }

@@ -5,7 +5,7 @@ import java.util.*;
 /** Pure M2 scoring functions. Inputs must contain only canonical SKILL tag IDs. */
 public final class ContentScorer {
     private ContentScorer() {}
-    public static final String VERSION = "content-hot-v1";
+    public static final String VERSION = "hybrid-v1";
     public static final double[] DEFAULT_WEIGHTS = {0.50, 0.20, 0.15, 0.15};
 
     public static final class Requirement {

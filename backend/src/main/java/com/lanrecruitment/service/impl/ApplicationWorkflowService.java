@@ -62,7 +62,7 @@ public class ApplicationWorkflowService {
                     @Override public void afterCompletion(int status) {if(status!=STATUS_COMMITTED)try{Files.deleteIfExists(target);}catch(Exception ignored){} }
                 });
             }
-            LocalDateTime now=LocalDateTime.now();JobApply apply=new JobApply();apply.setUserId(user);apply.setJobId(jobId);apply.setResumeId(resumeId);
+            LocalDateTime now=LocalDateTime.now().withNano(0);JobApply apply=new JobApply();apply.setUserId(user);apply.setJobId(jobId);apply.setResumeId(resumeId);
             apply.setStatus(0);apply.setVersion(1L);apply.setCreatedAt(now);apply.setProfileSnapshot(json.writeValueAsString(profiles.get()));
             apply.setResumeSnapshot(json.writeValueAsString(resumeData));apply.setJobSnapshot(json.writeValueAsString(jobData));
             apply.setMatchSnapshot(json.writeValueAsString(match));apply.setAttachmentSnapshot(attachment);applies.insert(apply);
@@ -86,8 +86,8 @@ public class ApplicationWorkflowService {
         if(changed!=1)throw new BizException(ErrorCode.CONFLICT);
         recordEvent(apply.getId(),from,to,actor);
     }
-    private void recordEvent(Long id,Integer from,int to,Long actor) {ApplicationEvent e=new ApplicationEvent();e.setApplicationId(id);e.setFromStatus(from);e.setToStatus(to);e.setActorId(actor);e.setCreatedAt(LocalDateTime.now());events.insert(e);}
-    public void recordBehavior(Long user,Long job,String type,String key) {BehaviorEvent e=new BehaviorEvent();e.setUserId(user);e.setJobId(job);e.setEventType(type);e.setEventTime(LocalDateTime.now());e.setDedupeKey(key);behaviors.insert(e);}
+    private void recordEvent(Long id,Integer from,int to,Long actor) {ApplicationEvent e=new ApplicationEvent();e.setApplicationId(id);e.setFromStatus(from);e.setToStatus(to);e.setActorId(actor);e.setCreatedAt(LocalDateTime.now().withNano(0));events.insert(e);}
+    public void recordBehavior(Long user,Long job,String type,String key) {BehaviorEvent e=new BehaviorEvent();e.setUserId(user);e.setJobId(job);e.setEventType(type);e.setEventTime(LocalDateTime.now().withNano(0));e.setDedupeKey(key);behaviors.insert(e);}
     public List<ApplicationEvent> timeline(Long id,boolean hr) {
         JobApply a=applies.selectById(id);Long actor=StpUtil.getLoginIdAsLong();if(a==null)throw new BizException(ErrorCode.APPLY_RECORD_NOT_FOUND);
         if(hr){Job j=jobs.selectById(a.getJobId());if(j==null || !actor.equals(j.getHrId()))throw new BizException(ErrorCode.JOB_NOT_FOUND);}
