@@ -1,8 +1,9 @@
 # Lan-Recruitment（毕业设计-智能招聘系统）
 
-> 本分支为“毕业生就业推荐与岗位匹配系统” M1 数据与权限阶段，**待审核**。
-> 请从 [M1 报告](docs/M1_REPORT.md)、[迁移说明](docs/M1_MIGRATION.md)、
-> [M1 接口契约](docs/M1_API_CONTRACT.md) 和 [来源与许可](THIRD_PARTY_NOTICES.md) 开始。
+> 本分支为“毕业生就业推荐与岗位匹配系统” M2 内容匹配阶段，**待审核**。
+> 请从 [M2 报告](docs/M2_REPORT.md)、[M2 迁移说明](docs/M2_MIGRATION.md)、
+> [M2 接口契约](docs/M2_API_CONTRACT.md) 和 [来源与许可](THIRD_PARTY_NOTICES.md) 开始。
+> 本机演示先按 [M2 验证说明](docs/evidence/M2/README.md) 创建隔离合成数据库并执行 V002。
 > M0 历史证据见 [M0 报告](docs/M0_REPORT.md) 与 [基线说明](docs/BASELINE.md)。
 > 以下保留上游 README；其示例默认库、默认账号与跳过测试命令不作为本次 demo 启动路线。
 
@@ -23,7 +24,9 @@
 - `/scripts`：一键启动脚本
 - `/docs`：需求与规范文档
 
-## 推荐与匹配算法
+## 上游历史说明（以下内容不描述 M2 当前算法）
+
+### 上游推荐与匹配算法
 
 系统内的“岗位推荐 / 简历筛选排序”基于标签向量相似度：将简历/岗位标签映射为稀疏向量 `{tagId -> weight}`，用余弦相似度计算匹配分（保留 4 位小数），并按分数从高到低排序；当用户无可用简历时退化为随机推荐。
 

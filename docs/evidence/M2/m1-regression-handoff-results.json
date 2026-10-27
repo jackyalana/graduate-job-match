@@ -1,0 +1,1278 @@
+{
+  "schema": "graduate_job_match_m1_runtime_13493a74",
+  "tests": [
+    {
+      "name": "anonymous common",
+      "method": "GET",
+      "path": "/api/common/user/me",
+      "expected_http": 401,
+      "actual_http": 401,
+      "code": "AUTH_NOT_LOGGED_IN",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login admin",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login student",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login student2",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login hr",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login hr2",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "demo registration without email verification",
+      "method": "POST",
+      "path": "/api/public/auth/register",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "new demo user login",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "new user email explicitly unverified",
+      "method": "GET",
+      "path": "/api/common/user/me",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "demo cannot self-register as admin",
+      "method": "POST",
+      "path": "/api/public/auth/register",
+      "expected_http": 422,
+      "actual_http": 422,
+      "code": "VALIDATION_FAILED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "demo HR registration",
+      "method": "POST",
+      "path": "/api/public/auth/register",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "pending demo HR login denied",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 403,
+      "actual_http": 403,
+      "code": "AUTH_HR_PENDING_AUDIT",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "find pending demo HR",
+      "method": "GET",
+      "path": "/api/admin/audit/hr/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "admin approves demo HR",
+      "method": "POST",
+      "path": "/api/admin/audit/hr/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approved demo HR login",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approved demo HR email unverified",
+      "method": "GET",
+      "path": "/api/common/user/me",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "cookie-only token rejected",
+      "method": "GET",
+      "path": "/api/common/user/me",
+      "expected_http": 401,
+      "actual_http": 401,
+      "code": "AUTH_NOT_LOGGED_IN",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "allowed CORS preflight",
+      "method": "OPTIONS",
+      "path": "/api/student/profile",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": null,
+      "request_id_present": true
+    },
+    {
+      "name": "untrusted CORS preflight rejected",
+      "method": "OPTIONS",
+      "path": "/api/student/profile",
+      "expected_http": 403,
+      "actual_http": 403,
+      "code": null,
+      "request_id_present": true
+    },
+    {
+      "name": "student forbidden admin",
+      "method": "GET",
+      "path": "/api/admin/user/page",
+      "expected_http": 403,
+      "actual_http": 403,
+      "code": "FORBIDDEN",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "admin create category",
+      "method": "POST",
+      "path": "/api/admin/job/categories",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list categories",
+      "method": "GET",
+      "path": "/api/public/job/categories",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "get student profile",
+      "method": "GET",
+      "path": "/api/student/profile",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "update own profile",
+      "method": "PUT",
+      "path": "/api/student/profile",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "reject spoofed owner or role",
+      "method": "PUT",
+      "path": "/api/student/profile",
+      "expected_http": 422,
+      "actual_http": 422,
+      "code": "VALIDATION_FAILED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student2 sees own profile",
+      "method": "GET",
+      "path": "/api/student/profile",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "own resume list",
+      "method": "GET",
+      "path": "/api/user/resume/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "select default resume",
+      "method": "GET",
+      "path": "/api/user/resume/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student2 cannot read student1 resume",
+      "method": "GET",
+      "path": "/api/user/resume/detail",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "RESUME_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "cross-student upload denied",
+      "method": "POST",
+      "path": "/api/user/resume/file/upload",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "RESUME_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "reject fake PDF header",
+      "method": "POST",
+      "path": "/api/user/resume/file/upload",
+      "expected_http": 422,
+      "actual_http": 422,
+      "code": "FILE_TYPE_NOT_SUPPORTED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "reject misleading MIME",
+      "method": "POST",
+      "path": "/api/user/resume/file/upload",
+      "expected_http": 422,
+      "actual_http": 422,
+      "code": "FILE_TYPE_NOT_SUPPORTED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "reject wrong extension",
+      "method": "POST",
+      "path": "/api/user/resume/file/upload",
+      "expected_http": 422,
+      "actual_http": 422,
+      "code": "FILE_TYPE_NOT_SUPPORTED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "reject >5MB file",
+      "method": "POST",
+      "path": "/api/user/resume/file/upload",
+      "expected_http": 413,
+      "actual_http": 413,
+      "code": "FILE_TOO_LARGE",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "valid synthetic PDF uploaded",
+      "method": "POST",
+      "path": "/api/user/resume/file/upload",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "anonymous legacy attachment URL denied",
+      "method": "GET",
+      "path": "/uploads/resume/8d9516b329b54c0eb921b9a87a75165b.pdf",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": null,
+      "request_id_present": true
+    },
+    {
+      "name": "anonymous catchall URL denied",
+      "method": "GET",
+      "path": "/uploads/8d9516b329b54c0eb921b9a87a75165b.pdf",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": null,
+      "request_id_present": true
+    },
+    {
+      "name": "anonymous authenticated download denied",
+      "method": "GET",
+      "path": "/api/user/resume/file/download",
+      "expected_http": 401,
+      "actual_http": 401,
+      "code": "AUTH_NOT_LOGGED_IN",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "owner downloads PDF",
+      "method": "GET",
+      "path": "/api/user/resume/file/download",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": null,
+      "request_id_present": true
+    },
+    {
+      "name": "SDD student download",
+      "method": "GET",
+      "path": "/api/student/resumes/1/attachment",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": null,
+      "request_id_present": true
+    },
+    {
+      "name": "cross student download denied",
+      "method": "GET",
+      "path": "/api/user/resume/file/download",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "RESUME_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create M1 合成岗位",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list HR jobs for M1 合成岗位",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "pending job detail hidden",
+      "method": "GET",
+      "path": "/api/public/job/detail",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "JOB_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "load pending version 1",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve 1",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approved public detail",
+      "method": "GET",
+      "path": "/api/public/job/detail",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "SDD public page",
+      "method": "GET",
+      "path": "/api/jobs",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "SDD public detail",
+      "method": "GET",
+      "path": "/api/jobs/1",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "structured category and salary search",
+      "method": "GET",
+      "path": "/api/public/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "salary preference excludes incompatible jobs",
+      "method": "GET",
+      "path": "/api/public/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "invalid salary filter rejected",
+      "method": "GET",
+      "path": "/api/public/job/list",
+      "expected_http": 422,
+      "actual_http": 422,
+      "code": "VALIDATION_FAILED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "qualified recommendation",
+      "method": "GET",
+      "path": "/api/user/job/recommend",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "personalized salary filter",
+      "method": "GET",
+      "path": "/api/user/job/recommend",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "incomplete profile recommendation",
+      "method": "GET",
+      "path": "/api/user/job/recommend",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "public skill list",
+      "method": "GET",
+      "path": "/api/public/tag/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "change approved job skills",
+      "method": "POST",
+      "path": "/api/hr/job/tags/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "skill change re-enters audit",
+      "method": "GET",
+      "path": "/api/public/job/detail",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "JOB_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "stale audit decision denied",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 409,
+      "actual_http": 409,
+      "code": "CONFLICT",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "audit without version denied",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 409,
+      "actual_http": 409,
+      "code": "CONFLICT",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "load pending version 1",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve 1",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "stale job version rejected",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 409,
+      "actual_http": 409,
+      "code": "CONFLICT",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "HR current version",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "job edit pending again",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "edited job hidden",
+      "method": "GET",
+      "path": "/api/public/job/detail",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "JOB_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "load pending version 1",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve 1",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create M1 过期岗位",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list HR jobs for M1 过期岗位",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "load pending version 2",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve 2",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "expired public detail denied",
+      "method": "GET",
+      "path": "/api/public/job/detail",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "JOB_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "public list excludes expired",
+      "method": "GET",
+      "path": "/api/public/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "expired job application denied",
+      "method": "POST",
+      "path": "/api/user/job/apply",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "JOB_NOT_APPLICABLE",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "HR2 cannot list HR1 applications",
+      "method": "GET",
+      "path": "/api/hr/job/applications",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "JOB_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create M1 学历限制岗位",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list HR jobs for M1 学历限制岗位",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "load pending version 3",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve 3",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "restricted job public detail",
+      "method": "GET",
+      "path": "/api/public/job/detail",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "lower education excludes recommendation",
+      "method": "GET",
+      "path": "/api/user/job/recommend",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student submits application",
+      "method": "POST",
+      "path": "/api/user/job/apply",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "applied job excluded from recommendation",
+      "method": "GET",
+      "path": "/api/user/job/recommend",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "HR1 sees own applicant",
+      "method": "GET",
+      "path": "/api/hr/job/applications",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "corresponding HR downloads",
+      "method": "GET",
+      "path": "/api/hr/resume/file/download",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": null,
+      "request_id_present": true
+    },
+    {
+      "name": "SDD HR download",
+      "method": "GET",
+      "path": "/api/hr/applications/1/attachment",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": null,
+      "request_id_present": true
+    },
+    {
+      "name": "SDD HR cross-owner download denied",
+      "method": "GET",
+      "path": "/api/hr/applications/1/attachment",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "JOB_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "other HR download denied",
+      "method": "GET",
+      "path": "/api/hr/resume/file/download",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "JOB_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "referenced resume attachment cannot be replaced",
+      "method": "POST",
+      "path": "/api/user/resume/file/upload",
+      "expected_http": 409,
+      "actual_http": 409,
+      "code": "CONFLICT",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "referenced attachment delete denied",
+      "method": "POST",
+      "path": "/api/user/resume/file/delete",
+      "expected_http": 409,
+      "actual_http": 409,
+      "code": "CONFLICT",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "legacy job remove closes without deleting history",
+      "method": "POST",
+      "path": "/api/hr/job/remove",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "closed job detail denied",
+      "method": "GET",
+      "path": "/api/public/job/detail",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "JOB_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "legacy user delete protected",
+      "method": "POST",
+      "path": "/api/admin/user/delete",
+      "expected_http": 409,
+      "actual_http": 409,
+      "code": "CONFLICT",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "archive resume",
+      "method": "POST",
+      "path": "/api/user/resume/delete",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "inactive resume cannot be used for recommendation",
+      "method": "GET",
+      "path": "/api/user/job/recommend",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "RESUME_NOT_AVAILABLE",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "disable student",
+      "method": "POST",
+      "path": "/api/admin/user/status/update",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "disabled token denied /api/common/user/me",
+      "method": "GET",
+      "path": "/api/common/user/me",
+      "expected_http": 401,
+      "actual_http": 401,
+      "code": "AUTH_NOT_LOGGED_IN",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "disabled token denied /api/user/resume/list",
+      "method": "GET",
+      "path": "/api/user/resume/list",
+      "expected_http": 401,
+      "actual_http": 401,
+      "code": "AUTH_NOT_LOGGED_IN",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "disabled token denied /api/student/profile",
+      "method": "GET",
+      "path": "/api/student/profile",
+      "expected_http": 401,
+      "actual_http": 401,
+      "code": "AUTH_NOT_LOGGED_IN",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "re-enable student",
+      "method": "POST",
+      "path": "/api/admin/user/status/update",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "old token remains invalid after re-enable",
+      "method": "GET",
+      "path": "/api/common/user/me",
+      "expected_http": 401,
+      "actual_http": 401,
+      "code": "AUTH_NOT_LOGGED_IN",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login student",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login hr",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create M1 企业停用岗位",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list HR jobs for M1 企业停用岗位",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "load pending version 4",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve 4",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "disable HR",
+      "method": "POST",
+      "path": "/api/admin/user/status/update",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "disabled company job detail denied",
+      "method": "GET",
+      "path": "/api/public/job/detail",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "JOB_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "disabled company omitted from list",
+      "method": "GET",
+      "path": "/api/public/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "remaining valid resume",
+      "method": "GET",
+      "path": "/api/user/resume/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "disabled company application denied",
+      "method": "POST",
+      "path": "/api/user/job/apply",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "JOB_NOT_APPLICABLE",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "disabled HR token denied",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 401,
+      "actual_http": 401,
+      "code": "AUTH_NOT_LOGGED_IN",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "disabled HR common denied",
+      "method": "GET",
+      "path": "/api/common/user/me",
+      "expected_http": 401,
+      "actual_http": 401,
+      "code": "AUTH_NOT_LOGGED_IN",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "re-enable HR",
+      "method": "POST",
+      "path": "/api/admin/user/status/update",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "failed login 1",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "failed login 2",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "failed login 3",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "failed login 4",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "failed login 5",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "rate limit after five failures",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 429,
+      "actual_http": 429,
+      "code": "AUTH_LOGIN_RATE_LIMITED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "failed email login 1",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "EMAIL_CODE_INVALID",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "failed email login 2",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "EMAIL_CODE_INVALID",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "failed email login 3",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "EMAIL_CODE_INVALID",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "failed email login 4",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "EMAIL_CODE_INVALID",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "failed email login 5",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "EMAIL_CODE_INVALID",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "email login rate limit",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 429,
+      "actual_http": 429,
+      "code": "AUTH_LOGIN_RATE_LIMITED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    }
+  ],
+  "total": 128
+}

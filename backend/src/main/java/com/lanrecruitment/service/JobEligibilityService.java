@@ -4,5 +4,6 @@ import com.lanrecruitment.domain.entity.Job;
 public interface JobEligibilityService {
     void visibleQuery(LambdaQueryWrapper<Job> query);
     void personalQuery(LambdaQueryWrapper<Job> query, Long userId);
+    void personalQueryIncludingApplied(LambdaQueryWrapper<Job> query, Long userId);
     boolean publiclyVisible(Job job);
 }

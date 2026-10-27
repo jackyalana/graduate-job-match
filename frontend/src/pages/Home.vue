@@ -69,6 +69,8 @@
     </div>
 
     <div class="right">
+      <el-alert v-if="batchStale" title="推荐已过期或数据已变化，请刷新推荐" type="warning" :closable="false" />
+      <el-button v-if="batchStale" @click="resetAndFetchRecommendJobs">刷新推荐</el-button>
       <el-alert v-if="role === 'USER' && missingProfileFields.length" :title="'完善 ' + missingProfileFields.join('、') + ' 后可看到更多符合条件的岗位'" type="info" :closable="false" show-icon />
       <template v-if="!selectedJob">
         <el-tabs v-model="activeTab" class="job-tabs" @tab-change="onTabChange">
@@ -81,13 +83,8 @@
             <div class="job-title">{{ job.jobName }}</div>
             <div class="job-salary">
               <span class="salary-text">{{ job.salaryRange }}</span>
-              <el-tag
-                v-if="activeTab === 'recommend' && job.matchScore != null"
-                size="small"
-                :type="matchTagFromScore(job.matchScore).type"
-              >
-                旧版标签相似度：{{ matchTagFromScore(job.matchScore).label }}
-              </el-tag>
+              <el-tag v-if="activeTab === 'recommend' && job.match && job.match.matchScore != null" size="small">匹配分：{{ job.match.matchScore }}</el-tag>
+              <el-tag v-if="activeTab === 'recommend' && job.match" size="small" type="info">推荐排序分：{{ job.match.recommendationScore }}</el-tag>
             </div>
           </div>
           <div class="job-meta">
@@ -97,6 +94,8 @@
             <span v-if="job.createdAt">发布时间：{{ formatDateTime(job.createdAt) }}</span>
           </div>
           <div class="job-desc">{{ job.description }}</div>
+          <div v-if="job.match && job.match.matchScore == null">完善资料可获得个性化匹配</div>
+          <div v-else-if="job.match">{{ job.match.reasons.join('、') }}</div>
           <div class="job-actions" @click.stop>
             <el-button size="small" @click="openDetail(job)">查看详情</el-button>
             <el-button v-if="role === 'USER'" size="small" type="primary" @click="onApply(job)">投递简历</el-button>
@@ -131,6 +130,14 @@
             <div class="job-desc-title">岗位描述</div>
             <el-input :model-value="selectedJob.description" type="textarea" :rows="10" readonly />
           </div>
+          <div v-if="selectedJob.match && selectedJob.match.eligible === false" class="job-desc-block">{{ selectedJob.match.reasons.map(eligibilityReason).concat(selectedJob.match.missingProfileFields.map(profileFieldName)).join('、') }}</div>
+          <div v-else-if="selectedJob.match" class="job-desc-block">
+            <div>匹配分：{{ selectedJob.match.matchScore == null ? '资料不足' : selectedJob.match.matchScore }}；推荐排序分：{{ selectedJob.match.recommendationScore }}</div>
+            <div>技能：{{ dimensionText(selectedJob.match.dimensions.skill) }}；类别：{{ dimensionText(selectedJob.match.dimensions.category) }}；城市：{{ dimensionText(selectedJob.match.dimensions.city) }}；薪资：{{ dimensionText(selectedJob.match.dimensions.salary) }}</div>
+            <div>满足技能：{{ selectedJob.match.matchedSkills.join('、') || '无' }}</div>
+            <div>不足技能：{{ selectedJob.match.missingSkills.map(x => `${x.name}（当前 ${x.actual}，要求 ${x.required}）`).join('、') || '无' }}</div>
+            <div>待完善：{{ selectedJob.match.missingProfileFields.map(profileFieldName).join('、') || '无' }}</div>
+          </div>
           <div class="detail-actions">
             <el-button v-if="role === 'USER'" type="primary" @click="onApply(selectedJob)">投递简历</el-button>
           </div>
@@ -146,10 +153,9 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
-import { listJobs, recommendJobs as fetchRecommendJobsApi } from '../api/job'
+import { listJobs } from '../api/job'
 import { applyJob, listMyResumes } from '../api/resume'
 import { searchTags } from '../api/tag'
-import { matchTagFromScore } from '../utils/match'
 import request from '../api/request'
 
 const filters = reactive({ 
@@ -185,6 +191,8 @@ const publicHasMore = ref(true)
 const recommendHasMore = ref(true)
 const publicCursorId = ref(null)
 const recommendOffset = ref(0)
+const batchId = ref(null)
+const batchStale = ref(false)
 const loadMoreRef = ref(null)
 let observer = null
 const scrollRoot = ref(null)
@@ -258,6 +266,8 @@ async function resetAndFetchRecommendJobs() {
   loading.value = true
   recommendJobs.value = []
   recommendOffset.value = 0
+  batchId.value = null
+  batchStale.value = false
   recommendHasMore.value = true
   prefetchCount.value = 0
   try {
@@ -303,9 +313,15 @@ async function onTabChange(name) {
 }
 
 function formatDateTime(value) { return formatShanghai(value) }
+function dimensionText(value) { return value == null ? '资料不足' : `${(value * 100).toFixed(1)} 分` }
+function profileFieldName(value) { return ({ skills: '技能', expectedCategoryId: '期望岗位类别', cityCodes: '期望城市', salaryMin: '最低期望月薪', educationRank: '请填写学历', graduationYear: '请填写毕业年份' })[value] || value }
+function eligibilityReason(value) { return ({ FRESH_GRADUATES_NOT_ACCEPTED: '岗位不接收应届生', EDUCATION_REQUIREMENT_NOT_MET: '学历不满足要求', GRADUATION_YEAR_REQUIREMENT_NOT_MET: '毕业年份不满足要求', ALREADY_APPLIED: '已投递该岗位' })[value] || value }
 
-function openDetail(job) {
-  selectedJob.value = job
+async function openDetail(job) {
+  selectedJob.value = { ...job }
+  if (role.value === 'USER' && !job.match) {
+    selectedJob.value.match = await request.get(`/api/student/matches/${job.id}`)
+  }
 }
 
 function closeDetail() {
@@ -333,33 +349,46 @@ async function onApply(job) {
   }
   await applyJob(job.id, defaultResume.id)
   ElMessage.success('已投递')
+  if (activeTab.value === 'recommend') { batchStale.value = true; recommendJobs.value = []; recommendHasMore.value = false; selectedJob.value = null }
 }
 
 async function loadMoreRecommendJobs() {
   if (!recommendHasMore.value || loadingMore.value) return
   loadingMore.value = true
   try {
-    const size = recommendOffset.value === 0 ? initialPageSize : pageSize
+    const size = pageSize
     const params = {
       keyword: filters.keyword || undefined,
       city: filters.city || undefined,
       jobType: filters.jobType || undefined,
       categoryId: filters.categoryId, salaryMin: filters.salaryMin, salaryMax: filters.salaryMax,
       tagIds: allTagIds.value.length > 0 ? allTagIds.value.join(',') : undefined,
-      offset: recommendOffset.value,
       pageSize: size
     }
-    const list = await fetchRecommendJobsApi(params)
-    const batch = Array.isArray(list) ? list : []
+    let response
+    if (!batchId.value) {
+      delete params.pageSize
+      response = await request.post('/api/student/recommendation-batches', params)
+      batchId.value = response.batchId
+    } else {
+      response = await request.get(`/api/student/recommendation-batches/${batchId.value}`, { params: { page: Math.floor(recommendOffset.value / size) + 1, pageSize: size } })
+    }
+    const batch = Array.isArray(response.items) ? response.items : []
     if (batch.length === 0) {
       recommendHasMore.value = false
       return
     }
     recommendJobs.value = recommendJobs.value.concat(batch)
     recommendOffset.value = recommendOffset.value + batch.length
-    if (batch.length < size) {
+    if (recommendOffset.value >= response.totalRanked) {
       recommendHasMore.value = false
     }
+  } catch (e) {
+    if (e.response?.data?.code === 'BATCH_STALE') {
+      batchStale.value = true
+      recommendHasMore.value = false
+      recommendJobs.value = []
+    } else throw e
   } finally {
     loadingMore.value = false
   }

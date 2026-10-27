@@ -95,9 +95,10 @@
         <el-table-column prop="resume.city" label="城市" width="100" />
         <el-table-column label="匹配度" width="100">
           <template #default="{ row }">
-            <el-tag size="small" :type="matchTagFromScore(row.matchScore).type">
-              {{ matchTagFromScore(row.matchScore).label }}
+            <el-tag v-if="row.matchScore != null" size="small" :type="matchTagFromScore(row.matchScore / 100).type">
+              匹配分 {{ row.matchScore }}
             </el-tag>
+            <span v-else>资料不足或不符合条件</span>
           </template>
         </el-table-column>
         <el-table-column label="标签" min-width="180">
@@ -452,7 +453,7 @@ const filteredApplications = computed(() => {
   return list.filter((a) => {
     if (edu && (!a.resume || a.resume.education !== edu)) return false
     if (matchLevel) {
-      if (matchLevelFromScore(a.matchScore) !== matchLevel) return false
+      if (a.matchScore == null || matchLevelFromScore(a.matchScore / 100) !== matchLevel) return false
     }
     if (tagIds.length > 0) {
       const ids = (a.resumeTags || []).map((t) => t.tagId)

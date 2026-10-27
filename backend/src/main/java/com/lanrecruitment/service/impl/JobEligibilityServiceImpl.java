@@ -22,9 +22,12 @@ public class JobEligibilityServiceImpl implements JobEligibilityService {
         return hr!=null && "HR".equals(hr.getRole()) && Integer.valueOf(1).equals(hr.getStatus()) && Integer.valueOf(1).equals(hr.getAuditStatus());
     }
     @Override public void personalQuery(LambdaQueryWrapper<Job> query, Long userId) {
+        personalQueryIncludingApplied(query,userId);
+        query.notInSql(Job::getId,"SELECT job_id FROM job_apply WHERE user_id="+userId);
+    }
+    @Override public void personalQueryIncludingApplied(LambdaQueryWrapper<Job> query, Long userId) {
         visibleQuery(query);
-        query.eq(Job::getAcceptFreshGraduate,true)
-            .notInSql(Job::getId,"SELECT job_id FROM job_apply WHERE user_id="+userId);
+        query.eq(Job::getAcceptFreshGraduate,true);
         StudentProfile p=profiles.selectOne(new LambdaQueryWrapper<StudentProfile>().eq(StudentProfile::getUserId,userId));
         Integer edu=p==null?null:p.getEducationRank(), year=p==null?null:p.getGraduationYear();
         if (edu==null) query.isNull(Job::getEducationMinRank);

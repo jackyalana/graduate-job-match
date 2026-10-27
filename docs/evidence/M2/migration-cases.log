@@ -1,0 +1,5 @@
+empty repeat=False exit_code=0 Applied V002 to isolated demo schema graduate_job_match_m1_empty_cccb9b98 
+empty repeat=True exit_code=1  Expected complete M1 schema with no V002 tables; refusing repeat or partial migration
+upgrade repeat=False exit_code=0 Applied V002 to isolated demo schema graduate_job_match_m1_upgrade_cccb9b98 
+upgrade repeat=True exit_code=1  Expected complete M1 schema with no V002 tables; refusing repeat or partial migration
+exit_code=0

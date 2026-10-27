@@ -1,0 +1,3 @@
+PASS 28 real HTTP requests; 205 eligible jobs; concurrent batches=8; schema graduate_job_match_m1_runtime_28e806c3
+
+exit_code=0

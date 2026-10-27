@@ -1,0 +1,258 @@
+{
+  "schema": "graduate_job_match_m1_runtime_a332fd69",
+  "tests": [
+    {
+      "name": "login student",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "login student2",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "login admin",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "login hr",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "cold batch",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "cold stable page",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "cold page two",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "cross user batch denied",
+      "expected": 404,
+      "actual": 404,
+      "code": "BATCH_NOT_FOUND",
+      "requestId": true
+    },
+    {
+      "name": "invalid page size",
+      "expected": 422,
+      "actual": 422,
+      "code": "VALIDATION_FAILED",
+      "requestId": true
+    },
+    {
+      "name": "set profile",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "rank all 205",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "matching detail",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "legacy recommendation",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "warm page one",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "warm page two",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "change profile",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "profile change invalidates batch",
+      "expected": 409,
+      "actual": 409,
+      "code": "BATCH_STALE",
+      "requestId": true
+    },
+    {
+      "name": "new batch",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "job closed invalidates batch",
+      "expected": 409,
+      "actual": 409,
+      "code": "BATCH_STALE",
+      "requestId": true
+    },
+    {
+      "name": "closed match hidden",
+      "expected": 404,
+      "actual": 404,
+      "code": "JOB_NOT_FOUND",
+      "requestId": true
+    },
+    {
+      "name": "parallel batch 2",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "parallel batch 6",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "parallel batch 0",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "parallel batch 5",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "parallel batch 7",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "parallel batch 4",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "parallel batch 3",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "parallel batch 1",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "filled skills without intersection",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "skill partial proficiency",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "skill satisfied",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "qualification expired and applied filtered",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "unqualified detail reason",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "expired detail hidden",
+      "expected": 404,
+      "actual": 404,
+      "code": "JOB_NOT_FOUND",
+      "requestId": true
+    },
+    {
+      "name": "applied excluded for student2",
+      "expected": 200,
+      "actual": 200,
+      "code": "OK",
+      "requestId": true
+    },
+    {
+      "name": "expired batch",
+      "expected": 409,
+      "actual": 409,
+      "code": "BATCH_STALE",
+      "requestId": true
+    }
+  ],
+  "total": 36
+}

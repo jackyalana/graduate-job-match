@@ -1,0 +1,3 @@
+Expected complete M1 schema with no V002 tables; refusing repeat or partial migration
+
+exit_code=1

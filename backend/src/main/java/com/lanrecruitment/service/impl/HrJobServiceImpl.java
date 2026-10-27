@@ -73,6 +73,7 @@ public class HrJobServiceImpl implements HrJobService {
     private final MatchService matchService;
     private final FileStorageService fileStorageService;
     private final com.lanrecruitment.service.JobCategoryService categories;
+    private final com.lanrecruitment.service.RecommendationService recommendations;
 
     public HrJobServiceImpl(
             JobMapper jobMapper,
@@ -86,7 +87,8 @@ public class HrJobServiceImpl implements HrJobService {
             TagMapper tagMapper,
             MatchService matchService,
             FileStorageService fileStorageService,
-            com.lanrecruitment.service.JobCategoryService categories
+            com.lanrecruitment.service.JobCategoryService categories,
+            com.lanrecruitment.service.RecommendationService recommendations
     ) {
         this.jobMapper = jobMapper;
         this.jobTagMapper = jobTagMapper;
@@ -100,6 +102,7 @@ public class HrJobServiceImpl implements HrJobService {
         this.matchService = matchService;
         this.fileStorageService = fileStorageService;
         this.categories = categories;
+        this.recommendations = recommendations;
     }
 
     @Override
@@ -371,12 +374,12 @@ public class HrJobServiceImpl implements HrJobService {
             Resume r = resumeMap.get(a.getResumeId());
             if (r != null) {
                 vo.setResume(toResumeVO(r));
-                vo.setMatchScore(matchService.computeAndSave(r.getId(), job.getId()));
+                if (Integer.valueOf(1).equals(r.getStatus())) vo.setMatchScore(recommendations.applicantMatch(a.getUserId(),r.getId(),job.getId()));
             }
             vo.setResumeTags(resumeTagMap.getOrDefault(a.getResumeId(), new ArrayList<>()));
             res.add(vo);
         }
-        res.sort(Comparator.comparing(HrJobApplicationVO::getMatchScore, Comparator.nullsLast(Comparator.naturalOrder())).reversed());
+        res.sort(Comparator.comparing(HrJobApplicationVO::getMatchScore, Comparator.nullsLast(Comparator.reverseOrder())));
         return res;
     }
 

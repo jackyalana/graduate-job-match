@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @MapperScan("com.lanrecruitment.mapper")
+@org.springframework.scheduling.annotation.EnableScheduling
 public class Application {
     public static void main(String[] args) {
         // DATETIME values and eligibility comparisons use UTC; UI converts for display.
