@@ -1,0 +1,131 @@
+{
+  "seed": 20261027,
+  "datasetSha256": "84aabea0f12cde091c7067c62cd1932688953153290e22c44d1dd9fc6327bb89",
+  "data": "synthetic latent-topic and category-correlated post-cutoff positives",
+  "users": 60,
+  "jobs": 80,
+  "trainEvents": 250,
+  "validationEventsNotUsed": 60,
+  "testEvents": 120,
+  "coldUsers": 10,
+  "eligibleUnion": 80,
+  "fallbackRatio": 0.166667,
+  "start": "2026-01-01T00:00",
+  "trainCutoff": "2026-03-12T00:00",
+  "validationCutoff": "2026-03-27T00:00",
+  "testEnd": "2026-04-11T00:00",
+  "metrics": {
+    "HOT": {
+      "users": 60,
+      "precision5": 0.023333,
+      "precision10": 0.028333,
+      "recall5": 0.058333,
+      "recall10": 0.141667,
+      "ndcg5": 0.043474,
+      "ndcg10": 0.077325,
+      "hit5": 0.1,
+      "hit10": 0.266667,
+      "coverage10": 0.1625
+    },
+    "CONTENT": {
+      "users": 60,
+      "precision5": 0.336667,
+      "precision10": 0.17,
+      "recall5": 0.841667,
+      "recall10": 0.85,
+      "ndcg5": 0.608213,
+      "ndcg10": 0.611289,
+      "hit5": 0.85,
+      "hit10": 0.866667,
+      "coverage10": 1.0
+    },
+    "HYBRID": {
+      "users": 60,
+      "precision5": 0.336667,
+      "precision10": 0.171667,
+      "recall5": 0.841667,
+      "recall10": 0.858333,
+      "ndcg5": 0.619988,
+      "ndcg10": 0.626852,
+      "hit5": 0.85,
+      "hit10": 0.883333,
+      "coverage10": 1.0
+    }
+  },
+  "coldMetrics": {
+    "HOT": {
+      "users": 10,
+      "precision5": 0.02,
+      "precision10": 0.03,
+      "recall5": 0.05,
+      "recall10": 0.15,
+      "ndcg5": 0.038685,
+      "ndcg10": 0.079869,
+      "hit5": 0.1,
+      "hit10": 0.3,
+      "coverage10": 0.125
+    },
+    "CONTENT": {
+      "users": 10,
+      "precision5": 0.02,
+      "precision10": 0.02,
+      "recall5": 0.05,
+      "recall10": 0.1,
+      "ndcg5": 0.026407,
+      "ndcg10": 0.044864,
+      "hit5": 0.1,
+      "hit10": 0.2,
+      "coverage10": 0.125
+    },
+    "HYBRID": {
+      "users": 10,
+      "precision5": 0.02,
+      "precision10": 0.03,
+      "recall5": 0.05,
+      "recall10": 0.15,
+      "ndcg5": 0.038685,
+      "ndcg10": 0.079869,
+      "hit5": 0.1,
+      "hit10": 0.3,
+      "coverage10": 0.125
+    }
+  },
+  "warmMetrics": {
+    "HOT": {
+      "users": 50,
+      "precision5": 0.024,
+      "precision10": 0.028,
+      "recall5": 0.06,
+      "recall10": 0.14,
+      "ndcg5": 0.044431,
+      "ndcg10": 0.076816,
+      "hit5": 0.1,
+      "hit10": 0.26,
+      "coverage10": 0.1625
+    },
+    "CONTENT": {
+      "users": 50,
+      "precision5": 0.4,
+      "precision10": 0.2,
+      "recall5": 1.0,
+      "recall10": 1.0,
+      "ndcg5": 0.724574,
+      "ndcg10": 0.724574,
+      "hit5": 1.0,
+      "hit10": 1.0,
+      "coverage10": 1.0
+    },
+    "HYBRID": {
+      "users": 50,
+      "precision5": 0.4,
+      "precision10": 0.2,
+      "recall5": 1.0,
+      "recall10": 1.0,
+      "ndcg5": 0.736249,
+      "ndcg10": 0.736249,
+      "hit5": 1.0,
+      "hit10": 1.0,
+      "coverage10": 1.0
+    }
+  }
+}

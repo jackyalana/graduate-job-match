@@ -26,12 +26,14 @@ public class AdminAuditServiceImpl implements AdminAuditService {
     private final JobMapper jobMapper;
     private final com.lanrecruitment.mapper.JobTagMapper jobTagMapper;
     private final com.lanrecruitment.mapper.TagMapper tagMapper;
+    private final AuditLogService auditLog;
 
-    public AdminAuditServiceImpl(SysUserMapper sysUserMapper, JobMapper jobMapper, com.lanrecruitment.mapper.JobTagMapper jobTagMapper, com.lanrecruitment.mapper.TagMapper tagMapper) {
+    public AdminAuditServiceImpl(SysUserMapper sysUserMapper, JobMapper jobMapper, com.lanrecruitment.mapper.JobTagMapper jobTagMapper, com.lanrecruitment.mapper.TagMapper tagMapper, AuditLogService auditLog) {
         this.sysUserMapper = sysUserMapper;
         this.jobMapper = jobMapper;
         this.jobTagMapper = jobTagMapper;
         this.tagMapper = tagMapper;
+        this.auditLog=auditLog;
     }
 
     @Override
@@ -56,6 +58,7 @@ public class AdminAuditServiceImpl implements AdminAuditService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public void auditHr(AuditDecisionDTO dto) {
         SysUser u = sysUserMapper.selectById(dto.getId());
         if (u == null || UserRole.from(u.getRole()) != UserRole.HR) {
@@ -64,6 +67,7 @@ public class AdminAuditServiceImpl implements AdminAuditService {
         u.setAuditStatus(dto.getPass() ? AuditStatus.PASS.getCode() : AuditStatus.REJECT.getCode());
         u.setUpdatedAt(LocalDateTime.now());
         sysUserMapper.updateById(u);
+        auditLog.record("HR",u.getId(),dto.getPass()?"APPROVE":"REJECT",dto.getReason());
     }
 
     @Override
@@ -90,6 +94,7 @@ public class AdminAuditServiceImpl implements AdminAuditService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public void auditJob(AuditDecisionDTO dto) {
         Job job = jobMapper.selectById(dto.getId());
         if (job == null) {
@@ -101,6 +106,7 @@ public class AdminAuditServiceImpl implements AdminAuditService {
             .set(Job::getAuditStatus,dto.getPass() ? AuditStatus.PASS.getCode() : AuditStatus.REJECT.getCode())
             .set(Job::getVersion,dto.getVersion()+1).set(Job::getUpdatedAt,LocalDateTime.now());
         if (jobMapper.update(null,update)!=1) throw new BizException(ErrorCode.CONFLICT);
+        auditLog.record("JOB",job.getId(),dto.getPass()?"APPROVE":"REJECT",dto.getReason());
     }
 
     @Override

@@ -1,0 +1,16 @@
+{
+  "sourceCommit": "28114d4eb43fb8b51086ef06cb801284f6659e53",
+  "sourceFilesSha256": {
+    "backend/src/main/java/com/lanrecruitment/evaluation/EvaluationMain.java": "550ff0aaa1b0e25a28c11ce71e4bc9caeeffd289b50107a2e7abaf92c96825c7",
+    "backend/src/main/java/com/lanrecruitment/matching/CollaborativeScorer.java": "6732f7308b89c40a96462dfeb24628d636008f1e6d12b2abae50837fd8b22fbd",
+    "backend/src/main/java/com/lanrecruitment/matching/ContentScorer.java": "554352faa921b4b09a44377f4debae04ca08ae10f15b7c989433df31816e0752",
+    "backend/src/main/java/com/lanrecruitment/matching/RecommendationCalculator.java": "a72e866e52df1b174dfc68f5810abd5c41bfe6edb1d68f89ccfd7821fd1ac613"
+  },
+  "datasetSha256": "84aabea0f12cde091c7067c62cd1932688953153290e22c44d1dd9fc6327bb89",
+  "seed": 20261027,
+  "algorithmVersion": "hybrid-v1",
+  "command": "python3 scripts/delivery/evaluate.py",
+  "repeatedOutputIdentical": true,
+  "split": "70/15/15 time ranges; validation events held out and unused; test positives never used in scoring",
+  "note": "All data synthetic; category preferences and positives intentionally correlate; no real-world inference."
+}

@@ -84,6 +84,7 @@ try:
     cancelled=call('CF sees cancellation','/api/student/recommendation-batches',role='student',data={},code='OK')['data'];target=next(x for x in cancelled['items'] if x['id']==ids[3]);assert target['match']['components']['collaborative']==0.0
     call('hide job','/api/student/jobs/'+str(ids[3])+'/actions/HIDE?active=true',role='student',data={},code='OK')
     hidden=call('hidden job excluded','/api/student/recommendation-batches',role='student',data={},code='OK')['data'];assert all(x['id']!=ids[3] for x in hidden['items'])
+    hidden_detail=call('hidden reason','/api/student/matches/'+str(ids[3]),role='student',code='OK')['data'];assert hidden_detail['eligible'] is False and 'HIDDEN_BY_STUDENT' in hidden_detail['reasons']
     call('unhide job','/api/student/jobs/'+str(ids[3])+'/actions/HIDE?active=false',role='student',data={},code='OK')
     unhidden=call('unhidden job restored','/api/student/recommendation-batches',role='student',data={},code='OK')['data'];assert any(x['id']==ids[3] for x in unhidden['items'])
     stats=call('admin statistics','/api/admin/statistics',role='admin',code='OK')['data'];assert stats['openJobs']==4 and stats['applications']==0

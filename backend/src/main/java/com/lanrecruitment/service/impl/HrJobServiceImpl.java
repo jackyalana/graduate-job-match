@@ -373,11 +373,12 @@ public class HrJobServiceImpl implements HrJobService {
             vo.setApplyId(a.getId());
             vo.setApplyStatus(a.getStatus());
             vo.setVersion(a.getVersion());
+            vo.setSnapshotAvailable(a.getResumeSnapshot()!=null);
             vo.setApplyTime(a.getCreatedAt());
             SysUser user = userMap.get(a.getUserId());
             vo.setApplicantPhone(user == null ? null : user.getPhone());
 
-            Resume r = resumeMap.get(a.getResumeId());
+            Resume r = a.getResumeSnapshot()==null?null:resumeMap.get(a.getResumeId());
             if(a.getResumeSnapshot()!=null) {
                 try {r=json.treeToValue(json.readTree(a.getResumeSnapshot()).get("resume"),Resume.class);}
                 catch(java.io.IOException e){throw new BizException(ErrorCode.SYSTEM_ERROR);}
@@ -397,7 +398,7 @@ public class HrJobServiceImpl implements HrJobService {
                     for(com.fasterxml.jackson.databind.JsonNode node:root.path("tags")) {ResumeTag rt=json.treeToValue(node,ResumeTag.class);Tag t=dictionary.get(rt.getTagId());ResumeTagVO tv=new ResumeTagVO();tv.setTagId(rt.getTagId());tv.setProficiency(rt.getProficiency());tv.setWeight(rt.getWeight());if(t!=null){tv.setTagName(t.getTagName());tv.setTagType(t.getTagType());}captured.add(tv);}
                     vo.setResumeTags(captured);
                 } catch(java.io.IOException e){throw new BizException(ErrorCode.SYSTEM_ERROR);}
-            } else vo.setResumeTags(resumeTagMap.getOrDefault(a.getResumeId(), new ArrayList<>()));
+            } else vo.setResumeTags(new ArrayList<>());
             res.add(vo);
         }
         res.sort(Comparator.comparing(HrJobApplicationVO::getMatchScore, Comparator.nullsLast(Comparator.reverseOrder())));

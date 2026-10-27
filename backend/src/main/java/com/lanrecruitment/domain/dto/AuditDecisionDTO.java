@@ -18,4 +18,6 @@ public class AuditDecisionDTO {
     private Boolean pass;
 
     private Long version;
+    @javax.validation.constraints.Size(max=255)
+    private String reason;
 }

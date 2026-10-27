@@ -46,6 +46,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     private final JobApplyMapper jobApplyMapper;
     private final MatchScoreMapper matchScoreMapper;
     private final LoginLogMapper loginLogMapper;
+    private final AuditLogService auditLog;
 
     public AdminUserServiceImpl(
             SysUserMapper sysUserMapper,
@@ -55,7 +56,7 @@ public class AdminUserServiceImpl implements AdminUserService {
             JobTagMapper jobTagMapper,
             JobApplyMapper jobApplyMapper,
             MatchScoreMapper matchScoreMapper,
-            LoginLogMapper loginLogMapper
+            LoginLogMapper loginLogMapper, AuditLogService auditLog
     ) {
         this.sysUserMapper = sysUserMapper;
         this.resumeMapper = resumeMapper;
@@ -65,6 +66,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         this.jobApplyMapper = jobApplyMapper;
         this.matchScoreMapper = matchScoreMapper;
         this.loginLogMapper = loginLogMapper;
+        this.auditLog=auditLog;
     }
 
     @Override
@@ -118,6 +120,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         return new PageVO<>(list, result.getTotal(), page, pageSize);
     }
 
+    @Transactional
     @Override
     public void updateStatus(AdminUserStatusUpdateDTO dto) {
         Long currentAdminId = StpUtil.getLoginIdAsLong();
@@ -136,6 +139,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         u.setStatus(dto.getStatus());
         u.setUpdatedAt(LocalDateTime.now());
         sysUserMapper.updateById(u);
+        auditLog.record("USER",u.getId(),Integer.valueOf(0).equals(dto.getStatus())?"DISABLE":"ENABLE",null);
         if (Integer.valueOf(0).equals(dto.getStatus())) StpUtil.logout(u.getId());
     }
 

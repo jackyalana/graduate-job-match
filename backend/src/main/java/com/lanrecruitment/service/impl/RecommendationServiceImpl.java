@@ -212,6 +212,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                     if(year==null)missing.add("graduationYear");else if((job.getGraduateYearMin()!=null && year<job.getGraduateYearMin()) || (job.getGraduateYearMax()!=null && year>job.getGraduateYearMax()))reasons.add("GRADUATION_YEAR_REQUIREMENT_NOT_MET");
                 }
                 if(applies.selectCount(new LambdaQueryWrapper<JobApply>().eq(JobApply::getUserId,user).eq(JobApply::getJobId,jobId))>0)reasons.add("ALREADY_APPLIED");
+                if(actions.selectCount(new LambdaQueryWrapper<UserJobAction>().eq(UserJobAction::getUserId,user).eq(UserJobAction::getJobId,jobId).eq(UserJobAction::getActionType,"HIDE").eq(UserJobAction::getActive,true))>0)reasons.add("HIDDEN_BY_STUDENT");
                 Map<String,Object> unavailable=new LinkedHashMap<>();unavailable.put("jobId",jobId);unavailable.put("eligible",false);unavailable.put("reasons",reasons);unavailable.put("missingProfileFields",missing);return unavailable;
             });
     }

@@ -84,7 +84,7 @@
 <script setup>
 import { formatShanghai } from '../utils/time'
 import { onMounted, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { adminDecisionHr, adminDecisionJob, adminGetJobDetail, adminListPendingHr, adminListPendingJob } from '../api/job'
 
 const tab = ref('hr')
@@ -102,13 +102,15 @@ async function load() {
 }
 
 async function decisionHr(row, pass) {
-  await adminDecisionHr(row.id, pass)
+  const reason = pass ? null : (await ElMessageBox.prompt('请输入拒绝原因', '审核原因', { inputValidator: v => !!v?.trim() || '请填写原因' })).value
+  await adminDecisionHr(row.id, pass, reason)
   ElMessage.success('已处理')
   await load()
 }
 
 async function decisionJob(row, pass) {
-  await adminDecisionJob(row.id, pass, row.version)
+  const reason = pass ? null : (await ElMessageBox.prompt('请输入拒绝原因', '审核原因', { inputValidator: v => !!v?.trim() || '请填写原因' })).value
+  await adminDecisionJob(row.id, pass, row.version, reason)
   ElMessage.success('已处理')
   jobDetailVisible.value = false
   await load()

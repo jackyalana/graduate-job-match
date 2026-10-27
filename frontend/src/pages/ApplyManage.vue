@@ -22,7 +22,8 @@
       <el-card v-for="a in filteredApplies" :key="a.applyId" class="apply-card">
         <div class="card-top">
           <div class="job-block">
-            <div class="job-name">{{ a.job?.jobName || '-' }}</div>
+            <div class="job-name">{{ a.job?.jobName || ('历史岗位 #' + a.jobId) }}</div>
+            <div v-if="!a.snapshotAvailable">历史记录未保存投递时快照</div>
             <div class="job-meta">
               <span>城市：{{ a.job?.city || '-' }}</span>
               <span>类型：{{ a.job?.jobType || '-' }}</span>
@@ -47,8 +48,8 @@
           <el-button v-if="a.applyStatus === 4" size="small" type="success" @click="changeStatus(a,5)">接受录用</el-button>
           <el-button v-if="a.applyStatus === 4" size="small" @click="changeStatus(a,6)">婉拒录用</el-button>
           <el-button size="small" @click="showTimeline(a)">时间线</el-button>
-          <el-button size="small" @click="openJob(a.job)">查看岗位</el-button>
-          <el-button size="small" @click="openResume(a.resume,a.applyId)">查看投递简历</el-button>
+          <el-button v-if="a.job" size="small" @click="openJob(a.job)">查看岗位</el-button>
+          <el-button v-if="a.resume" size="small" @click="openResume(a.resume,a.applyId)">查看投递简历</el-button>
         </div>
       </el-card>
     </div>

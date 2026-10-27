@@ -1,0 +1,2 @@
+PASS duplicate migration rejected without deleting either application
+exit_code=0

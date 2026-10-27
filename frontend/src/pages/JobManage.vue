@@ -116,7 +116,8 @@
         </el-table-column>
         <el-table-column label="查看简历" width="100">
           <template #default="{ row }">
-            <el-button size="small" type="primary" @click="openResumeDetail(row)">查看简历</el-button>
+            <el-button v-if="row.snapshotAvailable" size="small" type="primary" @click="openResumeDetail(row)">查看简历</el-button>
+            <span v-else>历史快照不可用</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="280">

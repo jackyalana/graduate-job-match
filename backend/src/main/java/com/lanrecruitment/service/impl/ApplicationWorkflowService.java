@@ -49,7 +49,9 @@ public class ApplicationWorkflowService {
             List<Long> tagIds=new ArrayList<>();for(ResumeTag t:capturedTags)tagIds.add(t.getTagId());
             resumeData.put("tagDictionary",tagIds.isEmpty()?Collections.emptyList():tags.selectBatchIds(tagIds));
             Map<String,Object> jobData=new LinkedHashMap<>();jobData.put("job",job);
-            jobData.put("tags",jobTags.selectList(new LambdaQueryWrapper<JobTag>().eq(JobTag::getJobId,jobId)));
+            List<JobTag> capturedJobTags=jobTags.selectList(new LambdaQueryWrapper<JobTag>().eq(JobTag::getJobId,jobId));
+            jobData.put("tags",capturedJobTags);List<Long> jobTagIds=new ArrayList<>();for(JobTag t:capturedJobTags)jobTagIds.add(t.getTagId());
+            jobData.put("tagDictionary",jobTagIds.isEmpty()?Collections.emptyList():tags.selectBatchIds(jobTagIds));
             Object match=recommendations.detail(jobId,resumeId);
             String attachment=null;
             if(resume.getFileUrl()!=null && !resume.getFileUrl().trim().isEmpty()) {

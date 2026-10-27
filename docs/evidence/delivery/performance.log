@@ -1,0 +1,36 @@
+seeded synthetic students=1000 jobs=2000 behavior=20000
+{
+  "synthetic": true,
+  "students": 1000,
+  "jobs": 2000,
+  "behaviorEvents": 20000,
+  "concurrency": 10,
+  "warmupSeconds": 30,
+  "sampleSeconds": 60,
+  "wallSeconds": 90.11,
+  "platform": "macOS-26.6-arm64-arm-64bit",
+  "python": "3.9.6",
+  "results": {
+    "list": {
+      "requests": 3394,
+      "success": 3394,
+      "errors": 0,
+      "p95_ms": 17.21
+    },
+    "batch": {
+      "requests": 3395,
+      "success": 3395,
+      "errors": 0,
+      "p95_ms": 109.43
+    },
+    "page": {
+      "requests": 3400,
+      "success": 3400,
+      "errors": 0,
+      "p95_ms": 98.53
+    }
+  },
+  "errorRate": 0.0
+}
+
+exit_code=0

@@ -1,0 +1,135 @@
+{
+  "tests": [
+    {
+      "name": "password login admin",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login student",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login hr",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create synthetic audit tag",
+      "method": "POST",
+      "path": "/api/admin/tag/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "admin tag list",
+      "method": "GET",
+      "path": "/api/admin/tag/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "update synthetic audit tag",
+      "method": "POST",
+      "path": "/api/admin/tag/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "delete synthetic audit tag",
+      "method": "POST",
+      "path": "/api/admin/tag/delete",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student cannot modify tags",
+      "method": "POST",
+      "path": "/api/admin/tag/delete",
+      "expected_http": 403,
+      "actual_http": 403,
+      "code": "FORBIDDEN",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "categories",
+      "method": "GET",
+      "path": "/api/public/job/categories",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create Audit reason synthetic",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list HR jobs for Audit reason synthetic",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "pending job",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "reject job with reason",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    }
+  ],
+  "total": 13
+}

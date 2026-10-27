@@ -91,12 +91,14 @@ public class ApplyServiceImpl implements ApplyService {
             vo.setApplyId(a.getId());
             vo.setApplyStatus(a.getStatus());
             vo.setVersion(a.getVersion());
+            vo.setJobId(a.getJobId());
+            vo.setSnapshotAvailable(a.getResumeSnapshot()!=null && a.getJobSnapshot()!=null);
             vo.setApplyTime(a.getCreatedAt());
             Job j = jobMap.get(a.getJobId());
             Resume r = resumeMap.get(a.getResumeId());
             try {
-                if(a.getJobSnapshot()!=null)j=json.treeToValue(json.readTree(a.getJobSnapshot()).get("job"),Job.class);
-                if(a.getResumeSnapshot()!=null)r=json.treeToValue(json.readTree(a.getResumeSnapshot()).get("resume"),Resume.class);
+                j=a.getJobSnapshot()==null?null:json.treeToValue(json.readTree(a.getJobSnapshot()).get("job"),Job.class);
+                r=a.getResumeSnapshot()==null?null:json.treeToValue(json.readTree(a.getResumeSnapshot()).get("resume"),Resume.class);
             } catch(java.io.IOException e) {throw new BizException(ErrorCode.SYSTEM_ERROR);}
             if (j != null) {
                 vo.setJob(toJobCardVO(j));

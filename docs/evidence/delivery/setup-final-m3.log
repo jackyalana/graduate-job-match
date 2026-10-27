@@ -1,0 +1,14 @@
+empty migration exit 0 Applied V001 to graduate_job_match_m1_empty_32d29e06 on isolated 127.0.0.1:13306; repeat is rejected 
+empty repeat exit 1 Expected untouched upstream schema; refusing repeat or partial migration
+upgrade migration exit 0 Applied V001 to graduate_job_match_m1_upgrade_32d29e06 on isolated 127.0.0.1:13306; repeat is rejected 
+upgrade repeat exit 1 Expected untouched upstream schema; refusing repeat or partial migration
+upgrade backfill user_id	COALESCE(education_rank,0)	profile_version; 2	2	1; 3	0	1
+runtime migration exit 0 Applied V001 to graduate_job_match_m1_runtime_32d29e06 on isolated 127.0.0.1:13306; repeat is rejected 
+runtime repeat exit 1 Expected untouched upstream schema; refusing repeat or partial migration
+runtime backfill user_id	COALESCE(education_rank,0)	profile_version; 2	2	1; 3	0	1
+M1 database names {"empty": "graduate_job_match_m1_empty_32d29e06", "upgrade": "graduate_job_match_m1_upgrade_32d29e06", "runtime": "graduate_job_match_m1_runtime_32d29e06"}
+M0 database was not changed.
+Applied V002 to isolated demo schema graduate_job_match_m1_runtime_32d29e06
+M2 migration applied to isolated synthetic runtime schema graduate_job_match_m1_runtime_32d29e06
+Applied V003 to isolated demo schema graduate_job_match_m1_runtime_32d29e06 existing applications retain legacy null snapshots
+Prepared isolated synthetic schema graduate_job_match_m1_runtime_32d29e06

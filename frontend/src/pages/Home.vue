@@ -338,7 +338,7 @@ async function onTabChange(name) {
 function formatDateTime(value) { return formatShanghai(value) }
 function dimensionText(value) { return value == null ? '资料不足' : `${(value * 100).toFixed(1)} 分` }
 function profileFieldName(value) { return ({ skills: '技能', expectedCategoryId: '期望岗位类别', cityCodes: '期望城市', salaryMin: '最低期望月薪', educationRank: '请填写学历', graduationYear: '请填写毕业年份' })[value] || value }
-function eligibilityReason(value) { return ({ FRESH_GRADUATES_NOT_ACCEPTED: '岗位不接收应届生', EDUCATION_REQUIREMENT_NOT_MET: '学历不满足要求', GRADUATION_YEAR_REQUIREMENT_NOT_MET: '毕业年份不满足要求', ALREADY_APPLIED: '已投递该岗位' })[value] || value }
+function eligibilityReason(value) { return ({ FRESH_GRADUATES_NOT_ACCEPTED: '岗位不接收应届生', EDUCATION_REQUIREMENT_NOT_MET: '学历不满足要求', GRADUATION_YEAR_REQUIREMENT_NOT_MET: '毕业年份不满足要求', ALREADY_APPLIED: '已投递该岗位', HIDDEN_BY_STUDENT: '已设为不感兴趣' })[value] || value }
 
 async function openDetail(job) {
   const generation = ++detailGeneration

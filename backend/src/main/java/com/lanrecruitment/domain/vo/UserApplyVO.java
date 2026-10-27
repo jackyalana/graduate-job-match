@@ -14,6 +14,8 @@ public class UserApplyVO {
     private Long applyId;
     private Integer applyStatus;
     private Long version;
+    private Long jobId;
+    private Boolean snapshotAvailable;
     private Boolean hasAttachment;
     private LocalDateTime applyTime;
     private JobCardVO job;

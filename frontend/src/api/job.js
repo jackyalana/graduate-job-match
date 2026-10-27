@@ -55,16 +55,16 @@ export function adminListPendingHr() {
   return request.get('/api/admin/audit/hr/list')
 }
 
-export function adminDecisionHr(id, pass) {
-  return request.post('/api/admin/audit/hr/decision', { id, pass })
+export function adminDecisionHr(id, pass, reason) {
+  return request.post('/api/admin/audit/hr/decision', { id, pass, reason })
 }
 
 export function adminListPendingJob() {
   return request.get('/api/admin/audit/job/list')
 }
 
-export function adminDecisionJob(id, pass, version) {
-  return request.post('/api/admin/audit/job/decision', { id, pass, version })
+export function adminDecisionJob(id, pass, version, reason) {
+  return request.post('/api/admin/audit/job/decision', { id, pass, version, reason })
 }
 
 export function adminGetJobDetail(id) {

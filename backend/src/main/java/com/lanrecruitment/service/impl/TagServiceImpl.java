@@ -25,11 +25,13 @@ public class TagServiceImpl implements TagService {
     private final com.lanrecruitment.mapper.SkillTagAliasMapper aliases;
     private final com.lanrecruitment.mapper.JobTagMapper jobTags;
     private final com.lanrecruitment.mapper.ResumeTagMapper resumeTags;
+    private final AuditLogService auditLog;
 
     public TagServiceImpl(TagMapper tagMapper, com.lanrecruitment.mapper.SkillTagAliasMapper aliases,
-            com.lanrecruitment.mapper.JobTagMapper jobTags, com.lanrecruitment.mapper.ResumeTagMapper resumeTags) {
+            com.lanrecruitment.mapper.JobTagMapper jobTags, com.lanrecruitment.mapper.ResumeTagMapper resumeTags, AuditLogService auditLog) {
         this.tagMapper = tagMapper;
         this.aliases=aliases; this.jobTags=jobTags; this.resumeTags=resumeTags;
+        this.auditLog=auditLog;
     }
 
     @Override
@@ -113,6 +115,7 @@ public class TagServiceImpl implements TagService {
             t.setStatus(dto.getStatus());
             t.setCreatedAt(LocalDateTime.now());
             tagMapper.insert(t);
+            auditLog.record("TAG",t.getId(),"CREATE",null);
             return;
         }
 
@@ -128,6 +131,7 @@ public class TagServiceImpl implements TagService {
         exists.setBaseWeight(dto.getBaseWeight());
         exists.setStatus(dto.getStatus());
         tagMapper.updateById(exists);
+        auditLog.record("TAG",exists.getId(),"UPDATE",null);
     }
 
     @Override
@@ -137,6 +141,7 @@ public class TagServiceImpl implements TagService {
         if (exists==null) throw new BizException(ErrorCode.TAG_NOT_FOUND);
         assertNotReferenced(dto.getId());
         tagMapper.deleteById(dto.getId());
+        auditLog.record("TAG",dto.getId(),"DELETE",null);
     }
 
     private void assertNotReferenced(Long id) {

@@ -1,0 +1,416 @@
+{
+  "tests": [
+    {
+      "name": "password login admin",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login student",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login student2",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login hr",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login hr2",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create category",
+      "method": "POST",
+      "path": "/api/admin/job/categories",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "categories",
+      "method": "GET",
+      "path": "/api/public/job/categories",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create Delivery synthetic role",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list HR jobs for Delivery synthetic role",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "load pending version 1",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve 1",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "resumes",
+      "method": "GET",
+      "path": "/api/user/resume/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "original PDF",
+      "method": "POST",
+      "path": "/api/user/resume/file/upload",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "parallel apply 0",
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true
+    },
+    {
+      "name": "parallel apply 1",
+      "actual_http": 409,
+      "code": "APPLY_DUPLICATE",
+      "request_id_present": true
+    },
+    {
+      "name": "own apply detail",
+      "method": "GET",
+      "path": "/api/user/apply/list/detail",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student cross owner timeline denied",
+      "method": "GET",
+      "path": "/api/user/apply/events",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "APPLY_RECORD_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "HR cross owner timeline denied",
+      "method": "GET",
+      "path": "/api/hr/job/apply/events",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "JOB_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "HR cross owner attachment denied",
+      "method": "GET",
+      "path": "/api/hr/resume/file/download",
+      "expected_http": 404,
+      "actual_http": 404,
+      "code": "JOB_NOT_FOUND",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "HR downloads snapshot",
+      "method": "GET",
+      "path": "/api/hr/resume/file/download",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": null,
+      "request_id_present": true
+    },
+    {
+      "name": "edit live resume",
+      "method": "POST",
+      "path": "/api/user/resume/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "replace live PDF",
+      "method": "POST",
+      "path": "/api/user/resume/file/upload",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "snapshot remains unchanged",
+      "method": "GET",
+      "path": "/api/hr/resume/file/download",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": null,
+      "request_id_present": true
+    },
+    {
+      "name": "snapshot resume unchanged",
+      "method": "GET",
+      "path": "/api/user/apply/list/detail",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "stale status denied",
+      "method": "POST",
+      "path": "/api/hr/job/apply/status",
+      "expected_http": 409,
+      "actual_http": 409,
+      "code": "CONFLICT",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "invalid skip denied",
+      "method": "POST",
+      "path": "/api/hr/job/apply/status",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "APPLY_STATUS_INVALID",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "HR interview",
+      "method": "POST",
+      "path": "/api/hr/job/apply/status",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "HR offer",
+      "method": "POST",
+      "path": "/api/hr/job/apply/status",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student accept",
+      "method": "POST",
+      "path": "/api/user/apply/status",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "timeline",
+      "method": "GET",
+      "path": "/api/user/apply/events",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "terminal status cannot revert",
+      "method": "POST",
+      "path": "/api/hr/job/apply/status",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "APPLY_STATUS_INVALID",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "close job keeps history",
+      "method": "POST",
+      "path": "/api/hr/job/remove",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "closed job snapshot remains",
+      "method": "GET",
+      "path": "/api/hr/resume/file/download",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": null,
+      "request_id_present": true
+    },
+    {
+      "name": "create Delivery status race",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list HR jobs for Delivery status race",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "load pending version 2",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve 2",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student2 resumes",
+      "method": "GET",
+      "path": "/api/user/resume/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student2 applies",
+      "method": "POST",
+      "path": "/api/user/job/apply",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "student2 application",
+      "method": "GET",
+      "path": "/api/user/apply/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "concurrent status 1",
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true
+    },
+    {
+      "name": "concurrent status 2",
+      "actual_http": 409,
+      "code": "CONFLICT",
+      "request_id_present": true
+    },
+    {
+      "name": "concurrent status event",
+      "method": "GET",
+      "path": "/api/user/apply/events",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    }
+  ],
+  "total": 43
+}
