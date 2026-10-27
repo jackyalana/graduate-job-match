@@ -1067,6 +1067,45 @@
           }
         }
       }
+    },
+    "/api/admin/audit/job/detail": {
+      "get": {
+        "summary": "Review job requirements at a specific version",
+        "security": [
+          {
+            "satoken": []
+          }
+        ],
+        "description": "ADMIN. Includes version, categoryId, cityCode, salaryMin, salaryMax, salaryNegotiable, educationMinRank, graduateYearMin, graduateYearMax, acceptFreshGraduate, deadline, tags and original fields. Decision must use the viewed version.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job detail"
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Invalid or missing id"
+          }
+        }
+      }
     }
   },
   "components": {

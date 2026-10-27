@@ -24,10 +24,14 @@ public class AdminAuditServiceImpl implements AdminAuditService {
 
     private final SysUserMapper sysUserMapper;
     private final JobMapper jobMapper;
+    private final com.lanrecruitment.mapper.JobTagMapper jobTagMapper;
+    private final com.lanrecruitment.mapper.TagMapper tagMapper;
 
-    public AdminAuditServiceImpl(SysUserMapper sysUserMapper, JobMapper jobMapper) {
+    public AdminAuditServiceImpl(SysUserMapper sysUserMapper, JobMapper jobMapper, com.lanrecruitment.mapper.JobTagMapper jobTagMapper, com.lanrecruitment.mapper.TagMapper tagMapper) {
         this.sysUserMapper = sysUserMapper;
         this.jobMapper = jobMapper;
+        this.jobTagMapper = jobTagMapper;
+        this.tagMapper = tagMapper;
     }
 
     @Override
@@ -100,12 +104,18 @@ public class AdminAuditServiceImpl implements AdminAuditService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
     public AdminJobDetailVO getJobDetail(Long id) {
         Job job = jobMapper.selectById(id);
         if (job == null) {
             throw new BizException(ErrorCode.JOB_NOT_FOUND);
         }
         SysUser hr = job.getHrId() == null ? null : sysUserMapper.selectById(job.getHrId());
+        List<com.lanrecruitment.domain.vo.JobTagVO> tags = new ArrayList<>();
+        for (com.lanrecruitment.domain.entity.JobTag jt : jobTagMapper.selectList(new LambdaQueryWrapper<com.lanrecruitment.domain.entity.JobTag>().eq(com.lanrecruitment.domain.entity.JobTag::getJobId, id))) {
+            com.lanrecruitment.domain.entity.Tag tag = tagMapper.selectById(jt.getTagId());
+            tags.add(com.lanrecruitment.domain.vo.JobTagVO.builder().tagId(jt.getTagId()).tagName(tag == null ? null : tag.getTagName()).tagType(tag == null ? null : tag.getTagType()).proficiency(jt.getProficiency()).weight(jt.getWeight()).build());
+        }
         return AdminJobDetailVO.builder()
                 .id(job.getId())
                 .hrId(job.getHrId())
@@ -116,6 +126,10 @@ public class AdminAuditServiceImpl implements AdminAuditService {
                 .salaryRange(job.getSalaryRange())
                 .jobType(job.getJobType())
                 .description(job.getDescription())
+                .version(job.getVersion()).categoryId(job.getCategoryId()).cityCode(job.getCityCode())
+                .salaryMin(job.getSalaryMin()).salaryMax(job.getSalaryMax()).salaryNegotiable(job.getSalaryNegotiable())
+                .educationMinRank(job.getEducationMinRank()).graduateYearMin(job.getGraduateYearMin()).graduateYearMax(job.getGraduateYearMax())
+                .acceptFreshGraduate(job.getAcceptFreshGraduate()).deadline(job.getDeadline()).tags(tags)
                 .status(job.getStatus())
                 .auditStatus(job.getAuditStatus())
                 .createdAt(job.getCreatedAt())

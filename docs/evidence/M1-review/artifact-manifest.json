@@ -1,0 +1,14 @@
+{
+  "parent": "690d7d0d7d5f527f0b3b17a7ce0de45a5b9993d3",
+  "files": {
+    "backend/src/main/java/com/lanrecruitment/domain/vo/AdminJobDetailVO.java": "b38b85034951c0dc8c24645d7092c60c2e5c83bb300343214e5b22be718a518a",
+    "backend/src/main/java/com/lanrecruitment/exception/GlobalExceptionHandler.java": "679575bfac3fdb7d4d842eb08551b4ac4f726d2c59f70a52c627edf04316b50f",
+    "backend/src/main/java/com/lanrecruitment/service/impl/AdminAuditServiceImpl.java": "3d1b423e17e6e9aac884966c75844c28fec31978395931693997ab4f3520045b",
+    "backend/src/main/java/com/lanrecruitment/service/impl/AuthServiceImpl.java": "0c8f899f4220804ab8c2850146908f5560f0c5ed5f424962a82d50ddd8315ba7",
+    "frontend/src/pages/AuditManage.vue": "c9f3483d2d508b5280d81ea821de4cff01358d99abb02d43b79f5af21f14546c",
+    "frontend/src/pages/JobManage.vue": "8c9b50ed003120f313c86ff2cb61e2b10e09e8a1af0c04526da94d05f1e68b35",
+    "scripts/m1/review_regression.py": "9eff17b3823f07cbb30a3167c556a5eff93610d591da78a96c4b1082ec98b3d2"
+  },
+  "backendJarSha256": "064483605e7a8ee135a8aaa797525f16db4eeade436494d9f638a3f174b443f5",
+  "frontendDistIndexSha256": "1259cfb8decb03ba83a3b3ea614e70f55cbb514c9680e148c9ff5960161aeaad"
+}

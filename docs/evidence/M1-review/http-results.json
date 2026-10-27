@@ -1,0 +1,316 @@
+{
+  "schema": "graduate_job_match_m1_runtime_35b1a50d",
+  "tests": [
+    {
+      "name": "password login admin",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "password login hr",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "username failed 1",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "username failed 2",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "username failed 3",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "username failed 4",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "username failed 5",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "username variant shares limit DEMO_STUDENT",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 429,
+      "actual_http": 429,
+      "code": "AUTH_LOGIN_RATE_LIMITED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "username variant shares limit dÉmo_student",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "expected_http": 429,
+      "actual_http": 429,
+      "code": "AUTH_LOGIN_RATE_LIMITED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "email failed 1",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "EMAIL_CODE_INVALID",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "email failed 2",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "EMAIL_CODE_INVALID",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "email failed 3",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "EMAIL_CODE_INVALID",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "email failed 4",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "EMAIL_CODE_INVALID",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "email failed 5",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 400,
+      "actual_http": 400,
+      "code": "EMAIL_CODE_INVALID",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "email variant shares limit DEMO_STUDENT2@EXAMPLE.INVALID",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 429,
+      "actual_http": 429,
+      "code": "AUTH_LOGIN_RATE_LIMITED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "email variant shares limit dÉmo_student2@example.invalid",
+      "method": "POST",
+      "path": "/api/public/auth/login/email",
+      "expected_http": 429,
+      "actual_http": 429,
+      "code": "AUTH_LOGIN_RATE_LIMITED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "query type",
+      "method": "GET",
+      "path": "/api/jobs",
+      "expected_http": 422,
+      "actual_http": 422,
+      "code": "VALIDATION_FAILED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "path type",
+      "method": "GET",
+      "path": "/api/jobs/abc",
+      "expected_http": 422,
+      "actual_http": 422,
+      "code": "VALIDATION_FAILED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "missing parameter",
+      "method": "GET",
+      "path": "/api/public/job/detail",
+      "expected_http": 422,
+      "actual_http": 422,
+      "code": "VALIDATION_FAILED",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create category",
+      "method": "POST",
+      "path": "/api/admin/job/categories",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list categories",
+      "method": "GET",
+      "path": "/api/public/job/categories",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "create 审核完整条件",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "list HR jobs for 审核完整条件",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "skill list",
+      "method": "GET",
+      "path": "/api/public/tag/list",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "set job skills",
+      "method": "POST",
+      "path": "/api/hr/job/tags/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "admin detail includes all audit conditions",
+      "method": "GET",
+      "path": "/api/admin/audit/job/detail",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "reject approval of unseen version",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 409,
+      "actual_http": 409,
+      "code": "CONFLICT",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "HR changes skills after detail viewed",
+      "method": "POST",
+      "path": "/api/hr/job/tags/save",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "reject previously viewed version after change",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 409,
+      "actual_http": 409,
+      "code": "CONFLICT",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "view updated audit detail",
+      "method": "GET",
+      "path": "/api/admin/audit/job/detail",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    },
+    {
+      "name": "approve viewed version",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "expected_http": 200,
+      "actual_http": 200,
+      "code": "OK",
+      "request_id_present": true,
+      "request_id_matches_header": true
+    }
+  ],
+  "total": 31
+}

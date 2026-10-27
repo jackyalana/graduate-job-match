@@ -23,7 +23,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(Response.fail(code, e.getMessage()));
     }
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class, ConstraintViolationException.class,
-            org.springframework.http.converter.HttpMessageNotReadableException.class})
+            org.springframework.http.converter.HttpMessageNotReadableException.class,
+            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class,
+            org.springframework.web.bind.MissingServletRequestParameterException.class})
     public ResponseEntity<Response<Void>> validation(Exception e) {
         return ResponseEntity.unprocessableEntity().body(Response.fail(ErrorCode.VALIDATION_FAILED));
     }

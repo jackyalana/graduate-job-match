@@ -30,8 +30,6 @@
           <el-table-column label="操作" width="240">
             <template #default="{ row }">
               <el-button size="small" @click="openJobDetail(row)">详情</el-button>
-              <el-button size="small" type="success" @click="decisionJob(row, true)">通过</el-button>
-              <el-button size="small" type="danger" @click="decisionJob(row, false)">拒绝</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -48,6 +46,15 @@
       <el-descriptions-item label="城市">{{ jobDetail.city || '-' }}</el-descriptions-item>
       <el-descriptions-item label="类型">{{ jobDetail.jobType || '-' }}</el-descriptions-item>
       <el-descriptions-item label="薪资" :span="2">{{ jobDetail.salaryRange || '-' }}</el-descriptions-item>
+      <el-descriptions-item label="版本">{{ jobDetail.version }}</el-descriptions-item>
+      <el-descriptions-item label="类别 ID">{{ jobDetail.categoryId ?? '未设置' }}</el-descriptions-item>
+      <el-descriptions-item label="城市代码">{{ jobDetail.cityCode || '未设置' }}</el-descriptions-item>
+      <el-descriptions-item label="结构化薪资">{{ jobDetail.salaryNegotiable ? '面议' : `${jobDetail.salaryMin ?? '未设置'} - ${jobDetail.salaryMax ?? '未设置'}` }}</el-descriptions-item>
+      <el-descriptions-item label="最低学历等级">{{ jobDetail.educationMinRank ?? '不限' }}</el-descriptions-item>
+      <el-descriptions-item label="毕业年份">{{ jobDetail.graduateYearMin ?? '不限' }} - {{ jobDetail.graduateYearMax ?? '不限' }}</el-descriptions-item>
+      <el-descriptions-item label="接受应届生">{{ jobDetail.acceptFreshGraduate ? '是' : '否' }}</el-descriptions-item>
+      <el-descriptions-item label="截止时间">{{ formatShanghai(jobDetail.deadline) || '未设置' }}</el-descriptions-item>
+      <el-descriptions-item label="技能及要求标签" :span="2">{{ (jobDetail.tags || []).map(t => `${t.tagName || t.tagId}（${t.tagType || '未知'}，熟练度 ${t.proficiency ?? '不适用'}，权重 ${t.weight ?? '未设置'}）`).join('、') || '无' }}</el-descriptions-item>
       <el-descriptions-item label="状态">
         <span v-if="jobDetail.status === 1">招聘中</span>
         <span v-else-if="jobDetail.status === 0">下架</span>
@@ -67,6 +74,10 @@
       <div style="font-weight: 600; margin-bottom: 6px">岗位描述</div>
       <el-input :model-value="jobDetail.description" type="textarea" :rows="10" readonly />
     </div>
+    <template #footer>
+      <el-button type="success" @click="decisionJob(jobDetail, true)">通过此版本</el-button>
+      <el-button type="danger" @click="decisionJob(jobDetail, false)">拒绝此版本</el-button>
+    </template>
   </el-dialog>
 </template>
 
@@ -99,6 +110,7 @@ async function decisionHr(row, pass) {
 async function decisionJob(row, pass) {
   await adminDecisionJob(row.id, pass, row.version)
   ElMessage.success('已处理')
+  jobDetailVisible.value = false
   await load()
 }
 

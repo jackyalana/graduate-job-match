@@ -562,6 +562,7 @@ async function saveTags() {
   await hrSaveJobTags(currentJob.value.id, items)
   ElMessage.success('标签已保存')
   tagVisible.value = false
+  await loadJobs()
 }
 
 async function openApplies(row) {

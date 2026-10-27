@@ -37,13 +37,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String loginByPassword(LoginByPasswordDTO dto) {
-        loginRateLimiter.check(dto.getUsername());
-        try { return doPasswordLogin(dto); }
-        catch (BizException e) { loginRateLimiter.recordFailure(dto.getUsername()); throw e; }
+        SysUser user = sysUserMapper.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, dto.getUsername()));
+        String key = user == null ? "username:" + dto.getUsername().toLowerCase(java.util.Locale.ROOT) : "username-id:" + user.getId();
+        loginRateLimiter.check(key);
+        try { return doPasswordLogin(dto, user, key); }
+        catch (BizException e) { loginRateLimiter.recordFailure(key); throw e; }
     }
 
-    private String doPasswordLogin(LoginByPasswordDTO dto) {
-        SysUser user = sysUserMapper.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, dto.getUsername()));
+    private String doPasswordLogin(LoginByPasswordDTO dto, SysUser user, String key) {
         if (user == null) {
             throw new BizException(ErrorCode.AUTH_INVALID_CREDENTIALS);
         }
@@ -56,22 +57,22 @@ public class AuthServiceImpl implements AuthService {
         if (!PasswordUtil.matches(dto.getPassword(), user.getPassword())) {
             throw new BizException(ErrorCode.AUTH_INVALID_CREDENTIALS);
         }
-        loginRateLimiter.clear(dto.getUsername());
+        loginRateLimiter.clear(key);
         StpUtil.login(user.getId());
         return StpUtil.getTokenValue();
     }
 
     @Override
     public String loginByEmail(LoginByEmailDTO dto) {
-        String limitKey="email:"+dto.getEmail();
+        SysUser user = sysUserMapper.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getEmail, dto.getEmail()));
+        String limitKey=user == null ? "email:"+dto.getEmail().toLowerCase(java.util.Locale.ROOT) : "email-id:"+user.getId();
         loginRateLimiter.check(limitKey);
-        try { return doEmailLogin(dto,limitKey); }
+        try { return doEmailLogin(dto,limitKey,user); }
         catch (BizException e) { loginRateLimiter.recordFailure(limitKey); throw e; }
     }
 
-    private String doEmailLogin(LoginByEmailDTO dto, String limitKey) {
+    private String doEmailLogin(LoginByEmailDTO dto, String limitKey, SysUser user) {
         emailCodeService.verifyCode(dto.getEmail(), EmailPurpose.LOGIN.name(), dto.getCode());
-        SysUser user = sysUserMapper.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getEmail, dto.getEmail()));
         if (user == null) {
             throw new BizException(ErrorCode.AUTH_ACCOUNT_NOT_FOUND);
         }
