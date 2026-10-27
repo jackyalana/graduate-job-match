@@ -1,0 +1,8 @@
+cwd=.local/downloads
+command=["curl", "-fL", "--retry", "2", "-o", "maven.tar.gz", "https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.11/apache-maven-3.9.11-bin.tar.gz"]
+start=2026-10-27T01:49:10.002601+00:00
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 8946k  100 8946k    0     0  13.6M      0 --:--:-- --:--:-- --:--:-- 13.6M
+
+exit_code=0

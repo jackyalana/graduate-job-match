@@ -1,0 +1,7 @@
+cwd=frontend
+command=["npm", "ci", "--ignore-scripts", "--no-audit", "--no-fund", "--fetch-retries=0"]
+start=2026-10-27T01:49:40.208406+00:00
+
+added 78 packages in 2s
+
+exit_code=0

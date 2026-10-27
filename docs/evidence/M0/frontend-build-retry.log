@@ -1,0 +1,23 @@
+cwd=frontend
+command=["env", "VITE_API_BASE_URL=http://127.0.0.1:18080", "npm", "run", "build"]
+start=2026-10-27T01:51:00.627217+00:00
+
+> lan-recruitment-frontend@0.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 1537 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.39 kB │ gzip:   0.30 kB
+dist/assets/index-CRx5Knfv.css    362.79 kB │ gzip:  49.46 kB
+dist/assets/index-BbGp00dB.js   1,132.62 kB │ gzip: 367.26 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.72s
+
+exit_code=0

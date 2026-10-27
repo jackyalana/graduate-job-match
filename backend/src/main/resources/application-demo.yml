@@ -1,0 +1,22 @@
+# Explicit local M0 profile; credentials live only under ignored .local/.
+server:
+  address: 127.0.0.1
+  port: 18080
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:13306/graduate_job_match_m0?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: graduate_demo
+    password: ${M0_DB_PASSWORD}
+lan:
+  sa-token:
+    store: memory
+  match:
+    cache:
+      store: memory
+  storage:
+    base-dir: ${M0_STORAGE_DIR}
+  email:
+    host: ''
+    from: ''
+    username: ''
+    password: ''

@@ -1,5 +1,12 @@
 # Lan-Recruitment（毕业设计-智能招聘系统）
 
+> 本检出副本为“毕业生就业推荐与岗位匹配系统”的 M0 底座验证，**待审核**。
+> 上游版本与业务源码保持可识别，未完成 SDD 新功能。请从
+> [M0 报告](docs/M0_REPORT.md)、[实测启动说明](docs/BASELINE.md)、
+> [复用矩阵](docs/REUSE_MATRIX.md)、[API 映射](docs/UPSTREAM_API_MAPPING.md)、
+> [来源与许可](THIRD_PARTY_NOTICES.md) 开始。
+> 以下为保留的上游 README；其示例默认库、默认账号与跳过测试命令不作为本次 demo 启动路线。
+
 > 系统首页
 
 ![系统首页](docs/img/系统首页.png)

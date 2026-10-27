@@ -1,0 +1,21 @@
+cwd=.
+command=["python3", "scripts/m0/local.py", "status"]
+start=2026-10-27T02:06:05.193306+00:00
+@@version	@@port	@@global.time_zone
+8.4.11	13306	+00:00
+Tables_in_graduate_job_match_m0
+job
+job_apply
+job_tag
+login_log
+match_score
+notice
+resume
+resume_tag
+sys_user
+tag
+
+http://127.0.0.1:18080/api/health 200
+http://127.0.0.1:15173 200
+
+exit_code=0

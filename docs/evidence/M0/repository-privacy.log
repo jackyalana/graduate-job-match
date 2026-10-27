@@ -1,0 +1,6 @@
+cwd=.
+command=["gh", "api", "repos/jackyalana/graduate-job-match", "--jq", "{full_name:.full_name,private:.private,visibility:.visibility,html_url:.html_url}"]
+start=2026-10-27T02:06:05.288746+00:00
+{"full_name":"jackyalana/graduate-job-match","html_url":"https://github.com/jackyalana/graduate-job-match","private":true,"visibility":"private"}
+
+exit_code=0

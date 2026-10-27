@@ -1,0 +1,10 @@
+cwd=frontend
+command=["env", "VITE_API_BASE_URL=http://127.0.0.1:18080", "npm", "run", "build"]
+start=2026-10-27T01:50:25.470993+00:00
+
+> lan-recruitment-frontend@0.0.0 build
+> vite build
+
+sh: vite: command not found
+
+exit_code=127

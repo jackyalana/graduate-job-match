@@ -1,0 +1,15 @@
+cwd=.
+command=["python3", "scripts/m0/local.py", "db-setup"]
+start=2026-10-27T01:52:19.096179+00:00
+@@version	@@port	@@hostname	@@global.time_zone
+8.4.11	13306	guanghaodeMacBook-Pro.local	+00:00
+Database
+graduate_job_match_m0
+information_schema
+mysql
+performance_schema
+sys
+
+Schema imported into fresh private database; random credentials in .local/credentials.json
+
+exit_code=0

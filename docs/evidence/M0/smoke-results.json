@@ -1,0 +1,1572 @@
+{
+  "timestamp": "2026-10-27T01:54:20.651468+00:00",
+  "scope": "Upstream M0 baseline, synthetic data only; not SDD acceptance",
+  "records": [
+    {
+      "name": "unauthenticated resume access",
+      "method": "GET",
+      "path": "/api/user/resume/list",
+      "role": null,
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 401,
+        "message": "未登录",
+        "data": null
+      }
+    },
+    {
+      "name": "password login admin",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "role": null,
+      "http_status": 200,
+      "request": {
+        "username": "demo_admin",
+        "password": "[REDACTED]"
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": "[TOKEN REDACTED]"
+      }
+    },
+    {
+      "name": "current user admin",
+      "method": "GET",
+      "path": "/api/common/user/me",
+      "role": "admin",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": {
+          "id": 1,
+          "username": "demo_admin",
+          "role": "ADMIN"
+        }
+      }
+    },
+    {
+      "name": "password login student",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "role": null,
+      "http_status": 200,
+      "request": {
+        "username": "demo_student",
+        "password": "[REDACTED]"
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": "[TOKEN REDACTED]"
+      }
+    },
+    {
+      "name": "current user student",
+      "method": "GET",
+      "path": "/api/common/user/me",
+      "role": "student",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": {
+          "id": 2,
+          "username": "demo_student",
+          "role": "USER"
+        }
+      }
+    },
+    {
+      "name": "password login student2",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "role": null,
+      "http_status": 200,
+      "request": {
+        "username": "demo_student2",
+        "password": "[REDACTED]"
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": "[TOKEN REDACTED]"
+      }
+    },
+    {
+      "name": "current user student2",
+      "method": "GET",
+      "path": "/api/common/user/me",
+      "role": "student2",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": {
+          "id": 3,
+          "username": "demo_student2",
+          "role": "USER"
+        }
+      }
+    },
+    {
+      "name": "password login hr",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "role": null,
+      "http_status": 200,
+      "request": {
+        "username": "demo_hr",
+        "password": "[REDACTED]"
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": "[TOKEN REDACTED]"
+      }
+    },
+    {
+      "name": "current user hr",
+      "method": "GET",
+      "path": "/api/common/user/me",
+      "role": "hr",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": {
+          "id": 4,
+          "username": "demo_hr",
+          "role": "HR"
+        }
+      }
+    },
+    {
+      "name": "password login hr2",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "role": null,
+      "http_status": 200,
+      "request": {
+        "username": "demo_hr2",
+        "password": "[REDACTED]"
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": "[TOKEN REDACTED]"
+      }
+    },
+    {
+      "name": "current user hr2",
+      "method": "GET",
+      "path": "/api/common/user/me",
+      "role": "hr2",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": {
+          "id": 5,
+          "username": "demo_hr2",
+          "role": "HR"
+        }
+      }
+    },
+    {
+      "name": "pending HR login rejected",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "role": null,
+      "http_status": 200,
+      "request": {
+        "username": "demo_hr_pending",
+        "password": "[REDACTED]"
+      },
+      "response": {
+        "code": 403,
+        "message": "HR账号待审核",
+        "data": null
+      }
+    },
+    {
+      "name": "pending HR list",
+      "method": "GET",
+      "path": "/api/admin/audit/hr/list",
+      "role": "admin",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "id": 6,
+            "username": "demo_hr_pending",
+            "email": "demo_hr_pending@example.invalid",
+            "companyName": "合成待审企业",
+            "status": 1,
+            "auditStatus": 0,
+            "createdAt": "2026-10-27 01:52"
+          }
+        ]
+      }
+    },
+    {
+      "name": "approve synthetic HR",
+      "method": "POST",
+      "path": "/api/admin/audit/hr/decision",
+      "role": "admin",
+      "http_status": 200,
+      "request": {
+        "id": 6,
+        "pass": true
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "approved HR login",
+      "method": "POST",
+      "path": "/api/public/auth/login/password",
+      "role": null,
+      "http_status": 200,
+      "request": {
+        "username": "demo_hr_pending",
+        "password": "[REDACTED]"
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": "[TOKEN REDACTED]"
+      }
+    },
+    {
+      "name": "student cannot enter admin audit",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "role": "student",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 403,
+        "message": "无权限",
+        "data": null
+      }
+    },
+    {
+      "name": "public skills",
+      "method": "GET",
+      "path": "/api/public/tag/list",
+      "role": null,
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "id": 3,
+            "tagName": "Vue",
+            "tagType": "SKILL",
+            "baseWeight": 3,
+            "status": 1,
+            "createdAt": "2026-10-27 01:52"
+          },
+          {
+            "id": 2,
+            "tagName": "MySQL",
+            "tagType": "SKILL",
+            "baseWeight": 3,
+            "status": 1,
+            "createdAt": "2026-10-27 01:52"
+          },
+          {
+            "id": 1,
+            "tagName": "Java",
+            "tagType": "SKILL",
+            "baseWeight": 3,
+            "status": 1,
+            "createdAt": "2026-10-27 01:52"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HR creates pending job",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "role": "hr",
+      "http_status": 200,
+      "request": {
+        "jobName": "M0 合成 Java 应届岗位",
+        "city": "上海",
+        "salaryRange": "8000-12000",
+        "jobType": "后端开发",
+        "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+        "status": 1
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "HR own jobs",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "role": "hr",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "id": 1,
+            "jobName": "M0 合成 Java 应届岗位",
+            "companyName": "合成企业A",
+            "city": "上海",
+            "salaryRange": "8000-12000",
+            "jobType": "后端开发",
+            "status": 1,
+            "auditStatus": 0,
+            "createdAt": "2026-10-27 01:54",
+            "applyCount": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "pending job absent from public list",
+      "method": "GET",
+      "path": "/api/public/job/list",
+      "role": null,
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": []
+      }
+    },
+    {
+      "name": "pending job cannot be opened",
+      "method": "GET",
+      "path": "/api/public/job/detail?id=1",
+      "role": null,
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 404,
+        "message": "岗位不存在",
+        "data": null
+      }
+    },
+    {
+      "name": "HR saves Java requirement",
+      "method": "POST",
+      "path": "/api/hr/job/tags/save",
+      "role": "hr",
+      "http_status": 200,
+      "request": {
+        "jobId": 1,
+        "items": [
+          {
+            "tagId": 1,
+            "proficiency": 3
+          }
+        ]
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "admin pending jobs",
+      "method": "GET",
+      "path": "/api/admin/audit/job/list",
+      "role": "admin",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "id": 1,
+            "hrId": 4,
+            "jobName": "M0 合成 Java 应届岗位",
+            "city": "上海",
+            "salaryRange": "8000-12000",
+            "jobType": "后端开发",
+            "status": 1,
+            "auditStatus": 0,
+            "createdAt": "2026-10-27 01:54"
+          }
+        ]
+      }
+    },
+    {
+      "name": "admin approves job",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "role": "admin",
+      "http_status": 200,
+      "request": {
+        "id": 1,
+        "pass": true
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "public approved job",
+      "method": "GET",
+      "path": "/api/public/job/list",
+      "role": null,
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "id": 1,
+            "jobName": "M0 合成 Java 应届岗位",
+            "companyName": "合成企业A",
+            "city": "上海",
+            "salaryRange": "8000-12000",
+            "jobType": "后端开发",
+            "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+            "matchScore": null,
+            "createdAt": "2026-10-27 01:54"
+          }
+        ]
+      }
+    },
+    {
+      "name": "public approved detail",
+      "method": "GET",
+      "path": "/api/public/job/detail?id=1",
+      "role": null,
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": {
+          "id": 1,
+          "jobName": "M0 合成 Java 应届岗位",
+          "companyName": "合成企业A",
+          "city": "上海",
+          "salaryRange": "8000-12000",
+          "jobType": "后端开发",
+          "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+          "matchScore": null,
+          "createdAt": "2026-10-27 01:54"
+        }
+      }
+    },
+    {
+      "name": "no resume recommendation",
+      "method": "GET",
+      "path": "/api/user/job/recommend",
+      "role": "student2",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "id": 1,
+            "jobName": "M0 合成 Java 应届岗位",
+            "companyName": "合成企业A",
+            "city": "上海",
+            "salaryRange": "8000-12000",
+            "jobType": "后端开发",
+            "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+            "matchScore": null,
+            "createdAt": "2026-10-27 01:54"
+          }
+        ]
+      }
+    },
+    {
+      "name": "student saves resume",
+      "method": "POST",
+      "path": "/api/user/resume/save",
+      "role": "student",
+      "http_status": 200,
+      "request": {
+        "resumeName": "M0 合成学生简历",
+        "realName": "合成学生A",
+        "city": "上海",
+        "education": "本科",
+        "workYears": "应届",
+        "expectJobType": "后端开发",
+        "expectSalary": "8000",
+        "workDesc": "仅合成项目经历",
+        "status": 1
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "student resume list",
+      "method": "GET",
+      "path": "/api/user/resume/list",
+      "role": "student",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "id": 1,
+            "userId": 2,
+            "resumeName": "M0 合成学生简历",
+            "realName": "合成学生A",
+            "gender": null,
+            "city": "上海",
+            "education": "本科",
+            "workYears": "应届",
+            "expectJobType": "后端开发",
+            "expectSalary": "8000",
+            "workDesc": "仅合成项目经历",
+            "fileName": null,
+            "fileUrl": null,
+            "fileType": null,
+            "fileSize": null,
+            "isDefault": 1,
+            "status": 1,
+            "createTime": "2026-10-27 01:54",
+            "updateTime": "2026-10-27 01:54"
+          }
+        ]
+      }
+    },
+    {
+      "name": "student resume detail",
+      "method": "GET",
+      "path": "/api/user/resume/detail?id=1",
+      "role": "student",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": {
+          "resume": {
+            "id": 1,
+            "userId": 2,
+            "resumeName": "M0 合成学生简历",
+            "realName": "合成学生A",
+            "gender": null,
+            "city": "上海",
+            "education": "本科",
+            "workYears": "应届",
+            "expectJobType": "后端开发",
+            "expectSalary": "8000",
+            "workDesc": "仅合成项目经历",
+            "fileName": null,
+            "fileUrl": null,
+            "fileType": null,
+            "fileSize": null,
+            "isDefault": 1,
+            "status": 1,
+            "createTime": "2026-10-27 01:54",
+            "updateTime": "2026-10-27 01:54"
+          },
+          "tags": []
+        }
+      }
+    },
+    {
+      "name": "student saves skills",
+      "method": "POST",
+      "path": "/api/user/resume/tags/save",
+      "role": "student",
+      "http_status": 200,
+      "request": {
+        "resumeId": 1,
+        "items": [
+          {
+            "tagId": 1,
+            "proficiency": 3
+          }
+        ]
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "real cosine recommendation",
+      "method": "GET",
+      "path": "/api/user/job/recommend?resumeId=1",
+      "role": "student",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "id": 1,
+            "jobName": "M0 合成 Java 应届岗位",
+            "companyName": "合成企业A",
+            "city": "上海",
+            "salaryRange": "8000-12000",
+            "jobType": "后端开发",
+            "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+            "matchScore": 1.0,
+            "createdAt": "2026-10-27 01:54"
+          }
+        ]
+      }
+    },
+    {
+      "name": "student2 denied student1 resume",
+      "method": "GET",
+      "path": "/api/user/resume/detail?id=1",
+      "role": "student2",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 404,
+        "message": "简历不存在",
+        "data": null
+      }
+    },
+    {
+      "name": "HR2 denied HR1 applications",
+      "method": "GET",
+      "path": "/api/hr/job/applications?jobId=1",
+      "role": "hr2",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 404,
+        "message": "岗位不存在",
+        "data": null
+      }
+    },
+    {
+      "name": "student applies once",
+      "method": "POST",
+      "path": "/api/user/job/apply",
+      "role": "student",
+      "http_status": 200,
+      "request": {
+        "jobId": 1,
+        "resumeId": 1
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "same resume duplicate rejected",
+      "method": "POST",
+      "path": "/api/user/job/apply",
+      "role": "student",
+      "http_status": 200,
+      "request": {
+        "jobId": 1,
+        "resumeId": 1
+      },
+      "response": {
+        "code": 400,
+        "message": "请勿重复投递",
+        "data": null
+      }
+    },
+    {
+      "name": "HR sees applicant and match",
+      "method": "GET",
+      "path": "/api/hr/job/applications?jobId=1",
+      "role": "hr",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "applyId": 1,
+            "applyStatus": 0,
+            "applyTime": "2026-10-27 01:54",
+            "applicantPhone": null,
+            "resume": {
+              "id": 1,
+              "userId": 2,
+              "resumeName": "M0 合成学生简历",
+              "realName": "合成学生A",
+              "gender": null,
+              "city": "上海",
+              "education": "本科",
+              "workYears": "应届",
+              "expectJobType": "后端开发",
+              "expectSalary": "8000",
+              "workDesc": "仅合成项目经历",
+              "fileName": null,
+              "fileUrl": null,
+              "fileType": null,
+              "fileSize": null,
+              "isDefault": 1,
+              "status": 1,
+              "createTime": "2026-10-27 01:54",
+              "updateTime": "2026-10-27 01:54"
+            },
+            "resumeTags": [
+              {
+                "tagId": 1,
+                "tagName": "Java",
+                "tagType": "SKILL",
+                "proficiency": 3,
+                "weight": 9
+              }
+            ],
+            "matchScore": 1.0
+          }
+        ]
+      }
+    },
+    {
+      "name": "student application detail",
+      "method": "GET",
+      "path": "/api/user/apply/list/detail",
+      "role": "student",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "applyId": 1,
+            "applyStatus": 0,
+            "applyTime": "2026-10-27 01:54",
+            "job": {
+              "id": 1,
+              "jobName": "M0 合成 Java 应届岗位",
+              "companyName": "合成企业A",
+              "city": "上海",
+              "salaryRange": "8000-12000",
+              "jobType": "后端开发",
+              "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+              "matchScore": null,
+              "createdAt": "2026-10-27 01:54"
+            },
+            "resume": {
+              "id": 1,
+              "userId": 2,
+              "resumeName": "M0 合成学生简历",
+              "realName": "合成学生A",
+              "gender": null,
+              "city": "上海",
+              "education": "本科",
+              "workYears": "应届",
+              "expectJobType": "后端开发",
+              "expectSalary": "8000",
+              "workDesc": "仅合成项目经历",
+              "fileName": null,
+              "fileUrl": null,
+              "fileType": null,
+              "fileSize": null,
+              "isDefault": 1,
+              "status": 1,
+              "createTime": "2026-10-27 01:54",
+              "updateTime": "2026-10-27 01:54"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HR rejects application",
+      "method": "POST",
+      "path": "/api/hr/job/apply/status",
+      "role": "hr",
+      "http_status": 200,
+      "request": {
+        "applyId": 1,
+        "status": 3
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "PROBE terminal status can revert to submitted",
+      "method": "POST",
+      "path": "/api/hr/job/apply/status",
+      "role": "hr",
+      "http_status": 200,
+      "request": {
+        "applyId": 1,
+        "status": 0
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "second resume save",
+      "method": "POST",
+      "path": "/api/user/resume/save",
+      "role": "student",
+      "http_status": 200,
+      "request": {
+        "resumeName": "M0 合成第二简历",
+        "realName": "合成学生A",
+        "city": "上海",
+        "education": "本科",
+        "workYears": "应届",
+        "expectJobType": "后端开发",
+        "expectSalary": "8000",
+        "workDesc": "仅合成项目经历",
+        "status": 1
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "list two resumes",
+      "method": "GET",
+      "path": "/api/user/resume/list",
+      "role": "student",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "id": 1,
+            "userId": 2,
+            "resumeName": "M0 合成学生简历",
+            "realName": "合成学生A",
+            "gender": null,
+            "city": "上海",
+            "education": "本科",
+            "workYears": "应届",
+            "expectJobType": "后端开发",
+            "expectSalary": "8000",
+            "workDesc": "仅合成项目经历",
+            "fileName": null,
+            "fileUrl": null,
+            "fileType": null,
+            "fileSize": null,
+            "isDefault": 1,
+            "status": 1,
+            "createTime": "2026-10-27 01:54",
+            "updateTime": "2026-10-27 01:54"
+          },
+          {
+            "id": 2,
+            "userId": 2,
+            "resumeName": "M0 合成第二简历",
+            "realName": "合成学生A",
+            "gender": null,
+            "city": "上海",
+            "education": "本科",
+            "workYears": "应届",
+            "expectJobType": "后端开发",
+            "expectSalary": "8000",
+            "workDesc": "仅合成项目经历",
+            "fileName": null,
+            "fileUrl": null,
+            "fileType": null,
+            "fileSize": null,
+            "isDefault": 0,
+            "status": 1,
+            "createTime": "2026-10-27 01:54",
+            "updateTime": "2026-10-27 01:54"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PROBE same user second resume same job",
+      "method": "POST",
+      "path": "/api/user/job/apply",
+      "role": "student",
+      "http_status": 200,
+      "request": {
+        "jobId": 1,
+        "resumeId": 2
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "database duplicate user-job proof",
+      "result": "user_id\tjob_id\tcopies\n2\t1\t2\n"
+    },
+    {
+      "name": "PROBE invalid PDF upload",
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": {
+          "id": 1,
+          "userId": 2,
+          "resumeName": "M0 合成学生简历",
+          "realName": "合成学生A",
+          "gender": null,
+          "city": "上海",
+          "education": "本科",
+          "workYears": "应届",
+          "expectJobType": "后端开发",
+          "expectSalary": "8000",
+          "workDesc": "仅合成项目经历",
+          "fileName": "synthetic-not-pdf.pdf",
+          "fileUrl": "/uploads/resume/26caf055dea64a0aa4ea0b6e8d198f7e.pdf",
+          "fileType": "pdf",
+          "fileSize": 28,
+          "isDefault": 1,
+          "status": 1,
+          "createTime": "2026-10-27 01:54",
+          "updateTime": "2026-10-27 01:54"
+        }
+      }
+    },
+    {
+      "name": "PROBE anonymous attachment URL",
+      "path": "/uploads/resume/26caf055dea64a0aa4ea0b6e8d198f7e.pdf",
+      "http_status": 200,
+      "body": "M0 synthetic non-PDF payload"
+    },
+    {
+      "name": "replace resume skills",
+      "method": "POST",
+      "path": "/api/user/resume/tags/save",
+      "role": "student",
+      "http_status": 200,
+      "request": {
+        "resumeId": 1,
+        "items": [
+          {
+            "tagId": 3,
+            "proficiency": 3
+          }
+        ]
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "cache invalidation nonoverlap",
+      "method": "GET",
+      "path": "/api/user/job/recommend?resumeId=1",
+      "role": "student",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "id": 1,
+            "jobName": "M0 合成 Java 应届岗位",
+            "companyName": "合成企业A",
+            "city": "上海",
+            "salaryRange": "8000-12000",
+            "jobType": "后端开发",
+            "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+            "matchScore": 0.0,
+            "createdAt": "2026-10-27 01:54"
+          }
+        ]
+      }
+    },
+    {
+      "name": "restore resume skills",
+      "method": "POST",
+      "path": "/api/user/resume/tags/save",
+      "role": "student",
+      "http_status": 200,
+      "request": {
+        "resumeId": 1,
+        "items": [
+          {
+            "tagId": 1,
+            "proficiency": 3
+          }
+        ]
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "create deletion probe job",
+      "method": "POST",
+      "path": "/api/hr/job/save",
+      "role": "hr",
+      "http_status": 200,
+      "request": {
+        "jobName": "M0 合成删除探针岗位",
+        "city": "上海",
+        "salaryRange": "8000-12000",
+        "jobType": "后端开发",
+        "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+        "status": 1
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "find probe job",
+      "method": "GET",
+      "path": "/api/hr/job/list",
+      "role": "hr",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": [
+          {
+            "id": 2,
+            "jobName": "M0 合成删除探针岗位",
+            "companyName": "合成企业A",
+            "city": "上海",
+            "salaryRange": "8000-12000",
+            "jobType": "后端开发",
+            "status": 1,
+            "auditStatus": 0,
+            "createdAt": "2026-10-27 01:54",
+            "applyCount": 0
+          },
+          {
+            "id": 1,
+            "jobName": "M0 合成 Java 应届岗位",
+            "companyName": "合成企业A",
+            "city": "上海",
+            "salaryRange": "8000-12000",
+            "jobType": "后端开发",
+            "status": 1,
+            "auditStatus": 1,
+            "createdAt": "2026-10-27 01:54",
+            "applyCount": 2
+          }
+        ]
+      }
+    },
+    {
+      "name": "approve deletion probe",
+      "method": "POST",
+      "path": "/api/admin/audit/job/decision",
+      "role": "admin",
+      "http_status": 200,
+      "request": {
+        "id": 2,
+        "pass": true
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "apply deletion probe",
+      "method": "POST",
+      "path": "/api/user/job/apply",
+      "role": "student",
+      "http_status": 200,
+      "request": {
+        "jobId": 2,
+        "resumeId": 1
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "PROBE physical remove",
+      "method": "POST",
+      "path": "/api/hr/job/remove",
+      "role": "hr",
+      "http_status": 200,
+      "request": {
+        "id": 2
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "physical deletion database proof",
+      "before": "COUNT(*)\n1\n",
+      "after": "COUNT(*)\n0\n"
+    },
+    {
+      "name": "invalidate before concurrency probe",
+      "method": "POST",
+      "path": "/api/user/resume/tags/save",
+      "role": "student",
+      "http_status": 200,
+      "request": {
+        "resumeId": 1,
+        "items": [
+          {
+            "tagId": 1,
+            "proficiency": 3
+          }
+        ]
+      },
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "20 concurrent same-pair recommendations",
+      "results": [
+        {
+          "http": 200,
+          "response": {
+            "code": 500,
+            "message": "系统异常",
+            "data": null
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 500,
+            "message": "系统异常",
+            "data": null
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 500,
+            "message": "系统异常",
+            "data": null
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        },
+        {
+          "http": 200,
+          "response": {
+            "code": 0,
+            "message": "OK",
+            "data": [
+              {
+                "id": 1,
+                "jobName": "M0 合成 Java 应届岗位",
+                "companyName": "合成企业A",
+                "city": "上海",
+                "salaryRange": "8000-12000",
+                "jobType": "后端开发",
+                "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+                "matchScore": 1.0,
+                "createdAt": "2026-10-27 01:54"
+              }
+            ]
+          }
+        }
+      ],
+      "database": "resume_id\tjob_id\tscore\n1\t1\t1.0000\n"
+    },
+    {
+      "name": "logout student2",
+      "method": "POST",
+      "path": "/api/common/auth/logout",
+      "role": "student2",
+      "http_status": 200,
+      "request": {},
+      "response": {
+        "code": 0,
+        "message": "OK",
+        "data": null
+      }
+    },
+    {
+      "name": "old token after logout rejected",
+      "method": "GET",
+      "path": "/api/user/resume/list",
+      "role": "student2",
+      "http_status": 200,
+      "request": null,
+      "response": {
+        "code": 401,
+        "message": "未登录",
+        "data": null
+      }
+    }
+  ]
+}

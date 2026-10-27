@@ -40,3 +40,8 @@ pnpm-debug.log*
 *.swo
 /backend/src/main/resources/application-dev.yml
 /uploads/
+
+# M0 project-private tools, database and logs
+.local/
+__pycache__/
+*.pyc

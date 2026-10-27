@@ -1,0 +1,380 @@
+[
+  {
+    "method": "GET",
+    "path": "/api/admin/audit/hr/list",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AdminAuditController.java",
+    "line": 28
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/audit/hr/decision",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AdminAuditController.java",
+    "line": 33
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/audit/job/list",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AdminAuditController.java",
+    "line": 39
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/audit/job/decision",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AdminAuditController.java",
+    "line": 44
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/audit/job/detail",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AdminAuditController.java",
+    "line": 50
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/user/page",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AdminUserController.java",
+    "line": 27
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/user/status/update",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AdminUserController.java",
+    "line": 39
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/user/delete",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AdminUserController.java",
+    "line": 45
+  },
+  {
+    "method": "POST",
+    "path": "/api/public/auth/login/password",
+    "role": "公开",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AuthController.java",
+    "line": 28
+  },
+  {
+    "method": "POST",
+    "path": "/api/public/auth/login/email",
+    "role": "公开",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AuthController.java",
+    "line": 33
+  },
+  {
+    "method": "POST",
+    "path": "/api/public/auth/register",
+    "role": "公开",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AuthController.java",
+    "line": 38
+  },
+  {
+    "method": "POST",
+    "path": "/api/public/auth/code",
+    "role": "公开",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AuthController.java",
+    "line": 44
+  },
+  {
+    "method": "POST",
+    "path": "/api/common/auth/logout",
+    "role": "已登录",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/AuthController.java",
+    "line": 50
+  },
+  {
+    "method": "GET",
+    "path": "/api/health",
+    "role": "公开",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/HealthController.java",
+    "line": 12
+  },
+  {
+    "method": "GET",
+    "path": "/api/hr/job/list",
+    "role": "HR",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/HrJobController.java",
+    "line": 33
+  },
+  {
+    "method": "POST",
+    "path": "/api/hr/job/save",
+    "role": "HR",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/HrJobController.java",
+    "line": 38
+  },
+  {
+    "method": "POST",
+    "path": "/api/hr/job/delete",
+    "role": "HR",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/HrJobController.java",
+    "line": 44
+  },
+  {
+    "method": "POST",
+    "path": "/api/hr/job/remove",
+    "role": "HR",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/HrJobController.java",
+    "line": 50
+  },
+  {
+    "method": "POST",
+    "path": "/api/hr/job/tags/save",
+    "role": "HR",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/HrJobController.java",
+    "line": 56
+  },
+  {
+    "method": "GET",
+    "path": "/api/hr/job/tags",
+    "role": "HR",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/HrJobController.java",
+    "line": 62
+  },
+  {
+    "method": "GET",
+    "path": "/api/hr/job/applications",
+    "role": "HR",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/HrJobController.java",
+    "line": 67
+  },
+  {
+    "method": "POST",
+    "path": "/api/hr/job/apply/status",
+    "role": "HR",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/HrJobController.java",
+    "line": 72
+  },
+  {
+    "method": "GET",
+    "path": "/api/hr/resume/file/download",
+    "role": "HR",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/HrJobController.java",
+    "line": 78
+  },
+  {
+    "method": "GET",
+    "path": "/api/public/job/list",
+    "role": "公开",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/JobBrowseController.java",
+    "line": 20
+  },
+  {
+    "method": "GET",
+    "path": "/api/public/job/detail",
+    "role": "公开",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/JobBrowseController.java",
+    "line": 32
+  },
+  {
+    "method": "GET",
+    "path": "/api/user/job/recommend",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/JobBrowseController.java",
+    "line": 37
+  },
+  {
+    "method": "GET",
+    "path": "/api/public/notice/list",
+    "role": "公开",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/NoticeController.java",
+    "line": 27
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/notice/list",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/NoticeController.java",
+    "line": 32
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/notice/save",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/NoticeController.java",
+    "line": 37
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/notice/delete",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/NoticeController.java",
+    "line": 43
+  },
+  {
+    "method": "GET",
+    "path": "/api/public/tag/list",
+    "role": "公开",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/TagController.java",
+    "line": 28
+  },
+  {
+    "method": "GET",
+    "path": "/api/public/tag/search",
+    "role": "公开",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/TagController.java",
+    "line": 33
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/tag/list",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/TagController.java",
+    "line": 42
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/tag/page",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/TagController.java",
+    "line": 50
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/tag/save",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/TagController.java",
+    "line": 61
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/tag/delete",
+    "role": "ADMIN",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/TagController.java",
+    "line": 67
+  },
+  {
+    "method": "POST",
+    "path": "/api/user/job/apply",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserApplyController.java",
+    "line": 27
+  },
+  {
+    "method": "GET",
+    "path": "/api/user/apply/list",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserApplyController.java",
+    "line": 33
+  },
+  {
+    "method": "GET",
+    "path": "/api/user/apply/list/detail",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserApplyController.java",
+    "line": 38
+  },
+  {
+    "method": "POST",
+    "path": "/api/user/apply/resume/update",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserApplyController.java",
+    "line": 43
+  },
+  {
+    "method": "GET",
+    "path": "/api/common/user/me",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserController.java",
+    "line": 29
+  },
+  {
+    "method": "GET",
+    "path": "/api/common/user/profile",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserController.java",
+    "line": 34
+  },
+  {
+    "method": "POST",
+    "path": "/api/common/user/profile/update",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserController.java",
+    "line": 39
+  },
+  {
+    "method": "POST",
+    "path": "/api/common/user/password/change",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserController.java",
+    "line": 45
+  },
+  {
+    "method": "POST",
+    "path": "/api/common/user/avatar/upload",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserController.java",
+    "line": 51
+  },
+  {
+    "method": "GET",
+    "path": "/api/user/resume/list",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserResumeController.java",
+    "line": 32
+  },
+  {
+    "method": "GET",
+    "path": "/api/user/resume/detail",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserResumeController.java",
+    "line": 37
+  },
+  {
+    "method": "POST",
+    "path": "/api/user/resume/save",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserResumeController.java",
+    "line": 42
+  },
+  {
+    "method": "POST",
+    "path": "/api/user/resume/delete",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserResumeController.java",
+    "line": 48
+  },
+  {
+    "method": "POST",
+    "path": "/api/user/resume/set-default",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserResumeController.java",
+    "line": 54
+  },
+  {
+    "method": "POST",
+    "path": "/api/user/resume/tags/save",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserResumeController.java",
+    "line": 60
+  },
+  {
+    "method": "POST",
+    "path": "/api/user/resume/file/upload",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserResumeController.java",
+    "line": 66
+  },
+  {
+    "method": "GET",
+    "path": "/api/user/resume/file/download",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserResumeController.java",
+    "line": 74
+  },
+  {
+    "method": "POST",
+    "path": "/api/user/resume/file/delete",
+    "role": "USER",
+    "source": "backend/src/main/java/com/lanrecruitment/controller/UserResumeController.java",
+    "line": 79
+  }
+]

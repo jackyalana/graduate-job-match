@@ -1,0 +1,192 @@
+[
+  {
+    "name": "unconfigured SMTP fails closed",
+    "response": {
+      "code": 500,
+      "message": "邮件服务未配置",
+      "data": null
+    }
+  },
+  {
+    "name": "registration without valid code rejected",
+    "response": {
+      "code": 400,
+      "message": "角色只能为USER或HR",
+      "data": null
+    }
+  },
+  {
+    "name": "MySQL 1062 counter after concurrent match probe",
+    "result": "ERROR_NUMBER\tERROR_NAME\tSUM_ERROR_RAISED\tSUM_ERROR_HANDLED\n1062\tER_DUP_ENTRY\t3\t0\n"
+  },
+  {
+    "name": "latest 200 drops older exact match",
+    "olderExactMatch": 1,
+    "eligibleCount": "203",
+    "responseCode": 0,
+    "returnedIds": [
+      204,
+      203,
+      202,
+      201,
+      200,
+      199,
+      198,
+      197,
+      196,
+      195,
+      194,
+      193,
+      192,
+      191,
+      190,
+      189,
+      188,
+      187,
+      186,
+      185,
+      184,
+      183,
+      182,
+      181,
+      180,
+      179,
+      178,
+      177,
+      176,
+      175,
+      174,
+      173,
+      172,
+      171,
+      170,
+      169,
+      168,
+      167,
+      166,
+      165,
+      164,
+      163,
+      162,
+      161,
+      160,
+      159,
+      158,
+      157,
+      156,
+      155
+    ],
+    "scores": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "oldMatchReturned": false
+  },
+  {
+    "name": "inactive resume still recommended",
+    "response": {
+      "code": 0,
+      "message": "OK",
+      "data": [
+        {
+          "id": 1,
+          "jobName": "M0 合成 Java 应届岗位",
+          "companyName": "合成企业A",
+          "city": "上海",
+          "salaryRange": "8000-12000",
+          "jobType": "后端开发",
+          "description": "合成测试岗位，用于底座审核，不是真实招聘。",
+          "matchScore": 1.0,
+          "createdAt": "2026-10-27 01:54"
+        },
+        {
+          "id": 3,
+          "jobName": "M0 浏览器合成 Vue 岗位",
+          "companyName": "合成企业A",
+          "city": "上海",
+          "salaryRange": "8000-10000",
+          "jobType": "前端开发",
+          "description": "仅用于 M0 本地浏览器验证的合成岗位。",
+          "matchScore": 0.0,
+          "createdAt": "2026-10-27 01:55"
+        }
+      ]
+    }
+  },
+  {
+    "name": "skill edits bypass re-audit",
+    "jobStatus": "id\taudit_status\n1\t1\n"
+  },
+  {
+    "name": "disabled old token on common me",
+    "response": {
+      "code": 0,
+      "message": "OK",
+      "data": {
+        "id": 2,
+        "username": "demo_student",
+        "role": "USER"
+      }
+    }
+  },
+  {
+    "name": "disabled old token on role resume",
+    "response": {
+      "code": 403,
+      "message": "无权限",
+      "data": null
+    }
+  },
+  {
+    "name": "application schema metadata",
+    "result": "Table\tCreate Table\njob_apply\tCREATE TABLE `job_apply` (\\n  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '投递ID',\\n  `job_id` bigint NOT NULL COMMENT '岗位ID',\\n  `resume_id` bigint NOT NULL COMMENT '简历ID',\\n  `user_id` bigint NOT NULL COMMENT '求职者用户ID',\\n  `status` tinyint DEFAULT '0' COMMENT '投递状态：0已投递 2通过 3拒绝',\\n  `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '投递时间',\\n  PRIMARY KEY (`id`),\\n  UNIQUE KEY `uk_resume_job` (`resume_id`,`job_id`),\\n  KEY `idx_job_id` (`job_id`),\\n  KEY `idx_user_job` (`user_id`,`job_id`)\\n) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='岗位投递记录表'\n"
+  }
+]

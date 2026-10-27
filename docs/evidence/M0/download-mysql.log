@@ -1,0 +1,8 @@
+cwd=.local/downloads
+command=["curl", "-fL", "--retry", "2", "-o", "mysql.tar.gz", "https://cdn.mysql.com/Downloads/MySQL-8.4/mysql-8.4.11-macos15-arm64.tar.gz"]
+start=2026-10-27T01:49:10.686695+00:00
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  7  160M    7 12.4M    0     0  12.8M      0  0:00:12 --:--:--  0:00:12 12.8M 29  160M   29 47.2M    0     0  23.8M      0  0:00:06  0:00:01  0:00:05 23.8M 47  160M   47 76.7M    0     0  25.8M      0  0:00:06  0:00:02  0:00:04 25.7M 58  160M   58 93.1M    0     0  22.8M      0  0:00:07  0:00:04  0:00:03 22.8M 72  160M   72  116M    0     0  23.3M      0  0:00:06  0:00:04  0:00:02 23.3M 85  160M   85  136M    0     0  22.8M      0  0:00:07  0:00:05  0:00:02 24.8M 99  160M   99  159M    0     0  22.3M      0  0:00:07  0:00:07 --:--:-- 21.7M100  160M  100  160M    0     0  22.4M      0  0:00:07  0:00:07 --:--:-- 19.9M
+
+exit_code=0

@@ -1,0 +1,7 @@
+{
+  "before": "users\tresumes\tjobs\tapplications\n6\t3\t203\t3\n",
+  "after": "users\tresumes\tjobs\tapplications\n6\t3\t203\t3\n",
+  "loginCode": 0,
+  "applicationCount": 3,
+  "result": "persisted after JVM restart"
+}

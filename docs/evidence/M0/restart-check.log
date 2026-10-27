@@ -1,0 +1,7 @@
+cwd=.
+command=["python3", "scripts/m0/restart_check.py"]
+start=2026-10-27T01:58:32.133356+00:00
+backend pid 27833 log /Users/guanghao/private/graduate-job-match/.local/backend.log
+{"before": "users\tresumes\tjobs\tapplications\n6\t3\t203\t3\n", "after": "users\tresumes\tjobs\tapplications\n6\t3\t203\t3\n", "loginCode": 0, "applicationCount": 3, "result": "persisted after JVM restart"}
+
+exit_code=0

@@ -1,0 +1,50 @@
+Initial PATH: Java stub with no JVM; Maven/MySQL/Redis/Docker/Podman absent; Node 26.8.2, npm 11.19.1.
+M0 uses project-private tools; no system service installed. Redis absent and memory mode verified.
+
+$ ["sw_vers"]
+ProductName:		macOS
+ProductVersion:		26.6
+BuildVersion:		25G72
+exit_code=0
+
+$ ["uname", "-m"]
+arm64
+exit_code=0
+
+$ ["sysctl", "-n", "machdep.cpu.brand_string", "hw.memsize"]
+sysctl: sysctl fmt -1 1024 1: Operation not permitted
+exit_code=1
+
+$ ["/Users/guanghao/private/graduate-job-match/.local/jdk/bin/java", "-version"]
+openjdk version "1.8.0_512"
+OpenJDK Runtime Environment (Zulu 8.98.0.107-CA-macos-aarch64) (build 1.8.0_512-b08)
+OpenJDK 64-Bit Server VM (Zulu 8.98.0.107-CA-macos-aarch64) (build 25.512-b08, mixed mode)
+exit_code=0
+
+$ ["/Users/guanghao/private/graduate-job-match/.local/maven/bin/mvn", "-v"]
+Apache Maven 3.9.11 (3e54c93a704957b63ee3494413a2b544fd3d825b)
+Maven home: /Users/guanghao/private/graduate-job-match/.local/maven
+Java version: 1.8.0_512, vendor: Azul Systems, Inc., runtime: /Users/guanghao/private/graduate-job-match/.local/zulu8.98.0.107-ca-jdk8.0.512-macosx_aarch64/Contents/Home/jre
+Default locale: zh_CN, platform encoding: UTF-8
+OS name: "mac os x", version: "26.6", arch: "aarch64", family: "mac"
+exit_code=0
+
+$ ["node", "--version"]
+v26.8.2
+exit_code=0
+
+$ ["npm", "--version"]
+11.19.1
+exit_code=0
+
+$ ["python3", "--version"]
+Python 3.9.6
+exit_code=0
+
+$ ["/Users/guanghao/private/graduate-job-match/.local/mysql/bin/mysqld", "--version"]
+/Users/guanghao/private/graduate-job-match/.local/mysql/bin/mysqld  Ver 8.4.11 for macos15 on arm64 (MySQL Community Server - GPL)
+exit_code=0
+
+$ ["git", "--version"]
+git version 2.50.1 (Apple Git-155)
+exit_code=0

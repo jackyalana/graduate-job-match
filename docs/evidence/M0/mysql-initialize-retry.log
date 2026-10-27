@@ -1,0 +1,13 @@
+cwd=.
+command=[".local/mysql/bin/mysqld", "--no-defaults", "--initialize-insecure", "--basedir=/Users/guanghao/private/graduate-job-match/.local/mysql", "--datadir=/Users/guanghao/private/graduate-job-match/.local/mysql-data-retry", "--default-time-zone=+00:00"]
+start=2026-10-27T01:51:13.447768+00:00
+2026-10-27T01:51:13.464570Z 0 [System] [MY-015017] [Server] MySQL Server Initialization - start.
+2026-10-27T01:51:13.465353Z 0 [System] [MY-013169] [Server] /Users/guanghao/private/graduate-job-match/.local/mysql-8.4.11-macos15-arm64/bin/mysqld (mysqld 8.4.11) initializing of server in progress as process 26842
+2026-10-27T01:51:13.466681Z 0 [Warning] [MY-010159] [Server] Setting lower_case_table_names=2 because file system for /Users/guanghao/private/graduate-job-match/.local/mysql-data-retry/ is case insensitive
+2026-10-27T01:51:13.468571Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-27T01:51:13.514636Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-27T01:51:13.795065Z 5 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2026-10-27T01:51:13.972238Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.4.11).
+2026-10-27T01:51:14.663457Z 0 [System] [MY-015018] [Server] MySQL Server Initialization - end.
+
+exit_code=0

@@ -1,0 +1,20 @@
+{
+  "upstream": "cd755d13443ea4b4c98be86e6c692238ed566d31",
+  "unchangedUpstreamPaths": [
+    "backend/src/main/java",
+    "backend/src/test",
+    "frontend/src",
+    "backend/pom.xml",
+    "frontend/package.json",
+    "frontend/package-lock.json"
+  ],
+  "sha256": {
+    "backend/pom.xml": "7d58443cb6fd94b558d701b50af92b4b7be4c5dacc9a00ecf66fc49fd71e7f8a",
+    "frontend/package.json": "9306b106f6083691ba806061d6711c483d2180cae995e68605bf01c77e2a5ea3",
+    "frontend/package-lock.json": "b31feec13c98adeea631a6f98a6c8f71ff07711817872e719d41e172666f6c0d",
+    "backend/sql/init.sql": "e2191c9f3e64fbbc68301e0b33fc26c5bf6eb497e523aa230621289da85c08f8",
+    "backend/src/main/resources/application-demo.yml": "0117cef5e848332fb551d92747db994c96ef2829f1b863732a47b07ac2cc2fb1",
+    "backend/target/backend-1.0.0-SNAPSHOT.jar": "2290733f7a1903401fbd510dff02b5acb4237633d2058b701ccd64a8479fd89d"
+  },
+  "scope": "demo config and M0 harness only"
+}

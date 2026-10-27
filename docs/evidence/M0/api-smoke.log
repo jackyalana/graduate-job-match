@@ -1,0 +1,6 @@
+cwd=.
+command=["python3", "scripts/m0/smoke.py"]
+start=2026-10-27T01:54:19.555036+00:00
+Core real HTTP smoke completed; known upstream defects captured, not SDD passes.
+
+exit_code=0

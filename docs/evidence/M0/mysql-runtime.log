@@ -1,0 +1,8 @@
+2026-10-27T01:52:18.052384Z 0 [System] [MY-015015] [Server] MySQL Server - start.
+2026-10-27T01:52:18.189541Z 0 [System] [MY-010116] [Server] /Users/guanghao/private/graduate-job-match/.local/mysql/bin/mysqld (mysqld 8.4.11) starting as process 26939
+2026-10-27T01:52:18.191250Z 0 [Warning] [MY-010159] [Server] Setting lower_case_table_names=2 because file system for /Users/guanghao/private/graduate-job-match/.local/mysql-data-retry/ is case insensitive
+2026-10-27T01:52:18.623685Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-27T01:52:18.672658Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-27T01:52:18.780313Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2026-10-27T01:52:18.780330Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2026-10-27T01:52:18.788613Z 0 [System] [MY-010931] [Server] /Users/guanghao/private/graduate-job-match/.local/mysql/bin/mysqld: ready for connections. Version: '8.4.11'  socket: '/Users/guanghao/private/graduate-job-match/.local/mysql.sock'  port: 13306  MySQL Community Server - GPL.

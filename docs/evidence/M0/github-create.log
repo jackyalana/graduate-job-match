@@ -1,0 +1,6 @@
+cwd=.
+command=["gh", "repo", "create", "jackyalana/graduate-job-match", "--private", "--description", "\u6bd5\u4e1a\u751f\u5c31\u4e1a\u63a8\u8350\u4e0e\u5c97\u4f4d\u5339\u914d\u7cfb\u7edf\uff1b\u57fa\u4e8e Lan-Recruitment \u7684\u6ce8\u660e\u6765\u6e90\u4e8c\u6b21\u5f00\u53d1"]
+start=2026-10-27T01:50:15.442200+00:00
+https://github.com/jackyalana/graduate-job-match
+
+exit_code=0
